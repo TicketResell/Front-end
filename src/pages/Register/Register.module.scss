@@ -1,4 +1,4 @@
-/* Gradient cho toàn bộ nền */
+
 .register-screen {
     background: linear-gradient(
         90deg,
@@ -8,11 +8,11 @@
     );
 }
 
-/* Cột trống có gradient (ẩn khi màn hình nhỏ) */
+
 .gradient-background {
     background: url('../../assets/images/ticket-logo.png') no-repeat;
-    background-position: 50px -50px; /* Căn giữa ảnh theo cả chiều dọc và ngang */
-    background-size: contain; /* Đảm bảo ảnh được co lại để vừa với box mà không bị cắt */
+    background-position: 50px -50px; 
+    background-size: contain;
 }
 
 .input {
@@ -20,9 +20,9 @@
     caret-color: rgba(117, 145, 249, 0.8);
 }
 
-/* Form container không bị ảnh hưởng bởi gradient nền */
+
 .form-container {
-    width: 100%; /* Chiếm hết chiều rộng có thể */
+    width: 100%; 
     max-width: 600px;
     height: auto;
     background-color: white;
@@ -31,26 +31,26 @@
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
     font-weight: bolder;
-    margin: auto; /* Căn giữa form trong cột */
+    margin: auto; 
 }
 
-/* Đảm bảo thông báo lỗi khớp chiều dài với input */
+
 .form-group {
     position: relative;
 }
 
 .form-control {
-    width: 100%; /* Đảm bảo input chiếm toàn bộ chiều rộng */
-    padding: 10px 40px 10px 10px; /* Thêm padding bên phải cho icon */
+    width: 100%; 
+    padding: 10px 40px 10px 10px; 
     border-radius: 5px;
     border: 1px solid #ced4da;
 }
 
-.password-toggle-icon {
+.password-icon {
     position: absolute;
-    right: 8%; /* Đảm bảo icon gần sát bên phải */
+    right: 8%; 
     transform: translateY(-50%);
     cursor: pointer;
-    z-index: 2; /* Đảm bảo icon nằm trên cùng */
+    z-index: 2; 
     font-size: 20px;
 }
