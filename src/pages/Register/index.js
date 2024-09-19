@@ -3,7 +3,7 @@ import classNames from "classnames/bind";
 import styles from "./Register.module.scss";
 import { Link } from "react-router-dom";
 import React, { useState } from "react";
-import { confirmEmail, confirmPhone } from "../../services/api/Register";
+import { confirmEmail, confirmPhone } from "../../services/api/RegisterAPI";
 import { FaEye, FaEyeSlash } from "react-icons/fa"; 
 import { ToastContainer, toast, Bounce } from "react-toastify";
 
@@ -68,7 +68,7 @@ function Register() {
   const checkPass = (e) => {
     const value = e.target.value;
     setPassword(value);
-    if (value.length <= 8) {
+    if (value.length < 9) {
       setErrors((prev) => ({
         ...prev,
         password: "Mật khẩu phải trên 8 ký tự",
@@ -92,6 +92,7 @@ function Register() {
   };
 
   const handleSubmit = (e) => {
+    console.log(e)
     e.preventDefault(); 
     const newErrors = { ...errors };
     
