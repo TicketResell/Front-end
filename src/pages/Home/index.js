@@ -1,5 +1,29 @@
 function Home() {
-    return <h2>Home Page</h2>
+    return (
+        <p>
+            <h2>Home Page</h2>
+            <h2>Home Page</h2><h2>Home Page</h2>
+            <h2>Home Page</h2>
+            <h2>Home Page</h2>
+            <h2>Home Page</h2>
+            <h2>Home Page</h2>
+            <h2>Home Page</h2>
+            <h2>Home Page</h2>
+            <h2>Home Page</h2>
+            <h2>Home Page</h2><h2>Home Page</h2>
+            <h2>Home Page</h2>
+            <h2>Home Page</h2>
+            <h2>Home Page</h2>
+
+            <h2>Home Page</h2>
+            <h2>Home Page</h2><h2>Home Page</h2>
+            <h2>Home Page</h2><h2>Home Page</h2>
+            <h2>Home Page</h2>
+            <h2>Home Page</h2>
+
+            <h2>Home Page</h2>
+        </p>
+    )
 }
 
 export default Home;

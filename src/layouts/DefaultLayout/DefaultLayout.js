@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import Header from '../components/Header';
-import NavigationBar from '../components/NavBar';
 import styles from './DefaultLayout.module.scss';
 import Footer from '../components/Footer';
 const cx = classNames.bind(styles);
@@ -9,7 +8,6 @@ const cx = classNames.bind(styles);
 function DefaultLayout({ children }) {
     return (
         <div className='App'>
-            <NavigationBar/>
             <Header />
             <div className={cx('container')}>
                 <div className={cx('content')}>{children}</div>
