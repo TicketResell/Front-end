@@ -93,7 +93,7 @@ function Register() {
 
   const handleSubmit = (e) => {
     console.log(e)
-    e.preventDefault(); 
+    e.preventDefault();   //Ngăn chặn hoạt động mặc định khi gửi file
     const newErrors = { ...errors };
     
     checkUserName({ target: { value: userName } });

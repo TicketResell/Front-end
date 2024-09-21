@@ -1,29 +1,12 @@
+import Search from "../../layouts/components/SearchBar";
+
 function Home() {
-    return (
-        <p>
-            <h2>Home Page</h2>
-            <h2>Home Page</h2><h2>Home Page</h2>
-            <h2>Home Page</h2>
-            <h2>Home Page</h2>
-            <h2>Home Page</h2>
-            <h2>Home Page</h2>
-            <h2>Home Page</h2>
-            <h2>Home Page</h2>
-            <h2>Home Page</h2>
-            <h2>Home Page</h2><h2>Home Page</h2>
-            <h2>Home Page</h2>
-            <h2>Home Page</h2>
-            <h2>Home Page</h2>
-
-            <h2>Home Page</h2>
-            <h2>Home Page</h2><h2>Home Page</h2>
-            <h2>Home Page</h2><h2>Home Page</h2>
-            <h2>Home Page</h2>
-            <h2>Home Page</h2>
-
-            <h2>Home Page</h2>
-        </p>
-    )
+    return (  
+        <>
+            <Search/>
+            <h2>Homepage</h2>
+        </>
+    );
 }
 
 export default Home;
