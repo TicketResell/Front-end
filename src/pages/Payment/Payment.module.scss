@@ -1,0 +1,36 @@
+.footer{
+    background-color: #7591F9;
+    text-align: center;
+    margin-top: 20px;
+    padding: 10px 0;
+    width: 1500px;
+    position: absolute;
+    left: 0;
+    box-sizing: border-box;
+}
+.step-circle{
+    background-color: red;
+    border-radius: 50%;
+    color: white;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.footer-steps p {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.step-circle {
+    display: inline-block;
+}
+.button{
+    background-color: #8E65FF;
+    color: #FDF0F0;
+}
