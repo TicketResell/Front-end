@@ -1,0 +1,83 @@
+
+.login-screen {
+    background: linear-gradient(90deg, rgba(142, 101, 255, 0.8) 0%, rgba(117, 145, 249, 0.8) 58%, rgba(85, 207, 235, 0.8) 100%);
+  }
+  
+  .gradient-background {
+    background: url("../../assets/images/ticket-logo.png") no-repeat;
+    background-position: 50px -50px;
+    background-size: contain;
+  }
+  
+  .input {
+    margin-bottom: 20px;
+    caret-color: rgba(117, 145, 249, 0.8);
+  }
+  
+  .form-container {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    font-weight: bolder;
+    margin: auto;
+  }
+  
+  .form-group {
+    position: relative;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 10px 40px 10px 10px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+  }
+  
+  .password-toggle-icon {
+    position: absolute;
+    right: 8%;
+    transform: translateY(-200%);
+    cursor: pointer;
+    z-index: 2;
+    font-size: 20px;
+  }
+
+  /* Phần tử phân cách */
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0; /* Khoảng cách trên và dưới */
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px; /* Độ dày của đường kẻ */
+  background-color: #000103; /* Màu của đường kẻ */
+}
+
+.divider-text {
+  padding: 0 10px; /* Padding trái và phải cho văn bản */
+  background: white; /* Màu nền của phần tử văn bản */
+  z-index: 1; /* Đảm bảo chữ nằm trên cùng */
+  position: relative; /* Định vị phần tử */
+}
+
+/* Nút Google đăng nhập */
+.google-login {
+  width: 100%; /* Đảm bảo nút Google có cùng chiều rộng với form */
+  margin-top: 20px; /* Khoảng cách trên của nút Google */
+  padding: 10px; /* Padding cho nút */
+  border: none; /* Xóa bỏ đường viền */
+  border-radius: 5px; /* Bo góc cho nút */
+  background-color: white; /* Nền trắng cho nút */
+  display: flex; /* Flex để căn giữa nội dung */
+  align-items: center; /* Căn giữa theo chiều dọc */
+  justify-content: center; /* Căn giữa theo chiều ngang */
+  cursor: pointer; /* Con trỏ chuột khi hover */
+}
