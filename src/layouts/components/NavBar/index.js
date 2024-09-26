@@ -2,9 +2,16 @@ import { Navbar, Nav, Container,Button } from "react-bootstrap";
 import styles from "../NavBar/NavigationBar.module.scss";
 import logo from "../../../assets/images/ticket-logo.png";
 import classNames from "classnames/bind";
+import { GoBell,GoGear } from "react-icons/go";
+import { useEffect, useState } from "react";
 
 function NavigationBar() {
   const cx = classNames.bind(styles);
+  const [signedIn,setSignedIn] = useState(false);
+  useEffect(()=>{
+    const user = localStorage.getItem("user");
+    setSignedIn(user);
+  },[])
   return (
     <Navbar expand="lg" fixed="top" data-bs-theme="dark" style={{backgroundColor: " rgba(0, 0, 0, 0.4)"}} className="navbar">
       <Container fluid className={cx("contain")}>
@@ -35,8 +42,24 @@ function NavigationBar() {
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
-        <Button variant="outline-light" href="register" style={{marginRight: "10px"}}>Đăng kí</Button>{' '}
-        <Button variant="outline-light" href="login">Đăng nhập</Button>{' '}
+        {signedIn ? (          
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Button variant="outline-light" style={{ marginRight: "10px" }}>
+              <GoGear />
+            </Button>
+            <Button variant="outline-light" style={{ marginRight: "10px" }}>
+              <GoBell /> 
+            </Button>
+            <Button variant="outline-light" style={{ marginRight: "10px" }}>
+              <img src="path_to_user_image" alt="User" style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
+              <span style={{ marginLeft: '10px', color: '#fff' }}>UserName</span>
+            </Button>
+          </div>):(
+            <>
+          <Button variant="outline-light" href="register" style={{marginRight: "10px"}}>Register</Button>
+        <Button variant="outline-light" href="login">Login</Button>
+        </>
+        )}
       </Container>
     </Navbar>
   );

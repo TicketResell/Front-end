@@ -46,6 +46,7 @@ function Home() {
     return (  
         <>
             <Search/>
+            
             {nearlyExpiredTickets.map((nearlyExpiredTicket)=>(
                 <TicketCard ticket ={nearlyExpiredTicket}/>
             ))}
