@@ -1,10 +1,4 @@
-@import 'normalize.css';
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;1,100;1,300&display=swap');
-:root {
-    --white-color: #fff;
-    --black-color: #000;
-    --text-color: #333;
-}
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap'); 
 * {
     /*Kế thừa box-sizing từ thẻ chứa nó*/
     box-sizing: inherit;
@@ -12,7 +6,9 @@
 html {
     /*Default font-size: 16px*/
     font-size: 100%;
-    font-family: 'Roboto', sans-serif;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
     box-sizing: border-box;
 }
 p {

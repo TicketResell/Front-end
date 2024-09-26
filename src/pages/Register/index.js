@@ -1,11 +1,12 @@
 import { Form, Button, Container, Row, Col, Spinner } from "react-bootstrap";
 import classNames from "classnames/bind";
 import styles from "./Register.module.scss";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import { confirmEmail, confirmPhone } from "../../services/api/RegisterAPI";
 import { FaEye, FaEyeSlash } from "react-icons/fa"; 
 import { ToastContainer, toast, Bounce } from "react-toastify";
+import api from "../../config";
 
 function Register() {
     //Nơi để các object trạng thái
@@ -29,6 +30,7 @@ function Register() {
 
   const iconShowPassword = () => setShowPassword((prev) => !prev);
   const iconShowConfirmPassword = () => setShowConfirmPassword((prev) => !prev);
+  const navigate = useNavigate()
   //Nơi để các phương thức thay đổi động
   const checkUserName = (e) => {
     const value = e.target.value;
@@ -91,9 +93,8 @@ function Register() {
     }
   };
 
-  const handleSubmit = (e) => {
-    console.log(e)
-    e.preventDefault(); 
+  const handleSubmit  = async (e) => {
+    e.preventDefault();   //Ngăn chặn hoạt động mặc định khi gửi file
     const newErrors = { ...errors };
     
     checkUserName({ target: { value: userName } });
@@ -157,6 +158,15 @@ function Register() {
       setLoading(false);
     
     }, 2000); 
+    
+    const data = {userName,email,phone,password}
+    console.log(data)
+    //Call api
+    const response = await api.post('register',data)
+    console.log(response.data)
+    const {token} = response.data
+    localStorage.setItem("token",token)
+    navigate("/login")
   };
 
   return (

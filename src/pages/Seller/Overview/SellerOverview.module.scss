@@ -1,0 +1,20 @@
+.rowHalfAbove {
+  height: 40%;
+}
+.rowHalfDown {
+  height: 60%;
+}
+.box {
+  background-color: #FFF;
+  padding: 20px;
+  height: 95%;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+  font-weight: bold
+}
+.child-box{
+  @extend .box;
+  height: 50%;
+  font-size: 16px;
+}
