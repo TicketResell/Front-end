@@ -140,8 +140,6 @@ const UpdateProfile = () => {
                     </div>
                 </div>
             </main>
-
-            <Footer />
         </div>
     );
 };

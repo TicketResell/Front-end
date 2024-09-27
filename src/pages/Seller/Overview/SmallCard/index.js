@@ -4,6 +4,10 @@ import { GrMoney } from "react-icons/gr"; //Revenue
 import { PiChartLineUpBold, PiChartLineDownBold } from "react-icons/pi";
 import { FaDollarSign } from "react-icons/fa6"; //Sales
 import { Line } from 'react-chartjs-2';
+import { Chart, CategoryScale, LinearScale, LineElement, PointElement, Filler } from 'chart.js';
+
+// Đăng ký các thành phần cần thiết
+Chart.register(CategoryScale, LinearScale, LineElement, PointElement, Filler);
 
 export default function SmallCard ({types}){
 
@@ -11,7 +15,7 @@ export default function SmallCard ({types}){
     labels: ['', '', ''], 
     datasets: [
       {
-        data: types.status == "up" ? ( [null, 75, 100]) : ([100,75,null]) ,
+        data: types.status === "up" ? ( [null, 75, 100]) : ([100,75,null]) ,
       fill: true,
       borderColor: types.status === 'up' ? '#198754' : '#F04438',
       tension: 0.4,
@@ -44,7 +48,7 @@ export default function SmallCard ({types}){
   };
 
   return (
-    <Card>
+    <Card style={{margin: "5px 0 5px 5px"  }}>
       <Card.Body>
         <Container>
           <Row>
@@ -57,14 +61,14 @@ export default function SmallCard ({types}){
           </Row>
           <Row>
             <Col>
-              <h1>${types.number}</h1>
+              <h1>{types.name === "Revenue" ? "$" : ""}{types.number}</h1>
               <p style={{ color: types.status === "up" ? '#17B26A' : '#F04438' }}>
                 {types.status === "up" ? (<PiChartLineUpBold />):(<PiChartLineDownBold/>) } {types.percent}% vs last week
               </p>
             </Col>
             <Col xs={4}>
               <div style={{ height: '50px' }}> 
-                <Line data={chartData} options={chartOptions} /> 
+                <Line data={chartData} options={chartOptions} style={{height: '50px'}}/> 
               </div>
             </Col>
           </Row>

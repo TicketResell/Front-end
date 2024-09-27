@@ -65,9 +65,6 @@ const Profile = () => {
                     </div>
                 </div>
             </main>
-
-            {/* Footer Section */}
-            <Footer />
         </div>
     );
 };

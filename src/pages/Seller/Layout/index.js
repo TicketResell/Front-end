@@ -6,6 +6,8 @@ import SellerOverview from "../Overview";
 import SellerTransaction from "../Transaction";
 import SellerChat from "../Chat";
 import noImg from "../../../assets/images/crowd-background.jpg";
+import SellerNewTick from "../NewTicket";
+import TicketManage from "../TicketManage";
 import { useState } from "react";
 const cx = classNames.bind(styles);
 
@@ -30,6 +32,10 @@ export default function SellerLayout() {
         return <SellerTransaction />;
       case "chat":
         return <SellerChat />;
+      case "newTicket":
+        return <SellerNewTick/>
+      case "setTicket":
+        return <TicketManage/>
       default:
         return <SellerOverview />;
     }
