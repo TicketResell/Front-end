@@ -8,6 +8,10 @@ function Home() {
     const [nearlyExpiredTickets,setNearlyExpiredTickets] = useState([])
     const [normalTickets,setNormalTickets] = useState([])
 
+    //Sau khi lấy được vé từ search
+    const handleSearchResults = (ticket) =>{
+        ticketClassification(ticket)
+    }
     //Phân loại vé 
     const ticketClassification = async(tickets) =>{
         const now = new Date()
@@ -32,7 +36,6 @@ function Home() {
         //call api get tickets
         try {
             const response = await api.get("ticket")
-            console.log(response.data)
             ticketClassification(response.data)
         } catch (err) {
             console.log(err)
@@ -45,15 +48,14 @@ function Home() {
 
     return (  
         <>
-            <Search/>
+            <Search onSearch={handleSearchResults}/>
             
             {nearlyExpiredTickets.map((nearlyExpiredTicket)=>(
-                <TicketCard ticket ={nearlyExpiredTicket}/>
+                <TicketCard key={nearlyExpiredTicket.id} ticket ={nearlyExpiredTicket}/>
             ))}
             {normalTickets.map((normalTicket)=>(
-                <TicketCard ticket ={normalTicket}/>
+                <TicketCard key={normalTicket.id} ticket ={normalTicket}/>
             ))}
-            <h2>Homepage</h2>
         </>
     );
 }

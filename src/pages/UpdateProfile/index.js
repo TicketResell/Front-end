@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // For navigation
-import Footer from '../../layouts/components/Footer';
 import styles from './updateProfile.module.scss';
 
 const UpdateProfile = () => {

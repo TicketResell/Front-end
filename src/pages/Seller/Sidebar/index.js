@@ -1,5 +1,6 @@
 import { Container, Row, Col, Button, Image } from "react-bootstrap";
 import {FaRegChartBar,FaDollarSign,FaComments,FaSignOutAlt,FaTicketAlt} from "react-icons/fa";
+import { CgProfile } from "react-icons/cg";
 import classNames from "classnames/bind";
 import styles from "./Sidebar.module.scss";
 
@@ -30,6 +31,9 @@ export default function SellerSidebar({ seller, onLayoutClick }) {
           </div>
           <div className={cx("menuItem")} onClick={()=>onLayoutClick('setTicket')}>
             <FaTicketAlt /> My Ticket
+          </div>
+          <div className={cx("menuItem")} onClick={()=>onLayoutClick('profile')}>
+            <CgProfile /> Profile
           </div>
         </Col>
       </Row>

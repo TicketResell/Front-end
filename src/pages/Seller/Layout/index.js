@@ -8,6 +8,8 @@ import SellerChat from "../Chat";
 import noImg from "../../../assets/images/crowd-background.jpg";
 import SellerNewTick from "../NewTicket";
 import TicketManage from "../TicketManage";
+import Profile from "../../Profile";
+
 import { useState } from "react";
 const cx = classNames.bind(styles);
 
@@ -36,6 +38,8 @@ export default function SellerLayout() {
         return <SellerNewTick/>
       case "setTicket":
         return <TicketManage/>
+      case "profile":
+        return <Profile/>
       default:
         return <SellerOverview />;
     }

@@ -5,12 +5,11 @@ import api from "../../../config";
 import { useNavigate } from "react-router-dom";
 import styles from "./SearchBar.module.scss" 
 
-function Search (){
+function Search ({ onSearch }){
   const [tickName,setTickName] = useState("")
   const [tickCategory,setTickCategory] = useState("")
   const [location,setLocation] = useState("")
   const [tickNum,setTickNum] = useState(1)
-  const navigate = useNavigate()
 
   const handleSearch = async () =>{
     const infoSearch = {
@@ -20,12 +19,12 @@ function Search (){
       tickNum
     }
 
-    console.log(infoSearch)
-    const response = await api.post("search",infoSearch)
-    console.log(response.data)
-    const {token} = response.data
-    localStorage.setItem("token",token)
-    navigate("/home")
+    try {
+      const response = await api.post("search",infoSearch)
+      onSearch(response.data)
+    } catch (err) {
+      console.log(err)
+    }
     
   }
 
@@ -33,7 +32,7 @@ function Search (){
     <div className="container p-4">
     <Container className={`  ${styles.wrapper} p-4 `} style={{maxWidth: "500px"}}>
       <h2 className={` ${styles.header} text-center`}>SEARCH TICKET</h2>
-      <Form>
+      <Form onSubmit={handleSearch}>
         <InputGroup className="mb-3">
           <InputGroup.Text><FaSearch /></InputGroup.Text>
           <Form.Control placeholder="Nhập vé cần tìm"  value={tickName} onChange={(e) =>{setTickName(e.target.value)}}/>
@@ -73,7 +72,7 @@ function Search (){
           </Form.Select>
         </Form.Group>
 
-        <Button variant="primary" type="submit" className="w-100" style={{ backgroundColor: '##4562EB' }} onClick={handleSearch}>
+        <Button variant="primary" type="submit" className="w-100" style={{ backgroundColor: '##4562EB' }}>
           SEARCH
         </Button>
       </Form>
