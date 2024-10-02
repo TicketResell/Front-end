@@ -19,7 +19,7 @@ const publicRoutes = [
 const privateRoutes = [
     { path: '/profile', component: Profile},
     { path: '/updateProfile', component: UpdateProfile},
-    { path: '/forgotPassword', component: ForgotPassword, layout: null},
+    { path: '/forgot-password', component: ForgotPassword, layout: null},
     { path: '/payment', component: Payment, layout: HeaderOnly},
     { path: '/seller', component: SellerLayout,layout : null},
 ];
