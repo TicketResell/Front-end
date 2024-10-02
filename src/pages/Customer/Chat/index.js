@@ -1,5 +1,5 @@
 import { Row,Col } from "react-bootstrap";
-function SellerChat() {
+export default function Chat() {
   return (
     <>
       <Row>
@@ -10,4 +10,3 @@ function SellerChat() {
   );
 }
 
-export default SellerChat;

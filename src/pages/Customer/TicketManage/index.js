@@ -62,16 +62,16 @@ function TicketManage() {
           <MDBTable align="middle">
             <MDBTableHead>
               <tr>
-                <th scope="col">TicketID</th>
-                <th scope="col">Image</th>
-                <th scope="col">Event Title</th>
-                <th scope="col">Ticket Type</th>
-                <th scope="col">Event Date</th>
-                <th scope="col">Location</th>
-                <th scope="col">Price</th>
-                <th scope="col">SalePrice</th>
-                <th scope="col">Status</th>
-                <th scope="col">Actions</th>
+                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >TicketID</th>
+                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Image</th>
+                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Event Title</th>
+                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Ticket Type</th>
+                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Event Date</th>
+                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Location</th>
+                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Price</th>
+                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >SalePrice</th>
+                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Status</th>
+                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Actions</th>
               </tr>
             </MDBTableHead>
             <MDBTableBody>

@@ -1,12 +1,12 @@
 import { Row, Col } from "react-bootstrap";
 import classNames from "classnames/bind";
-import styles from "./SellerOverview.module.scss";
+import styles from "./Overview.module.scss";
 import SmallerCard from "./SmallCard"
 import RevenueChart from "./RevenueChart";
 import OrdersToday from "./OrdersToday";
 const cx = classNames.bind(styles);
 
-export default function SellerOverview() {
+export default function Overview() {
   const listOrder = [
     {
       orderID : "1",

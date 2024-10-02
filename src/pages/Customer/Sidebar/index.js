@@ -6,7 +6,7 @@ import styles from "./Sidebar.module.scss";
 
 const cx = classNames.bind(styles);
 
-export default function SellerSidebar({ seller, onLayoutClick }) {
+export default function Sidebar({ seller, onLayoutClick }) {
   return (
     <Container className={cx("sidebar")}>
       <Row className={cx("dashboardTitle")}>
@@ -15,7 +15,7 @@ export default function SellerSidebar({ seller, onLayoutClick }) {
       <Row className={cx("sellerInfo")}>
         <Image src={seller.image} roundedCircle  className={cx("sellerImage")} />
         <div className={cx("sellerName")}>{seller.name}</div>
-        <div className={cx("sellerRole")}>Seller</div>
+        <div className={cx("sellerRole")}>User</div>
         <Button className={cx("addProductButton")} onClick={()=>onLayoutClick('newTicket')}>Add New Ticket</Button>
       </Row>
       <Row className={cx("menu")}>
@@ -39,7 +39,7 @@ export default function SellerSidebar({ seller, onLayoutClick }) {
       </Row>
       <Row className={cx("logoutSection")}>
         <Col>
-          <div className={cx("logoutItem")} style={{marginTop:"140%"}}>
+          <div className={cx("logoutItem")} style={{marginTop:"100%"}}>
             Logout <FaSignOutAlt />
           </div>
         </Col>

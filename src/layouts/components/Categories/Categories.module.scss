@@ -1,0 +1,29 @@
+.category-grid {
+    padding: 20px;
+    background-color: #EDEDED;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+.card {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  margin: 10px auto;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  &:hover {
+    transform: translateY(10px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  }
+  }
+  
+.card-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+  }
+  

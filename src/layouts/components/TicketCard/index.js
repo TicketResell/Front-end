@@ -40,9 +40,10 @@ function TicketCard({ticket}) {
           </Col>
           <Col xs={9}>
             <ListGroup className="list-group-flush">
-              <ListGroup.Item>{ticket.location}</ListGroup.Item>
-              <ListGroup.Item>{ticket.eventDate}</ListGroup.Item>
-              <ListGroup.Item>{ticket.salePrice}</ListGroup.Item>
+              <ListGroup.Item>Location : {ticket.location}</ListGroup.Item>
+              <ListGroup.Item>Date : {ticket.eventDate}</ListGroup.Item>
+              <ListGroup.Item><span style={{ textDecoration: 'line-through' }}>{ticket.price}</span> 
+              <span style={{ color: 'red', marginLeft: '8px' }}>{ticket.salePrice}</span></ListGroup.Item>
             </ListGroup>
           </Col>
         </Row>
