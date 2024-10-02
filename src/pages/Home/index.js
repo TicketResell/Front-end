@@ -3,11 +3,48 @@ import TicketCard from "../../layouts/components/TicketCard";
 import api from "../../config";
 import { useEffect,useState } from "react";
 import { differenceInDays, parse } from "date-fns";
+import Categories from "../../layouts/components/Categories";
+import moviebackground from "../../assets/images/movie-background.jpg"
+import crowd from "../../assets/images/crowd-background.jpg"
+import sport from "../../assets/images/sport-background.png"
 
 function Home() {
-    const [nearlyExpiredTickets,setNearlyExpiredTickets] = useState([])
-    const [normalTickets,setNormalTickets] = useState([])
+    const [nearlyExpiredTickets,setNearlyExpiredTickets] = useState([]);
+    const [normalTickets,setNormalTickets] = useState([]);
 
+    const categories = [
+        { title: 'Concert', imgSrc: moviebackground},
+        { title: 'Lễ hội', imgSrc:  moviebackground},
+        { title: 'Phương tiện', imgSrc:  moviebackground},
+        { title: 'Bóng đá', imgSrc:  moviebackground},
+        { title: 'Hài kịch', imgSrc:  moviebackground},
+        { title: 'Triển lãm', imgSrc: moviebackground },
+        { title: 'Hòa nhạc', imgSrc:  moviebackground},
+        { title: 'Hội chợ', imgSrc:  moviebackground},
+        { title: 'Hội thảo', imgSrc: moviebackground},
+        { title: 'Phim chiếu rạp', imgSrc:  moviebackground}
+      ];
+
+    const tickets = {
+        price: 999.50,
+        userID: 2,
+        eventTitle: "Sky Tour",
+        eventDate: "2024-10-01",
+        categoryId: 1,
+        location: "Stadium",
+        ticketType: "PROMAX",
+        salePrice: 890.00,
+        ticketDetails: "Front row seat",
+        imageUrls: [
+          crowd,
+          sport
+        ]
+      }
+
+    //Sau khi lấy được vé từ search
+    const handleSearchResults = (ticket) =>{
+        ticketClassification(ticket)
+    }
     //Phân loại vé 
     const ticketClassification = async(tickets) =>{
         const now = new Date()
@@ -32,8 +69,7 @@ function Home() {
         //call api get tickets
         try {
             const response = await api.get("ticket")
-            console.log(response.data)
-            ticketClassification(response.data)
+            ticketClassification(tickets)
         } catch (err) {
             console.log(err)
         }
@@ -45,15 +81,15 @@ function Home() {
 
     return (  
         <>
-            <Search/>
-            
+            <Search onSearch={handleSearchResults}/>
+            <Categories categories = {categories}/>
             {nearlyExpiredTickets.map((nearlyExpiredTicket)=>(
-                <TicketCard ticket ={nearlyExpiredTicket}/>
+                <TicketCard key={nearlyExpiredTicket.id} ticket ={nearlyExpiredTicket}/>
             ))}
+            
             {normalTickets.map((normalTicket)=>(
-                <TicketCard ticket ={normalTicket}/>
+                <TicketCard key={normalTicket.id} ticket ={normalTicket}/>
             ))}
-            <h2>Homepage</h2>
         </>
     );
 }

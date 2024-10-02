@@ -7,7 +7,7 @@ import UpdateProfile from '../UpdateProfile';
 import ForgotPassword from '../ForgotPassword';
 import AboutUs from '../AboutUs';
 import Payment from '../Payment';
-import SellerLayout from '../Seller/Layout';
+import CustomerLayout from '../Customer/Layout';
 
 const publicRoutes = [
     { path: '/', component: Home},
@@ -21,7 +21,7 @@ const privateRoutes = [
     { path: '/updateProfile', component: UpdateProfile},
     { path: '/forgot-password', component: ForgotPassword, layout: null},
     { path: '/payment', component: Payment, layout: HeaderOnly},
-    { path: '/seller', component: SellerLayout,layout : null},
+    { path: '/customer', component: CustomerLayout,layout : null},
 ];
 
 export { publicRoutes, privateRoutes };
