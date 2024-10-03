@@ -7,13 +7,15 @@ import UpdateProfile from '../UpdateProfile';
 import ForgotPassword from '../ForgotPassword';
 import AboutUs from '../AboutUs';
 import Payment from '../Payment';
+import Admin from '../Admin';
 import SellerLayout from '../Seller/Layout';
 
 const publicRoutes = [
     { path: '/', component: Home},
     { path: '/register', component: Register, layout: null },
     { path: '/login', component: Login, layout: null },
-    {path: '/aboutUs',component: AboutUs, layout: null}
+    {path: '/aboutUs',component: AboutUs, layout: null},
+    {path: '/admin',component: Admin, layout: null}
 ];
 
 const privateRoutes = [
