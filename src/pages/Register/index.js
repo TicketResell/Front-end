@@ -162,7 +162,7 @@ function Register() {
     const data = {userName,email,phone,password}
     console.log(data)
     //Call api
-    const response = await api.post('register',data)
+    const response = await api.post('accounts/register',data)
     console.log(response.data)
     const {token} = response.data
     localStorage.setItem("token",token)

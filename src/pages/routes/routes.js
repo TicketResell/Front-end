@@ -8,12 +8,14 @@ import ForgotPassword from '../ForgotPassword';
 import AboutUs from '../AboutUs';
 import Payment from '../Payment';
 import CustomerLayout from '../Customer/Layout';
+import TicketDetail from '../TicketDetail';
 
 const publicRoutes = [
     { path: '/', component: Home},
     { path: '/register', component: Register, layout: null },
     { path: '/login', component: Login, layout: null },
-    {path: '/aboutUs',component: AboutUs, layout: null}
+    {path: '/aboutUs',component: AboutUs, layout: null},
+    {path: '/ticketDetail',component: TicketDetail}
 ];
 
 const privateRoutes = [

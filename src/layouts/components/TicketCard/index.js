@@ -1,56 +1,47 @@
-import { useState } from "react";
 import { Card, ListGroup, Button, Container, Row, Col } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import ReactLoading from "react-loading";
+import { useNavigate,useHistory } from "react-router-dom";
+import styles from "./TicketCard.module.scss"
+import classNames from "classnames/bind";
 
 function TicketCard({ticket}) {
-  const [loadImage,setLoadImage] = useState(true);
+  const cx = classNames.bind(styles);
 
   const navigate = useNavigate();
 
   const handleBuy = () =>{
     navigate("/payment")
   }
+  const handleClickCard = () =>{
+    navigate("/ticketDetail",{ state: { data: ticket } })
+  }
   return (
-    <Card style={{ width: "18rem" }}>
+    <Card className={cx("card")} onClick={handleClickCard}>
       {/*Hình ảnh của seller*/}
-      {loadImage && (
-        <div className="d-flex justify-content-center align-items-center" style={{ height: "150px" }}>
-          <ReactLoading type={"spin"} color={"#000"} />
-        </div>
-      )}
-      <Card.Img variant="top" src={ticket.sellerID} onLoad={()=> setLoadImage(false)} 
-      style={{ display: loadImage ? "none" : "block" }} //Ẩn cho đến khi ảnh tải xong
+      <Card.Img variant="top" src={ticket.sellerID} alt="2"
        />
-      <Card.Body>
-        <Card.Title>{ticket.eventTitle}</Card.Title>
+      <Card.Body className={cx("card-body")}>
+        <Card.Title className={cx("card-title")}>{ticket.eventTitle}</Card.Title>
         <Card.Text>{ticket.ticketDetails}</Card.Text>
       </Card.Body>
 
-      <Container>
+      <Container className={cx("card-container")}>
         <Row>
           <Col xs={3}>
-          {loadImage && (
-              <div className="d-flex justify-content-center align-items-center" style={{ height: "100px" }}>
-                <ReactLoading type={"spin"} color={"#000"} />
-              </div>
-            )}
-            <Card.Img src={ticket.image} onLoad={() => setLoadImage(false)} 
-              style={{ display: loadImage ? "none" : "block" }}/>
+            <Card.Img src={ticket.image} alt="1"/>
           </Col>
           <Col xs={9}>
             <ListGroup className="list-group-flush">
               <ListGroup.Item>Location : {ticket.location}</ListGroup.Item>
               <ListGroup.Item>Date : {ticket.eventDate}</ListGroup.Item>
-              <ListGroup.Item><span style={{ textDecoration: 'line-through' }}>{ticket.price}</span> 
-              <span style={{ color: 'red', marginLeft: '8px' }}>{ticket.salePrice}</span></ListGroup.Item>
+              <ListGroup.Item><span className={cx("price-original")}>{ticket.price}</span> 
+              <span className={cx("price-sale")}>{ticket.salePrice}</span></ListGroup.Item>
             </ListGroup>
           </Col>
         </Row>
       </Container>
 
-      <Card.Body className="d-flex justify-content-center w-100">
-        <Button variant="success" onClick={handleBuy}>Buy</Button>
+      <Card.Body className={cx("card-footer")}>
+        <Button variant="success" onClick={handleBuy} className={cx("buy-button")}>Buy</Button>
       </Card.Body>
     </Card>
   );

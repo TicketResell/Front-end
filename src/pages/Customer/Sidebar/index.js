@@ -37,9 +37,9 @@ export default function Sidebar({ seller, onLayoutClick }) {
           </div>
         </Col>
       </Row>
-      <Row className={cx("logoutSection")}>
+      <Row className={cx("menuItem")}>
         <Col>
-          <div className={cx("logoutItem")} style={{marginTop:"100%"}}>
+          <div className={cx("logoutItem")}>
             Logout <FaSignOutAlt />
           </div>
         </Col>
