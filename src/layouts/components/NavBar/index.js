@@ -37,7 +37,7 @@ function NavigationBar() {
             <Nav.Link href="#link" style={{ fontSize:"20px",color: "#fff" ,marginRight: "40px",fontFamily : "bold"}}>
               Gia đình
             </Nav.Link>
-            <Nav.Link href="#link" style={{ fontSize:"20px",color: "#fff" ,marginRight: "40px",fontFamily : "bold"}}>
+            <Nav.Link href="aboutUs" style={{ fontSize:"20px",color: "#fff" ,marginRight: "40px",fontFamily : "bold"}}>
               Giới thiệu
             </Nav.Link>
           </Nav>

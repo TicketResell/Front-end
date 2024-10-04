@@ -66,7 +66,7 @@ function Login() {
         setLoading(true);
 
         try {
-            const response = await api.post('/auth/login', {
+            const response = await api.post('/accounts/login', {
                 email,
                 password
             });
@@ -187,7 +187,7 @@ function Login() {
                             <GoogleLogin
                                 onSuccess={credentialResponse => {
                                     const tokenId = credentialResponse.credential;
-                                    fetch('/api/auth/google', {
+                                    fetch('accounts/login-google', {
                                         method: 'POST',
                                         headers: {
                                             'Content-Type': 'application/json',

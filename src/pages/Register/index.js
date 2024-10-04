@@ -162,7 +162,7 @@ function Register() {
     const data = {userName,email,phone,password}
     console.log(data)
     //Call api
-    const response = await api.post('register',data)
+    const response = await api.post('accounts/register',data)
     console.log(response.data)
     const {token} = response.data
     localStorage.setItem("token",token)
@@ -192,7 +192,7 @@ function Register() {
             <h2 className={cx("mb-4")} style={{ paddingBottom: "20px" }}>
               Đăng kí
             </h2>
-            <Form style={{ marginTop: "-20px" }}>
+            <Form style={{ marginTop: "-20px" }} onSubmit={handleSubmit}>
               <Form.Group
                 controlId="formBasicUserName"
                 className={cx("mt-3", "form-group")}
@@ -343,7 +343,6 @@ function Register() {
                 variant="primary"
                 type="submit"
                 className={cx("mt-4", "w-100", "btn-lg")}
-                onClick={handleSubmit}
                 disabled={loading}
               >
                 {loading ? (

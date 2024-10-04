@@ -1,11 +1,33 @@
 import { Row, Col } from "react-bootstrap";
 import classNames from "classnames/bind";
-import styles from "./SellerOverview.module.scss";
+import styles from "./Overview.module.scss";
 import SmallerCard from "./SmallCard"
 import RevenueChart from "./RevenueChart";
+import OrdersToday from "./OrdersToday";
 const cx = classNames.bind(styles);
 
-export default function SellerOverview() {
+export default function Overview() {
+  const listOrder = [
+    {
+      orderID : "1",
+      buyerID : "1",
+      ticketID : "1",
+      orderDate : "25/9/2023",
+      paymentID : "EIR9",
+      orderMethod : "COD",
+      totalAmount : "1294000",
+      status : "pending"
+    },{
+      orderID : "1",
+      buyerID : "1",
+      ticketID : "1",
+      orderDate : "25/9/2023",
+      paymentID : "EIR9",
+      orderMethod : "paypal",
+      totalAmount : "12394000",
+      status : "completed"
+    }
+  ]
   const types1 ={
     name : "Revenue",
     number : 400,
@@ -36,7 +58,7 @@ export default function SellerOverview() {
       </Row>
       <Row className={cx("rowHalfDown")}>
         <Col xs={8} >
-          Total orders for the day
+          <OrdersToday listOrder={listOrder}/>
         </Col>
         <Col xs={4}>
           Validity period of tickets on sale

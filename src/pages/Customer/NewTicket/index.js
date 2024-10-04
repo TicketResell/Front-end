@@ -9,10 +9,10 @@ import {Container,
 } from "react-bootstrap";
 import Autocomplete from "react-google-autocomplete";
 import classNames from "classnames/bind";
-import styles from "./SellerNewTick.module.scss"
+import styles from "./NewTick.module.scss"
 
 const cx = classNames.bind(styles)
-function SellerNewTick() {
+export default function NewTick() {
   const [ticketType, setTicketType] = useState("Select Ticket Type");
 
   const handleSelect = (e) => {
@@ -135,4 +135,4 @@ function SellerNewTick() {
   );
 }
 
-export default SellerNewTick;
+

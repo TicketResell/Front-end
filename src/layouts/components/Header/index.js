@@ -1,6 +1,6 @@
 import React from "react";
 import { Carousel } from "react-bootstrap";
-import styles from "../Header/Header.module.scss";
+import styles from "./Header.module.scss";
 import classNames from "classnames/bind";
 import crowd_background from "../../../assets/images/crowd-background.jpg";
 import movie_background from "../../../assets/images/movie-background.jpg";
