@@ -1,7 +1,7 @@
 import { Form, Button, Container, Row, Col, Spinner } from 'react-bootstrap';
 import classNames from 'classnames/bind';
 import styles from './Login.module.scss';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import { confirmEmail } from '../../services/api/RegisterAPI';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -11,6 +11,7 @@ import api from "../../config";
 
 function Login() {
     const cx = classNames.bind(styles);
+    const navigate  = useNavigate();
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -66,10 +67,11 @@ function Login() {
         setLoading(true);
 
         try {
-            const response = await api.post('/accounts/login', {
+            const response = await api.post('accounts/login', {
                 email,
                 password
             });
+            console.log('Response Data:', response.data);
             // Successful login
             toast.success('Đăng nhập thành công!', {
                 position: "top-center",
@@ -82,20 +84,54 @@ function Login() {
                 theme: "light",
                 transition: Bounce,
             });
+            const {token} = response.data
+            localStorage.setItem("token",token)
+            localStorage.setItem("user",JSON.stringify(response.data))
+            navigate('/')
             // Handle token or user data
         } catch (error) {
             // Login failed
-            toast.error('Đăng nhập không thành công! Vui lòng kiểm tra lại email và mật khẩu.', {
-                position: "top-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                transition: Bounce,
-            });
+            if(error.response){
+                const errorMessage = error.response.data?.message || 'Lỗi không xác định';
+                console.error('Response Error:', error.response);
+                toast.error(`Đăng nhập không thành công: ${errorMessage}`, {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
+            }else if(error.request){
+                console.error('No Response Error:', error.request);
+                toast.error('Không có phản hồi từ máy chủ. Vui lòng kiểm tra kết nối mạng của bạn.', {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
+            }else{
+                console.error('Error:', error.message);
+                toast.error(`Đã xảy ra lỗi: ${error.message}`, {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
+            }
         } finally {
             setLoading(false);
         }
