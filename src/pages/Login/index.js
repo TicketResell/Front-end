@@ -1,7 +1,7 @@
 import { Form, Button, Container, Row, Col, Spinner } from 'react-bootstrap';
 import classNames from 'classnames/bind';
 import styles from './Login.module.scss';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import React, { useState } from 'react';
 import { confirmEmail } from '../../services/api/RegisterAPI';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -11,6 +11,7 @@ import api from "../../config";
 
 function Login() {
     const cx = classNames.bind(styles);
+    const navigate = useNavigate(); // Hook for navigation
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -82,7 +83,10 @@ function Login() {
                 theme: "light",
                 transition: Bounce,
             });
-            // Handle token or user data
+
+            // Navigate to Home after successful login
+            navigate('/'); 
+
         } catch (error) {
             // Login failed
             toast.error('Đăng nhập không thành công! Vui lòng kiểm tra lại email và mật khẩu.', {
