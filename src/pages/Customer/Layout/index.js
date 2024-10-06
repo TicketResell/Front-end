@@ -9,6 +9,7 @@ import noImg from "../../../assets/images/crowd-background.jpg";
 import NewTick from "../NewTicket";
 import TicketManage from "../TicketManage";
 import Profile from "../../Profile";
+import Support from "../Support";
 
 import { useState } from "react";
 const cx = classNames.bind(styles);
@@ -56,6 +57,8 @@ export default function CustomerLayout() {
         return <TicketManage/>
       case "profile":
         return <Profile/>
+      case "support":
+        return <Support/>
       default:
         return <Overview />;
     }

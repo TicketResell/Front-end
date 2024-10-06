@@ -1,101 +1,129 @@
 /* General Styles */
 .profilePage {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f0f0f0;
-  
-    /* Main Content Styles */
-    .profileContainer {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f0f0f0;
+
+  /* Main Content Styles */
+  .profileContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: white;
+    margin: 20px auto;
+    width: 80%;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .uploadSection {
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    align-items: center; /* Center align the items */
+    margin-bottom: 20px;
+
+    .imageContainer {
+      position: relative; /* Set position relative to contain absolute children */
+      width: 120px; /* Fixed width */
+      height: 120px; /* Fixed height */
+      border-radius: 50%; /* Circular shape */
+      overflow: hidden; /* Hide overflow */
+      background-color: #f0f0f0; /* Background color for empty container */
       display: flex;
-      flex-direction: column;
       align-items: center;
-      padding: 20px;
-      background-color: white;
-      margin: 20px auto;
-      width: 80%;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-  
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-  
-    .uploadSection {
-      display: flex;
       justify-content: center;
-      margin-bottom: 20px;
-  
-      .imageContainer {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        overflow: hidden;
-        background-color: #f0f0f0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+
+      img {
+        width: 100%; /* Full width of the container */
+        height: 100%; /* Full height of the container */
+        object-fit: cover; /* Cover the container without distortion */
       }
-  
+
       .cameraIcon {
-        font-size: 40px;
+        position: absolute; /* Position absolute to allow overlapping */
+        top: 50%; /* Center vertically */
+        left: 50%; /* Center horizontally */
+        transform: translate(-50%, -50%); /* Adjust to truly center the icon */
+        font-size: 40px; /* Size of the camera icon */
         cursor: pointer;
         color: #007bff;
         transition: color 0.3s ease;
-  
+
         &:hover {
-          color: #0056b3;
+          color: #0056b3; /* Change color on hover */
         }
       }
     }
-  
-    .contactInfo {
-      width: 45%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-  
-      form {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-  
-        label {
-          margin-bottom: 15px;
-  
-          input,
-          textarea {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-          }
-        }
-  
-        textarea {
-          resize: none;
-        }
-      }
-  
-      /* Update Button */
-      .updateButton {
-        padding: 10px 20px;
-        margin-top: 20px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-        transition: background-color 0.3s ease;
-  
-        &:hover {
-          background-color: #0056b3;
-        }
+
+    /* Styles for the change image button */
+    .changeImageButton {
+      margin-top: 10px; /* Space above the button */
+      padding: 5px 10px; /* Smaller padding for the button */
+      font-size: 14px; /* Smaller font size */
+      background-color: #e7e7e7; /* Light background */
+      color: #333; /* Dark text color */
+      border: 1px solid #ccc; /* Light border */
+      border-radius: 5px; /* Rounded corners */
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: #dcdcdc; /* Slightly darker on hover */
       }
     }
   }
-  
+
+  .contactInfo {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    form {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+
+      label {
+        margin-bottom: 15px;
+
+        input,
+        textarea {
+          width: 100%;
+          padding: 10px;
+          margin-top: 5px;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+        }
+      }
+
+      textarea {
+        resize: none;
+      }
+    }
+
+    /* Update Button */
+    .updateButton {
+      padding: 10px 20px;
+      margin-top: 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+  }
+}
