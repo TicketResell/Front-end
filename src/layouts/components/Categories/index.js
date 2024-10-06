@@ -10,13 +10,14 @@ function Categories({categories}) {
         <Row>
           {categories.map((category, index) => (
             <Col key={index} xs={6} md={4} lg={3} className={cx("mb-4")}>
-                <Image 
-                roundedCircle                   
+               <div className={cx("card")}>
+                <Image                   
                   variant="top"
                   src={category.imgSrc}
                   alt={category.title}
-                  className={cx("card")} 
+                  className={cx("card-img")} 
                   />
+                  </div>
                   <h1 className={cx("card-title","text-center")}>{category.title}</h1>
             </Col>
           ))}
