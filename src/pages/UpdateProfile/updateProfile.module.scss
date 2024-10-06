@@ -104,5 +104,27 @@
         background-color: #0056b3;
       }
     }
+
+    /* Styling for View Mode */
+    &.viewMode {
+      .cameraIcon {
+        display: none; /* Hide camera icon in view mode */
+      }
+
+      img {
+        cursor: default; /* Prevent pointer cursor on profile image */
+      }
+    }
+
+    /* Styling for Edit Mode */
+    &.editMode {
+      .cameraIcon {
+        display: block; /* Show camera icon in edit mode */
+      }
+
+      img {
+        cursor: pointer; /* Show pointer cursor on profile image */
+      }
+    }
   }
 }

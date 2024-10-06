@@ -88,7 +88,6 @@ function Login() {
             localStorage.setItem("token",token)
             localStorage.setItem("user",JSON.stringify(response.data))
             navigate('/')
-            // Handle token or user data
         } catch (error) {
             // Login failed
             if(error.response){
