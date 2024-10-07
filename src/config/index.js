@@ -20,7 +20,9 @@ const handleBefore = (config) => {
   
 };
 
-api.interceptors.request.use(handleBefore, null);
+api.interceptors.request.use(handleBefore, (error) => {
+  return Promise.reject(error);
+});
 
 
 export default api;

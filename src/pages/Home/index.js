@@ -25,7 +25,7 @@ function Home() {
     { title: "Hội thảo", imgSrc: moviebackground },
     { title: "Phim chiếu rạp", imgSrc: moviebackground },
   ];
-
+  
   const sampleTickets = [
     {
       id: 1,
@@ -115,7 +115,7 @@ function Home() {
   const fetchTickets = async () => {
     //call api get tickets
     try {
-      const response = await api.get("ticket");
+      const response = await api.get("tickets");
       const tickets = response.data;
       ticketClassification(tickets);
     } catch (err) {
