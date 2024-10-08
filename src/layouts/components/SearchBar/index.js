@@ -35,7 +35,7 @@ function Search ({ onSearch }){
       <Form onSubmit={handleSearch}>
         <InputGroup className="mb-3">
           <InputGroup.Text><FaSearch /></InputGroup.Text>
-          <Form.Control placeholder="Nhập vé cần tìm"  value={tickName} onChange={(e) =>{setTickName(e.target.value)}}/>
+          <Form.Control placeholder="Enter the ticket you want to find"  value={tickName} onChange={(e) =>{setTickName(e.target.value)}}/>
         </InputGroup>
 
         <Row className="mb-3">
@@ -63,7 +63,7 @@ function Search ({ onSearch }){
         </Row>
 
         <Form.Group className="mb-3">
-          <Form.Label>SỐ LƯỢNG</Form.Label>
+          <Form.Label>Quantity</Form.Label>
           <Form.Select defaultValue={1} value={tickNum} onChange={(e) =>{setTickNum(parseInt(e.target.value,10))}}>
             <option value={1}>1 ticket</option>
             <option value={2}>2 ticket</option>

@@ -7,6 +7,7 @@ import { confirmEmail, confirmUsername } from '../../services/api/RegisterAPI'; 
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { GoogleLogin } from '@react-oauth/google';
+import {jwtDecode} from "jwt-decode"
 import api from "../../config";
 
 function Login() {
@@ -65,27 +66,35 @@ function Login() {
         }
 
         setLoading(true);
-
+        const email = identifier;
         try {
             const response = await api.post('/accounts/login', {
-                identifier, // Either email or username
+                email, // Either email or username
                 password
             });
-            // Successful login
-            toast.success('Đăng nhập thành công!', {
-                position: "top-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                transition: Bounce,
-            });
-
-            navigate('/');
-
+            console.log("Response",response)
+            console.log("Response Status",response.status)
+            if(response && response.status === 200){
+                toast.success('Đăng nhập thành công!', {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
+                const { jwt } = response.data;
+                console.log(jwt);
+                const decodedUser = jwtDecode(jwt);
+                console.log(decodedUser);
+                localStorage.setItem("token", jwt); 
+                localStorage.setItem("user", JSON.stringify(decodedUser)); 
+                console.log("JSON",JSON.stringify(decodedUser))
+                navigate("/")
+            }
         } catch (error) {
             // Login failed
             toast.error('Đăng nhập không thành công! Vui lòng kiểm tra lại thông tin đăng nhập.', {
