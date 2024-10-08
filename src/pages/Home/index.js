@@ -6,14 +6,13 @@ import { useEffect, useState } from "react";
 import { differenceInDays, parse } from "date-fns";
 import Categories from "../../layouts/components/Categories";
 import moviebackground from "../../assets/images/movie-background.jpg";
-import crowd from "../../assets/images/crowd-background.jpg";
 import sport from "../../assets/images/sport-background.png";
 
 
 function Home() {
   const [nearlyExpiredTickets, setNearlyExpiredTickets] = useState([]);
   const [normalTickets, setNormalTickets] = useState([]);
-
+  const crowd = "https://i.ibb.co/ZgMMVP2/Music-Concert-Event-Ticket-Design-870x490.jpg"
   const categories = [
     { title: "Concert", imgSrc: moviebackground },
     { title: "Lễ hội", imgSrc: moviebackground },
@@ -26,7 +25,7 @@ function Home() {
     { title: "Hội thảo", imgSrc: moviebackground },
     { title: "Phim chiếu rạp", imgSrc: moviebackground },
   ];
-
+  
   const sampleTickets = [
     {
       id: 1,
@@ -116,7 +115,7 @@ function Home() {
   const fetchTickets = async () => {
     //call api get tickets
     try {
-      const response = await api.get("ticket");
+      const response = await api.get("tickets");
       const tickets = response.data;
       ticketClassification(tickets);
     } catch (err) {

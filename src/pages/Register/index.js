@@ -4,21 +4,22 @@ import styles from "./Register.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import { confirmEmail, confirmPhone } from "../../services/api/RegisterAPI";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; 
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import api from "../../config";
 
 function Register() {
-    //Nơi để các object trạng thái
-  const cx = classNames.bind(styles); 
+  const cx = classNames.bind(styles);
   const [loading, setLoading] = useState(false);
-  const [userName, setUserName] = useState("");
+  const [fullname, setFullname] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({
-    userName: "",
+    fullname: "",
+    username: "",
     email: "",
     phone: "",
     password: "",
@@ -30,20 +31,30 @@ function Register() {
 
   const iconShowPassword = () => setShowPassword((prev) => !prev);
   const iconShowConfirmPassword = () => setShowConfirmPassword((prev) => !prev);
-  const navigate = useNavigate()
-  //Nơi để các phương thức thay đổi động
-  const checkUserName = (e) => {
+  const navigate = useNavigate();
+
+  const checkFullname = (e) => {
     const value = e.target.value;
-    setUserName(value);
+    setFullname(value);
     if (value.trim() === "") {
-      setErrors((prev) => ({ ...prev, userName: "Không được để ô trống" }));
+      setErrors((prev) => ({ ...prev, fullname: "Do not leave blank cells" }));
+    } else {
+      setErrors((prev) => ({ ...prev, fullname: "" }));
+    }
+  };
+
+  const checkUsername = (e) => {
+    const value = e.target.value;
+    setUsername(value);
+    if (value.trim() === "") {
+      setErrors((prev) => ({ ...prev, username: "Do not leave blank cells" }));
     } else if (value.trim().length >= 40) {
       setErrors((prev) => ({
         ...prev,
-        userName: "Tên người dùng chỉ được tối đa 40 kí tự",
+        username: "User name can only be a maximum of 40 characters",
       }));
     } else {
-      setErrors((prev) => ({ ...prev, userName: "" }));
+      setErrors((prev) => ({ ...prev, username: "" }));
     }
   };
 
@@ -51,7 +62,7 @@ function Register() {
     const value = e.target.value;
     setEmail(value);
     if (!confirmEmail(value)) {
-      setErrors((prev) => ({ ...prev, email: "Email không đúng định dạng" }));
+      setErrors((prev) => ({ ...prev, email: "Email is not in correct format" }));
     } else {
       setErrors((prev) => ({ ...prev, email: "" }));
     }
@@ -61,7 +72,7 @@ function Register() {
     const value = e.target.value;
     setPhone(value);
     if (!confirmPhone(value)) {
-      setErrors((prev) => ({ ...prev, phone: "Số điện thoại không đúng" }));
+      setErrors((prev) => ({ ...prev, phone: "Phone number is incorrect" }));
     } else {
       setErrors((prev) => ({ ...prev, phone: "" }));
     }
@@ -70,10 +81,10 @@ function Register() {
   const checkPass = (e) => {
     const value = e.target.value;
     setPassword(value);
-    if (value.length < 9) {
+    if (value.length < 8) {
       setErrors((prev) => ({
         ...prev,
-        password: "Mật khẩu phải trên 8 ký tự",
+        password: "Password must be 8 characters long",
       }));
     } else {
       setErrors((prev) => ({ ...prev, password: "" }));
@@ -86,43 +97,26 @@ function Register() {
     if (value !== password) {
       setErrors((prev) => ({
         ...prev,
-        confirmPassword: "Mật khẩu xác nhận không khớp",
+        confirmPassword: "Confirmation password does not match",
       }));
     } else {
       setErrors((prev) => ({ ...prev, confirmPassword: "" }));
     }
   };
 
-  const handleSubmit  = async (e) => {
-    e.preventDefault();   //Ngăn chặn hoạt động mặc định khi gửi file
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     const newErrors = { ...errors };
-    
-    checkUserName({ target: { value: userName } });
+
+    checkFullname({ target: { value: fullname } });
+    checkUsername({ target: { value: username } });
     checkEmail({ target: { value: email } });
     checkPhone({ target: { value: phone } });
     checkPass({ target: { value: password } });
     checkPassAgain({ target: { value: confirmPassword } });
 
-    //Khi TẤT CẢ lỗi nào trong error được in ra khác rỗng thì sẽ hiện thông báo
-    if (!userName && !email && !phone && !password && !confirmPassword) {
-        toast.error("Vui lòng điền đủ thông tin vào form", {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
-        return;
-      }
-
-    //Khi có bất kì lỗi nào trong error được in ra khác rỗng thì sẽ hiện thông báo
-    const hasErrors = Object.values(newErrors).some((error) => error);
-    if (hasErrors) {
-      toast.error("Vui lòng kiểm tra lại thông tin đăng kí", {
+    if (!fullname && !username && !email && !phone && !password && !confirmPassword) {
+      toast.error("Please fill out all information in the form", {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -136,9 +130,24 @@ function Register() {
       return;
     }
 
-    //Khi người dùng không chấp nhận điều khoản hiện thông báo
+    const hasErrors = Object.values(newErrors).some((error) => error);
+    if (hasErrors) {
+      toast.error("Please check your registration information again", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+
     if (!acceptTerms) {
-      toast.error("Bạn phải chấp nhận điều khoản dịch vụ", {
+      toast.error("You must accept the terms of service", {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -153,73 +162,100 @@ function Register() {
     }
 
     setLoading(true);
-    
     setTimeout(() => {
       setLoading(false);
-    
-    }, 2000); 
-    
-    const data = {userName,email,phone,password}
-    console.log(data)
-    //Call api
-    const response = await api.post('accounts/register',data)
-    console.log(response.data)
-    const {token} = response.data
-    localStorage.setItem("token",token)
-    navigate("/login")
+    }, 2000);
+
+    const data = { fullname, username, email, phone, password };
+    console.log(data);
+    try {
+      const response = await api.post("accounts/register", data);
+      console.log("Status",response.status)
+      if(response && response.status === 200){
+        toast.success("Registered successfully", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+      }
+      navigate("/login");
+    } catch (error) {
+      toast.error(error.response.data, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
   };
 
   return (
     <Container fluid className={cx("vh-100", "register-screen")}>
       <ToastContainer />
       <Row className={cx("h-100")}>
-
-        <Col
-          md={6}
-          className={cx("d-none", "d-md-block", "gradient-background")}
-        ></Col>
-
-
-        <Col
-          md={6}
-          className={cx(
-            "d-flex",
-            "align-items-center",
-            "justify-content-center"
-          )}
-        >
+        <Col md={6} className={cx("d-none", "d-md-block", "gradient-background")}></Col>
+        <Col md={6} className={cx("d-flex", "align-items-center", "justify-content-center")}>
           <div className={cx("form-container")}>
-            <h2 className={cx("mb-4")} style={{ paddingBottom: "20px" }}>
-              Đăng kí
-            </h2>
-            <Form style={{ marginTop: "-20px" }} onSubmit={handleSubmit}>
-              <Form.Group
-                controlId="formBasicUserName"
-                className={cx("mt-3", "form-group")}
-              >
+            <h2 className={cx("form-title", "mb-4")}>Register an account</h2>
+            <Form onSubmit={handleSubmit}>
+              {/* Fullname input */}
+              <Form.Group controlId="formBasicFullname" className={cx("mt-3", "form-group")}>
                 <Form.Control
                   required
                   type="text"
-                  placeholder="Họ và Tên"
+                  placeholder="Full Name"
                   className={cx("input", "form-control-lg")}
-                  onChange={checkUserName}
-                  value={userName}
-                  isInvalid={errors.userName} 
-                  isValid={!errors.userName && userName.length > 0}
+                  onChange={checkFullname}
+                  value={fullname}
+                  isInvalid={errors.fullname}
+                  isValid={!errors.fullname && fullname.length > 0}
                 />
-                {errors.userName ? (
+                {errors.fullname ? (
                   <Form.Control.Feedback type="invalid">
-                    {errors.userName}
+                    {errors.fullname}
                   </Form.Control.Feedback>
                 ) : (
                   <Form.Control.Feedback></Form.Control.Feedback>
                 )}
               </Form.Group>
-              <Form.Group
-                controlId="formBasicEmail"
-                className={cx("mt-3", "form-group")}
-              >
+
+              {/* Username input */}
+              <Form.Group controlId="formBasicUsername" className={cx("mt-3", "form-group")}>
                 <Form.Control
+                  required
+                  type="text"
+                  placeholder="User Name"
+                  className={cx("input", "form-control-lg")}
+                  onChange={checkUsername}
+                  value={username}
+                  isInvalid={errors.username}
+                  isValid={!errors.username && username.length > 0}
+                />
+                {errors.username ? (
+                  <Form.Control.Feedback type="invalid">
+                    {errors.username}
+                  </Form.Control.Feedback>
+                ) : (
+                  <Form.Control.Feedback></Form.Control.Feedback>
+                )}
+              </Form.Group>
+
+              {/* Email input */}
+              <Form.Group controlId="formBasicEmail" className={cx("mt-3", "form-group")}>
+                <Form.Control
+                  required
                   type="email"
                   placeholder="Email"
                   className={cx("input", "form-control-lg")}
@@ -236,13 +272,13 @@ function Register() {
                   <Form.Control.Feedback></Form.Control.Feedback>
                 )}
               </Form.Group>
-              <Form.Group
-                controlId="formBasicPhone"
-                className={cx("mt-3", "form-group")}
-              >
+
+              {/* Phone input */}
+              <Form.Group controlId="formBasicPhone" className={cx("mt-3", "form-group")}>
                 <Form.Control
-                  type="tel"
-                  placeholder="Số điện thoại"
+                  required
+                  type="text"
+                  placeholder="Phone"
                   className={cx("input", "form-control-lg")}
                   onChange={checkPhone}
                   value={phone}
@@ -258,13 +294,14 @@ function Register() {
                 )}
               </Form.Group>
 
+              {/* Password input */}
               <Form.Group
                 controlId="formBasicPassword"
                 className={cx("mt-3", "form-group")}
               >
                 <Form.Control
                   type={showPassword ? "text" : "password"}
-                  placeholder="Mật khẩu"
+                  placeholder="Password"
                   className={cx("input", "form-control-lg")}
                   onChange={checkPass}
                   value={password}
@@ -293,7 +330,7 @@ function Register() {
               >
                 <Form.Control
                   type={showConfirmPassword ? "text" : "password"}
-                  placeholder="Xác nhận mật khẩu"
+                  placeholder="Confirm Password"
                   className={cx("input", "form-control-lg")}
                   onChange={checkPassAgain}
                   value={confirmPassword}
@@ -321,7 +358,7 @@ function Register() {
               <Form.Check
                 type="switch"
                 id="custom-switch"
-                label="Tôi chấp nhận điều khoản dịch vụ"
+                label="I accept the terms of service"
                 onChange={(e) => setAcceptTerms(e.target.checked)}
                 checked={acceptTerms}
               />
@@ -334,9 +371,9 @@ function Register() {
                 }}
               >
                 <h6 style={{ margin: "0", marginRight: "5px" }}>
-                  Đã có tài khoản?
+                Already have an account?
                 </h6>
-                <Link to="/login">Đăng nhập</Link>
+                <Link to="/login">Log in</Link>
               </span>
 
               <Button
@@ -348,10 +385,10 @@ function Register() {
                 {loading ? (
                   <>
                     <Spinner animation="border" size="sm" />
-                    <span className="ml-2">Đang xác nhận...</span>
+                    <span className="ml-2">Confirming...</span>
                   </>
                 ) : (
-                  "Xác nhận"
+                  "Confirm"
                 )}
               </Button>
             </Form>

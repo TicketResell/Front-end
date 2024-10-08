@@ -18,7 +18,7 @@ function TicketManage() {
   const [tickets, setTickets] = useState([
     {
       id: 1,
-      image: "https://mdbootstrap.com/img/new/avatars/8.jpg",
+      images: ["https://mdbootstrap.com/img/new/avatars/8.jpg","https://mdbootstrap.com/img/new/avatars/8.jpg","https://mdbootstrap.com/img/new/avatars/8.jpg"],
       title: "Vé ca nhạc",
       type: "Sự kiện",
       date: "15/9/2024",
@@ -79,12 +79,15 @@ function TicketManage() {
                 <tr key={ticket.id}>
                   <td>{ticket.id}</td>
                   <td>
-                    <img
-                      src={ticket.image}
-                      alt=""
-                      style={{ width: "45px", height: "45px" }}
-                      className="rounded-circle"
-                    />
+                  {ticket.images.map((imgSrc, index) => (
+                      <img
+                        key={index}
+                        src={imgSrc}
+                        alt="ticket"
+                        style={{ width: "45px", height: "45px", marginRight: "10px" }}
+                        className="rounded-circle"
+                      />
+                    ))}
                   </td>
                   <td>{ticket.title}</td>
                   <td>{ticket.type}</td>
