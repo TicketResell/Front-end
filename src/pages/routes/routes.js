@@ -10,6 +10,7 @@ import Payment from '../Payment';
 import Admin from '../Admin';
 import CustomerLayout from '../Customer/Layout';
 import TicketDetail from '../TicketDetail';
+import StaffLayout from '../Staff/Layout';
 
 const publicRoutes = [
     { path: '/', component: Home},
@@ -26,6 +27,7 @@ const privateRoutes = [
     { path: '/forgot-password', component: ForgotPassword, layout: null},
     { path: '/payment', component: Payment, layout: HeaderOnly},
     { path: '/customer', component: CustomerLayout,layout : null},
+    { path: '/staff', component: StaffLayout, layout: null},
 ];
 
 export { publicRoutes, privateRoutes };
