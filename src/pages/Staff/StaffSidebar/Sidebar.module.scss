@@ -1,0 +1,95 @@
+.sidebar {
+    background-color: #9063e0;
+    height: 100vh;
+    padding: 20px;
+    color: #fff;
+  }
+  
+  .dashboardTitle {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center; /* Center the dashboard title */
+  }
+  
+  .sellerInfo {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .sellerImage {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+    object-fit: cover; /* Ensures the image maintains its aspect ratio */
+    border-radius: 50%;
+  }
+  
+  .sellerName {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .sellerRole {
+    color: #f0f0f0;
+    margin-bottom: 20px;
+  }
+  
+  .addProductButton {
+    width: 150px !important;
+    background-color: #612568 !important;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .addProductButton:hover {
+    background-color: #7591f9 !important;
+  }
+  
+  .menu {
+    margin-bottom: auto;
+  }
+  
+  .menuItem {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    padding: 10px;
+    text-align: left; /* Align text to the left */
+    transition: background-color 0.3s ease;
+  }
+  
+  .menuItem svg {
+    margin-right: 10px;
+    font-size: 20px; /* Consistent icon size */
+    flex-shrink: 0; /* Prevents icons from shrinking */
+  }
+  
+  .menuItem:hover {
+    background-color: #7591f9 !important;
+  }
+  
+  
+  .logoutSection {
+    margin-top: auto;
+  }
+  
+  .logoutItem {
+    display: flex;
+    align-items: center; /* Vertically center */
+    justify-content: center; /* Center the logout button */
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .logoutItem:hover {
+    background-color: #7591f9 !important;
+  }
+  
+  .logoutItem svg {
+    margin-left: 10px;
+    font-size: 20px; /* Consistent icon size */
+  }
+  
