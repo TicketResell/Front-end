@@ -8,7 +8,6 @@ import ForgotPassword from '../ForgotPassword';
 import AboutUs from '../AboutUs';
 import Payment from '../Payment';
 import Admin from '../Admin';
-import SellerLayout from '../Seller/Layout';
 import CustomerLayout from '../Customer/Layout';
 import TicketDetail from '../TicketDetail';
 

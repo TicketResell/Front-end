@@ -1,9 +1,9 @@
 import { Form, Button, Container, Row, Col, Spinner } from 'react-bootstrap';
 import classNames from 'classnames/bind';
 import styles from './Login.module.scss';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
-import { confirmEmail } from '../../services/api/RegisterAPI';
+import { confirmEmail, confirmUsername } from '../../services/api/RegisterAPI'; // Import email and username validation functions
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { GoogleLogin } from '@react-oauth/google';
@@ -11,25 +11,25 @@ import api from "../../config";
 
 function Login() {
     const cx = classNames.bind(styles);
-    const navigate = useNavigate(); // Hook for navigation
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-    const [email, setEmail] = useState('');
+    const [identifier, setIdentifier] = useState(''); // Unified input for email/username
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({
-        email: '',
+        identifier: '', // Error field for email/username
         password: '',
     });
     const [showPassword, setShowPassword] = useState(false);
 
     const toggleShowPassword = () => setShowPassword((prev) => !prev);
 
-    const checkEmail = (e) => {
+    const checkIdentifier = (e) => {
         const value = e.target.value;
-        setEmail(value);
-        if (!confirmEmail(value)) {
-            setErrors((prev) => ({ ...prev, email: 'Email không đúng định dạng' }));
+        setIdentifier(value);
+        if (!confirmEmail(value) && !confirmUsername(value)) {
+            setErrors((prev) => ({ ...prev, identifier: 'Email hoặc tên đăng nhập không đúng định dạng' }));
         } else {
-            setErrors((prev) => ({ ...prev, email: '' }));
+            setErrors((prev) => ({ ...prev, identifier: '' }));
         }
     };
 
@@ -46,10 +46,10 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        checkEmail({ target: { value: email } });
+        checkIdentifier({ target: { value: identifier } });
         checkPass({ target: { value: password } });
 
-        if (errors.email || errors.password) {
+        if (errors.identifier || errors.password) {
             toast.error('Vui lòng sửa các lỗi trên form', {
                 position: "top-center",
                 autoClose: 5000,
@@ -68,7 +68,7 @@ function Login() {
 
         try {
             const response = await api.post('/accounts/login', {
-                email,
+                identifier, // Either email or username
                 password
             });
             // Successful login
@@ -84,12 +84,11 @@ function Login() {
                 transition: Bounce,
             });
 
-            // Navigate to Home after successful login
-            navigate('/'); 
+            navigate('/');
 
         } catch (error) {
             // Login failed
-            toast.error('Đăng nhập không thành công! Vui lòng kiểm tra lại email và mật khẩu.', {
+            toast.error('Đăng nhập không thành công! Vui lòng kiểm tra lại thông tin đăng nhập.', {
                 position: "top-center",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -115,18 +114,18 @@ function Login() {
                     <div className={cx('form-container')}>
                         <h2 className={cx('mb-4')} style={{ paddingBottom: '20px' }}>Đăng nhập</h2>
                         <Form style={{ marginTop: '-20px' }} onSubmit={handleSubmit}>
-                            <Form.Group controlId="formBasicEmail" className={cx('mt-3', 'form-group')}>
+                            <Form.Group controlId="formBasicIdentifier" className={cx('mt-3', 'form-group')}>
                                 <Form.Control
-                                    type="email"
-                                    placeholder="Email"
+                                    type="text"
+                                    placeholder="Email/Tên đăng nhập"
                                     className={cx('input', 'form-control-lg')}
-                                    onChange={checkEmail}
-                                    value={email}
-                                    isInvalid={!!errors.email}
-                                    isValid={!errors.email && email.length > 0}
+                                    onChange={checkIdentifier}
+                                    value={identifier}
+                                    isInvalid={!!errors.identifier}
+                                    isValid={!errors.identifier && identifier.length > 0}
                                 />
-                                {errors.email ? (
-                                    <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
+                                {errors.identifier ? (
+                                    <Form.Control.Feedback type="invalid">{errors.identifier}</Form.Control.Feedback>
                                 ) : (
                                     <Form.Control.Feedback></Form.Control.Feedback>
                                 )}
@@ -191,7 +190,7 @@ function Login() {
                             <GoogleLogin
                                 onSuccess={credentialResponse => {
                                     const tokenId = credentialResponse.credential;
-                                    fetch('accounts/login-google', {
+                                    fetch('/api/auth/google', {
                                         method: 'POST',
                                         headers: {
                                             'Content-Type': 'application/json',
