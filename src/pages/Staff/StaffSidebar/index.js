@@ -7,16 +7,16 @@ import styles from "./Sidebar.module.scss";
 
 const cx = classNames.bind(styles);
 
-export default function Sidebar({ seller, onLayoutClick }) {
+export default function Sidebar({ staff, onLayoutClick }) {
   return (
     <Container className={cx("sidebar")}>
       <Row className={cx("dashboardTitle")}>
         <Col>DASHBOARD</Col>
       </Row>
-      <Row className={cx("sellerInfo")}>
-        <Image src={seller.image} roundedCircle className={cx("sellerImage")} />
-        <div className={cx("sellerName")}>{seller.name}</div>
-        <div className={cx("sellerRole")}>User</div>
+      <Row className={cx("staffInfo")}>
+        <Image src={staff.image} roundedCircle className={cx("staffImage")} />
+        <div className={cx("staffName")}>{staff.name}</div>
+        <div className={cx("staffRole")}>Staff</div>
         <Button className={cx("addProductButton")} onClick={() => onLayoutClick('newTicket')}>Add New Ticket</Button>
       </Row>
       <Row className={cx("menu")}>
@@ -30,8 +30,8 @@ export default function Sidebar({ seller, onLayoutClick }) {
           <div className={cx("menuItem")} onClick={() => onLayoutClick('chat')}>
             <FaComments /> Chat
           </div>
-          <div className={cx("menuItem")} onClick={() => onLayoutClick('setTicket')}>
-            <FaTicketAlt /> My Ticket
+          <div className={cx("menuItem")} onClick={() => onLayoutClick('ticketManage')}>
+            <FaTicketAlt /> Ticket Manage
           </div>
           <div className={cx("menuItem")} onClick={() => onLayoutClick('profile')}>
             <CgProfile /> Profile
