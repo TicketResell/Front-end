@@ -14,7 +14,7 @@ function NavigationBar() {
   const [user, setUser] = useState(null);
   const [showNofitication,setShowNofitication] = useState(false)
 
-  /*const [categories,setCategories] = useState([])*/
+  const [categories,setCategories] = useState([])
   /*const [listNofitication,setListNofitication] = useState([])*/
 /*const fetchListNotification = async ()=>{
   const response = await api.get("nofiticationList");
@@ -32,15 +32,15 @@ const userSession = () =>{
     }
   }
 }
-/*const fetchCategoryNav = async () =>{
-    const response = await api.get("categories")
+const fetchCategoryNav = async () =>{
+    const response = await api.get("/categories")
     setCategories(response.data);
   }
-*/
+
   
   useEffect(()=>{
     userSession();
-    //fetchCategoryNav();
+    fetchCategoryNav();
   },[])
 
   const handleLogout = ()=>{
@@ -64,21 +64,11 @@ const userSession = () =>{
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav" style={{ marginLeft: "40px" }}>
           <Nav className="me-auto">
-            <Nav.Link href="#home" style={{ fontSize:"20px",color: "#fff",marginRight: "40px", fontFamily : "bold"}}>
-              Concert
+            {categories.map(category =>(
+            <Nav.Link key={category.id} style={{ fontSize:"20px",color: "#fff",marginRight: "40px", fontFamily : "bold"}}>
+              {category.name}
             </Nav.Link>
-            <Nav.Link href="#link" style={{ fontSize:"20px",color: "#fff" ,marginRight: "40px",fontFamily : "bold"}}>
-              Sport
-            </Nav.Link>
-            <Nav.Link href="#link" style={{ fontSize:"20px",color: "#fff" ,marginRight: "40px",fontFamily : "bold"}}>
-              Movie
-            </Nav.Link>
-            <Nav.Link href="#link" style={{ fontSize:"20px",color: "#fff" ,marginRight: "40px",fontFamily : "bold"}}>
-              Opera
-            </Nav.Link>
-            <Nav.Link href="#link" style={{ fontSize:"20px",color: "#fff" ,marginRight: "40px",fontFamily : "bold"}}>
-              Family
-            </Nav.Link>
+            ))}
             <Nav.Link href="aboutUs" style={{ fontSize:"20px",color: "#fff" ,marginRight: "40px",fontFamily : "bold"}}>
               About Us
             </Nav.Link>
@@ -97,8 +87,8 @@ const userSession = () =>{
               <img src="" alt="User" style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
               <span style={{ marginLeft: '10px', color: '#fff' }}>{user.sub}</span>
             </Button>
-            <Button variant="outline-light" style={{ marginRight: "10px" }}>
-            <span style={{ marginLeft: '10px', color: '#fff' }} onClick={handleLogout}>Logout</span>
+            <Button variant="outline-light" style={{ marginRight: "10px" }} onClick={handleLogout}>
+            <span style={{ marginLeft: '10px', color: '#fff' }} >Logout</span>
             <TbLogout /> 
             </Button>
           </div>):(

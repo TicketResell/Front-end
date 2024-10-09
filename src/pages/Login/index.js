@@ -37,8 +37,8 @@ function Login() {
     const checkPass = (e) => {
         const value = e.target.value;
         setPassword(value);
-        if (value.length <= 8) {
-            setErrors((prev) => ({ ...prev, password: 'Mật khẩu phải trên 8 ký tự' }));
+        if (value.length > 8) {
+            setErrors((prev) => ({ ...prev, password: 'Mật khẩu phải từ 8 ký tự' }));
         } else {
             setErrors((prev) => ({ ...prev, password: '' }));
         }

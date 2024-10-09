@@ -1,9 +1,9 @@
 import axios from "axios";
-const baseUrl = "http://localhost:8084/api/";
+const baseUrl = "http://localhost:8084/api";
 
 
 const config = {
-  baseUrl: baseUrl,
+  baseURL: baseUrl,
 };
 
 const api = axios.create(config);
@@ -17,7 +17,6 @@ const handleBefore = (config) => {
     config.headers["Authorization"] = `Bearer ${token}`;
   }
   return config;
-  
 };
 
 api.interceptors.request.use(handleBefore, (error) => {
