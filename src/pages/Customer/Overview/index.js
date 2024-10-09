@@ -57,12 +57,7 @@ export default function Overview() {
         </Col>
       </Row>
       <Row className={cx("rowHalfDown")}>
-        <Col xs={8} >
           <OrdersToday listOrder={listOrder}/>
-        </Col>
-        <Col xs={4}>
-          Validity period of tickets on sale
-        </Col>
       </Row>
     </>
   );
