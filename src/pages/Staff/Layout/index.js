@@ -4,10 +4,10 @@ import styles from "./StaffLayout.module.scss";
 import Sidebar from "../StaffSidebar";
 import Overview from "../StaffOverview";
 import Transaction from "../Transaction";
-import Chat from "../Chat";
 import noImg from "../../../assets/images/crowd-background.jpg";
 import Profile from "../../Profile";
-import TicketManage from "../TicketManage"
+import TicketManage from "../TicketManage";
+import Feedback from "../Feedback";
 
 import { useState } from "react";
 const cx = classNames.bind(styles);
@@ -47,12 +47,12 @@ export default function StaffLayout() {
         return <Overview />;
       case "transaction":
         return <Transaction listTransactions={listTransactions}/>;
-      case "chat":
-        return <Chat />;
       case "profile":
         return <Profile/>
       case "ticketManage":
         return <TicketManage/>
+      case "feedback":
+        return <Feedback/>
       default:
         return <Overview />;
     }
