@@ -5,11 +5,17 @@ import { Container, Row, Col } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { differenceInDays, parse } from "date-fns";
 import Categories from "../../layouts/components/Categories";
+import Pagination from "../../layouts/components/Pagination";
 
 function Home() {
   const [nearlyExpiredTickets, setNearlyExpiredTickets] = useState([]);
   const [normalTickets, setNormalTickets] = useState([]);
   const [categories, setCategories] = useState([]);
+  //State phân trang của từng mục vé
+  const [nearlyExpiredPage, setNearlyExpiredPage] = useState(0);
+  const [normalPage, setNormalPage] = useState(0);
+  
+  const itemsPerPage = 4;
   //Sau khi lấy được vé từ search
   const handleSearchResults = (ticket) => {
     ticketClassification(ticket);
@@ -87,41 +93,58 @@ function Home() {
     fetchCategories();
   }, []);
 
+  //item mục vé gần hết hạn cho trang hiện
+  const displayedNearlyExpiredTickets = nearlyExpiredTickets.slice(
+    nearlyExpiredPage * itemsPerPage,
+    (nearlyExpiredPage + 1) * itemsPerPage
+  );
+  //item mục vé thường cho trang hiện
+  const displayedNormalTickets = normalTickets.slice(
+    normalPage * itemsPerPage,
+    (normalPage + 1) * itemsPerPage
+  );
   return (
     <>
-      <Search onSearch={handleSearchResults} />
-      <Categories categories={categories} clickCategory={handleCategoryClick} />
-      <Container>
-        <Row>
-          <h2>Nearly Expired Tickets</h2>
-          {nearlyExpiredTickets.length === 0 ? (
-            <h2>No Nearly Expired Tickets</h2>
-          ) : (
-            nearlyExpiredTickets.map((nearlyExpiredTicket) => (
-              <Col
-                xs={12}
-                sm={6}
-                md={3}
-                className="mb-4"
-                key={nearlyExpiredTicket.id}
-              >
-                <TicketCard
-                  key={nearlyExpiredTicket.id}
-                  ticket={nearlyExpiredTicket}
-                />
-              </Col>
-            ))
-          )}
-
-          <h2>Normal Ticket</h2>
-          {normalTickets.map((normalTicket) => (
-            <Col xs={12} sm={6} md={3} className="mb-4" key={normalTicket.id}>
-              <TicketCard key={normalTicket.id} ticket={normalTicket} />
+    <Search onSearch={handleSearchResults} categories={categories} />
+    <Categories
+      categories={categories}
+      clickCategory={handleCategoryClick}
+      clickAll={fetchTickets}
+    />
+    <Container>
+      <Row>
+        <h2>Nearly Expired Tickets</h2>
+        {displayedNearlyExpiredTickets.length === 0 ? (
+          <h2>No Nearly Expired Tickets</h2>
+        ) : (
+          displayedNearlyExpiredTickets.map((ticket) => (
+            <Col xs={12} sm={6} md={3} className="mb-4" key={ticket.id}>
+              <TicketCard ticket={ticket} />
             </Col>
-          ))}
-        </Row>
-      </Container>
-    </>
+          ))
+        )}
+
+        <Pagination
+          currentPage={nearlyExpiredPage}
+          pageCount={Math.ceil(nearlyExpiredTickets.length / itemsPerPage)}
+          onPageChange={(selectedPage) => setNearlyExpiredPage(selectedPage)}
+        />
+
+        <h2>Normal Tickets</h2>
+        {displayedNormalTickets.map((ticket) => (
+          <Col xs={12} sm={6} md={3} className="mb-4" key={ticket.id}>
+            <TicketCard ticket={ticket} />
+          </Col>
+        ))}
+
+        <Pagination
+          currentPage={normalPage}
+          pageCount={Math.ceil(normalTickets.length / itemsPerPage)}
+          onPageChange={(selectedPage) => setNormalPage(selectedPage)}
+        />
+      </Row>
+    </Container>
+  </>
   );
 }
 

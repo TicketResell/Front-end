@@ -66,6 +66,7 @@ function Login() {
         }
 
         setLoading(true);
+
         try {
             const response = await api.post('/accounts/login', {
                 identifier, // Either email or username
@@ -96,7 +97,7 @@ function Login() {
             }
         } catch (error) {
             // Login failed
-            toast.error('Đăng nhập không thành công! Vui lòng kiểm tra lại thông tin đăng nhập.', {
+            toast.error(error.response.data, {
                 position: "top-center",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -106,7 +107,8 @@ function Login() {
                 progress: undefined,
                 theme: "light",
                 transition: Bounce,
-            });
+              });
+              return;
         } finally {
             setLoading(false);
         }

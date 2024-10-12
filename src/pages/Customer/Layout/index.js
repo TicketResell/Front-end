@@ -19,7 +19,7 @@ export default function CustomerLayout() {
   const [currentLayout, setCurrentLayout] = useState("overview");
   const ticket = location.state?.ticket;
   console.log("Location Ticket",ticket);
-  const [user,setUser] = useEffect(null);
+  const [user,setUser] = useState(null);
 
   const seller = {
     name: "Karthi Madesh",

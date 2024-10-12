@@ -5,7 +5,7 @@ import io from 'socket.io-client';
 import styles from "./Chat.module.scss";
 import classNames from 'classnames/bind';
 
-//const socket = io('http://localhost:8084'); 
+const socket = io('http://localhost:8084'); 
 
 export default function Chat({ticket,userId}){
   const cx = classNames.bind(styles);
@@ -33,7 +33,7 @@ export default function Chat({ticket,userId}){
     }
   } 
 
-  /*const socketSetup=() =>{
+  const socketSetup=() =>{
     // Lắng nghe sự kiện nhận tin nhắn
     socket.on('receiveMessage', (message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
@@ -43,16 +43,16 @@ export default function Chat({ticket,userId}){
     return () => {
       socket.off('receiveMessage');
     };
-  }*/
+  }
 
-  /*const handleSendMessage = () => {
+  const handleSendMessage = () => {
     if (newMessage.trim()) {
       const message = { text: newMessage, id: messages.length + 1, sender: 'user' };
       setMessages((prevMessages) => [...prevMessages, message]);
       socket.emit('sendMessage', message); // Gửi tin nhắn đến server
       setNewMessage('');
     }
-  };*/
+  };
 
   const handleDeal = () =>{
 
@@ -62,7 +62,7 @@ export default function Chat({ticket,userId}){
   }
   useEffect(() => {
     isBuyer();
-    //socketSetup()
+    socketSetup()
   }, []);
 
   return (
@@ -102,8 +102,7 @@ export default function Chat({ticket,userId}){
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
             />
-            {/* <Button variant="primary" onClick={handleSendMessage}>Send</Button> */}
-        <Button variant="primary" disabled>Send</Button>
+            <Button variant="primary" onClick={handleSendMessage}>Send</Button>
           </InputGroup>
           <Row>
             <Col xs={6}>
