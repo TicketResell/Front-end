@@ -37,7 +37,7 @@ function Login() {
     const checkPass = (e) => {
         const value = e.target.value;
         setPassword(value);
-        if (value.length > 8) {
+        if (value.length < 8) {
             setErrors((prev) => ({ ...prev, password: 'Mật khẩu phải từ 8 ký tự' }));
         } else {
             setErrors((prev) => ({ ...prev, password: '' }));
@@ -66,10 +66,9 @@ function Login() {
         }
 
         setLoading(true);
-        const email = identifier;
         try {
             const response = await api.post('/accounts/login', {
-                email, // Either email or username
+                identifier, // Either email or username
                 password
             });
             console.log("Response",response)

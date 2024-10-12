@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Button, Form, InputGroup } from "react-bootstrap";
 import { useState } from "react";
 import { TiTicket } from "react-icons/ti";
@@ -11,16 +11,12 @@ import classNames from "classnames/bind";
 
 
 function TicketDetail() {
+  const navigate = useNavigate();
   const location = useLocation();
   const ticket = location.state?.data;
   const cx = classNames.bind(styles)
-  const initialImage = "https://mdbcdn.b-cdn.net/img/bootstrap-ecommerce/items/detail1/big.webp";
-  const series = [
-    "big1.webp",
-    "big2.webp",
-    "big3.webp",
-    "big4.webp",
-  ].map((img) => `https://mdbcdn.b-cdn.net/img/bootstrap-ecommerce/items/detail1/${img}`);
+  const initialImage = ticket.imageUrls[0];
+  const series = ticket.imageUrls.slice(1)
 
   const [mainImage, setMainImage] = useState(initialImage);
   const [imagesSeries, setImageSeries] = useState(series);
@@ -39,12 +35,18 @@ function TicketDetail() {
   const handlePlus = () =>{
     setQuantity((quantity)=>quantity+1)
   }
+  const handleBuy = () =>{
+    navigate("/order",{ state: { data: ticket } })
+  }
+  const handleBargain = () =>{
+    navigate("/customer",{ state: { data: ticket,currentLayout : "chat" } })
+  }
   return (
     <section className={cx("py-5")}>
     <Container>
       <Row className={cx("gx-5")}>
         <Col lg={6}>
-          <div className={cx("border", "rounded-4", "mb-3", "d-flex", "justify-content-center")}>
+          <div className={cx("rounded-4", "mb-3", "d-flex", "justify-content-center")}>
             <img
               style={{
                 maxWidth: "100%",
@@ -125,10 +127,10 @@ function TicketDetail() {
               </Col>
             </Row>
 
-            <Button variant="warning" className={cx("shadow-0")}>
+            <Button variant="warning" className={cx("shadow-0")} onClick={handleBuy}>
               <TiTicket/>  Buy now
             </Button>
-            <Button variant="primary" className={cx("shadow-0", "mx-2")}>
+            <Button variant="primary" className={cx("shadow-0", "mx-2")} onClick={handleBargain}>
             <LuMessagesSquare/>  Bargain
             </Button>
           </div>

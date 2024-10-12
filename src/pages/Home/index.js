@@ -10,13 +10,12 @@ function Home() {
   const [nearlyExpiredTickets, setNearlyExpiredTickets] = useState([]);
   const [normalTickets, setNormalTickets] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [tickets, setTickets] = useState([]);
   //Sau khi lấy được vé từ search
   const handleSearchResults = (ticket) => {
     ticketClassification(ticket);
   };
   //Phân loại vé
-  const ticketClassification = async (tickets) => {
+  const ticketClassification = (tickets) => {
     const ticketArray = Array.isArray(tickets) ? tickets : [tickets];
     const now = new Date();
     const nearlyExpired = [];
@@ -42,8 +41,8 @@ function Home() {
     //call api get tickets
     try {
       const response = await api.get("/tickets");
-      setTickets(response.data);
-      ticketClassification(tickets);
+      console.log("Tickets List",response.data);
+      ticketClassification(response.data);
     } catch (err) {
       if (err.response) {
         // Server đã phản hồi nhưng có mã lỗi (như 401)
@@ -60,17 +59,26 @@ function Home() {
   };
 
   const fetchCategories = async () => {
-    const response = await api.get("/categories");
-    console.log("Response Categories", response);
-    console.log("Response Categories", response.data);
-    setCategories(response.data);
+    try {
+      const response = await api.get("/categories");
+      console.log("Response Categories", response);
+      console.log("Response Categories", response.data);
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Error fetching categories", error);
+    }
+
   };
 
   const handleCategoryClick = async (categoryId) => {
-    const response = await api.get(`/categories/${categoryId}`);
-    console.log("Ticket by Category ID",response.data);
-    setTickets(response.data);
-    ticketClassification(tickets);
+    try {
+      const response = await api.get(`/categories/${categoryId}`);
+      console.log("Ticket by Category ID",response.data);
+      ticketClassification(response.data);
+    } catch (error) {
+      console.error("Error fetching ticket by categories ", error);
+    }
+
   };
 
   //Mỗi lần load lại trang lại lấy lại dữ liệu 1 lần

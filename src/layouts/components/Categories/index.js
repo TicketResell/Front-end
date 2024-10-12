@@ -5,6 +5,7 @@ import styles from "./Categories.module.scss"
 
 function Categories({categories,clickCategory}) {
   const cx = classNames.bind(styles);
+  
     return (      
     <Container className={cx("category-grid")}>
         <Row>
@@ -16,7 +17,7 @@ function Categories({categories,clickCategory}) {
                   src={category.imgSrc}
                   alt={category.name}
                   className={cx("card-img")} 
-                  onClick={()=>clickCategory(category.id)}
+                  onClick={() => clickCategory(category.id)}
                   />
                   </div>
                   <h1 className={cx("card-title","text-center")}>{category.name}</h1>

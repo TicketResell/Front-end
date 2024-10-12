@@ -5,15 +5,14 @@ import io from 'socket.io-client';
 import styles from "./Chat.module.scss";
 import classNames from 'classnames/bind';
 
-// Kết nối đến server Socket.IO
-const socket = io('http://localhost:8084'); // Địa chỉ server
+//const socket = io('http://localhost:8084'); 
 
-export default function Chat(){
+export default function Chat({ticket,userId}){
   const cx = classNames.bind(styles);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-
+  const [buyerMode,setBuyerMode] = useState(false)
   
   const channels = [
     { name: 'Channel 1', lastMessage: 'This is a message', date: '2022-01-01' },
@@ -28,7 +27,13 @@ export default function Chat(){
     channel.name.toLowerCase().includes(searchTerm.toLowerCase()) 
   );
 
-  useEffect(() => {
+  const isBuyer = () =>{
+    if(ticket.userId !== userId){
+      setBuyerMode(true);
+    }
+  } 
+
+  /*const socketSetup=() =>{
     // Lắng nghe sự kiện nhận tin nhắn
     socket.on('receiveMessage', (message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
@@ -38,16 +43,27 @@ export default function Chat(){
     return () => {
       socket.off('receiveMessage');
     };
-  }, []);
+  }*/
 
-  const handleSendMessage = () => {
+  /*const handleSendMessage = () => {
     if (newMessage.trim()) {
       const message = { text: newMessage, id: messages.length + 1, sender: 'user' };
       setMessages((prevMessages) => [...prevMessages, message]);
       socket.emit('sendMessage', message); // Gửi tin nhắn đến server
       setNewMessage('');
     }
-  };
+  };*/
+
+  const handleDeal = () =>{
+
+  }
+  const handleSignal =(signal) =>{
+    
+  }
+  useEffect(() => {
+    isBuyer();
+    //socketSetup()
+  }, []);
 
   return (
     <Container fluid>
@@ -86,8 +102,17 @@ export default function Chat(){
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
             />
-            <Button variant="primary" onClick={handleSendMessage}>Send</Button>
+            {/* <Button variant="primary" onClick={handleSendMessage}>Send</Button> */}
+        <Button variant="primary" disabled>Send</Button>
           </InputGroup>
+          <Row>
+            <Col xs={6}>
+            <Button variant="success" className={cx("button-mess")} onClick={handleSignal(buyerMode ? "REJECT" : "DISCOUNT MORE")}>{buyerMode ? ("REJECT"):("DISCOUNT MORE")}</Button>
+            </Col>
+            <Col xs={6}>
+            <Button variant="danger" className={cx("button-mess")} onClick={handleDeal}>DEAL</Button>
+            </Col>
+          </Row>
         </Col>
       </Row>
     </Container>

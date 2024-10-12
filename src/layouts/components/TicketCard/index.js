@@ -1,5 +1,5 @@
 import { Card, ListGroup, Button, Container, Row, Col } from "react-bootstrap";
-import { useNavigate,useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styles from "./TicketCard.module.scss"
 import classNames from "classnames/bind";
 
@@ -8,16 +8,13 @@ function TicketCard({ticket}) {
 
   const navigate = useNavigate();
 
-  const handleBuy = () =>{
-    navigate("/payment")
-  }
   const handleClickCard = () =>{
     navigate("/ticketDetail",{ state: { data: ticket } })
   }
   return (
     <Card className={cx("card")} onClick={handleClickCard}>
       {/*Hình ảnh của seller*/}
-      <Card.Img variant="top" src={ticket.imageUrls[0]} alt="2" onClick={ticket.userID}/>
+      <Card.Img variant="top" src={ticket.imageUrls[0]} alt="2"/>
       <Card.Body className={cx("card-body")}>
         <Card.Title className={cx("card-title")}>{ticket.eventTitle}</Card.Title>
         <Card.Text>{ticket.ticketDetails}</Card.Text>
@@ -41,7 +38,7 @@ function TicketCard({ticket}) {
       </Container>
 
       <Card.Body className={cx("card-footer")}>
-        <Button variant="success" onClick={handleBuy} className={cx("buy-button")}>Buy</Button>
+        <Button variant="success"  className={cx("buy-button")}>Buy</Button>
       </Card.Body>
     </Card>
   );
