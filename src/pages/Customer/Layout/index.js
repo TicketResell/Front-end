@@ -60,7 +60,7 @@ export default function CustomerLayout() {
       case "chat":
         return <Chat ticket={ticket} userId={user.id}/>;
       case "newTicket":
-        return <NewTick/>
+        return <NewTick user={user}/>
       case "setTicket":
         return <TicketManage/>
       case "profile":

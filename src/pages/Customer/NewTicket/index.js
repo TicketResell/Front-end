@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   Container,
   Form,
@@ -12,26 +12,31 @@ import classNames from "classnames/bind";
 import styles from "./NewTick.module.scss";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import api from "../../../config";
-import { useNavigate } from "react-router-dom"; // Import useNavigate để điều hướng sau khi gửi thành công
 
 const cx = classNames.bind(styles);
 
-export default function NewTick() {
+export default function NewTick({ user }) {
   const [ticketType, setTicketType] = useState("Select Ticket Type");
   const [loading, setLoading] = useState(false);
   const [showImages, setShowImages] = useState([]);
-
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("Select Category");
+  
   // Khai báo formData ở đây
   const [formData, setFormData] = useState({
+    price: "",
+    userID: user.id,
     eventTitle: "",
     eventDate: "",
+    categoryId: "",
     location: "",
-    originalPrice: "",
-    discountedPrice: "",
-    images: [],
+    ticketType: "",
+    salePrice: "",
+    ticketDetails: "",
+    imageUrls: [],
+    status: "onsale",
+    quantity : "",
   });
-
-  const navigate = useNavigate(); // Sử dụng useNavigate để điều hướng sau khi form được gửi thành công
 
   const apiKey = "a393ae4d99828767ecd403ef4539e170";
 
@@ -55,13 +60,10 @@ export default function NewTick() {
     return Promise.all(uploadPromises);
   }
 
-  const handleSelect = (e) => {
-    setTicketType(e);
-  };
-
   const handleImageChange = async (e) => {
     const imageList = Array.from(e.target.files);
-    if (imageList.length > 5) { //Nếu lớn hơn 5 tấm sẽ dừng tại đây 
+    if (imageList.length > 5) {
+      //Nếu lớn hơn 5 tấm sẽ dừng tại đây
       toast.error("Bạn chỉ có thể tải lên tối đa 5 ảnh", {
         position: "top-center",
         autoClose: 5000,
@@ -88,7 +90,52 @@ export default function NewTick() {
     const uploadedUrls = await uploadImgBB(imageList);
     const validUrls = uploadedUrls.filter((url) => url !== null);
 
-    setFormData({ ...formData, images: validUrls });
+    setFormData({ ...formData, imageUrls: validUrls });
+  };
+
+  const handleEventDateChange = (e) => {
+    const selectedDate = new Date(e.target.value);
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    if (selectedDate < currentDate) {
+      // Reset lại ngày về hiện tại
+      const today = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
+      setFormData({ ...formData, eventDate: today});
+      toast.error("The event date was not selected in the past. Reset to current date", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+    } else {
+      setFormData({ ...formData, eventDate: e.target.value });
+    }
+  };
+
+  const handleCategorySelect = (categoryId, categoryName) => {
+    console.log("Category",categoryId);
+    setFormData({ ...formData, categoryId });
+    setSelectedCategory(categoryName); 
+  };
+  const handleSelectedTicketType = (e) =>{
+    console.log("Ticket Type",e);
+    setTicketType(e)
+    setFormData({ ...formData, ticketType: e });
+  }
+
+  const fetchCategories = async () => {
+    try {
+      const response = await api.get("/categories");
+      const fetchedCategories = response.data;
+  
+      if (Array.isArray(fetchedCategories)) {
+        setCategories(fetchedCategories);
+      } else {
+        console.error("Fetched categories is not an array");
+      }
+    } catch (error) {
+      console.error("Error fetching categories", error);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -99,10 +146,10 @@ export default function NewTick() {
       !formData.eventDate ||
       ticketType === "Select Ticket Type" ||
       !formData.location ||
-      !formData.originalPrice ||
-      !formData.discountedPrice ||
-      !formData.images ||
-      formData.images.length === 0
+      !formData.price ||
+      !formData.salePrice ||
+      !formData.imageUrls ||
+      formData.imageUrls.length === 0
     ) {
       toast.error("Vui lòng nhập đầy đủ thông tin vé", {
         position: "top-center",
@@ -153,7 +200,7 @@ export default function NewTick() {
       return;
     }
 
-    if (!formData.originalPrice) {
+    if (!formData.price) {
       toast.error("Vui lòng nhập giá gốc", {
         position: "top-center",
         autoClose: 5000,
@@ -163,7 +210,7 @@ export default function NewTick() {
       return;
     }
 
-    if (!formData.discountedPrice) {
+    if (!formData.salePrice) {
       toast.error("Vui lòng nhập giá đã giảm", {
         position: "top-center",
         autoClose: 5000,
@@ -183,25 +230,33 @@ export default function NewTick() {
       return;
     }
 
+    if (new Date(formData.eventDate) < new Date()) {
+      toast.error("Ngày sự kiện không được chọn trong quá khứ.", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+
     setLoading(true);
 
-    const data = {
-      eventTitle: formData.eventTitle,
-      eventDate: formData.eventDate,
-      ticketType,
-      location: formData.location,
-      originalPrice: formData.originalPrice,
-      discountedPrice: formData.discountedPrice,
-      images: formData.images,
-    };
-
     try {
-      const response = await api.post("your-api-endpoint", data);
+      console.log("Form data",formData);
+      const response = await api.post("/tickets/create", formData);
       console.log(response.data);
-
-      const { token } = response.data;
-      localStorage.setItem("token", token);
-      navigate("/success-page"); // Điều hướng đến trang thành công
+      toast.success('Tickets found', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Có lỗi xảy ra. Vui lòng thử lại.", {
@@ -214,6 +269,9 @@ export default function NewTick() {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   return (
     <Container className={cx("wrapper", "d-flex")}>
@@ -222,31 +280,34 @@ export default function NewTick() {
         <Col></Col>
         <Col>
           <Form className={cx("formStyle")} onSubmit={handleSubmit}>
-
             <Form.Group as={Row} className={cx("mb-3")} controlId="formImages">
               <Form.Label className={cx("fui-upload")}>
-              <div className={cx("upload-icon")}>
-                <img src="https://i.ibb.co/5cQkzZN/img-upload.png"/>
-              </div>
-              <Form.Control
-                type="file"
-                multiple
-                className={cx("fui-input-upload")}
-                hidden
-                accept="image/*"
-                onChange={handleImageChange}
-              />
-              <span className={cx("fui-upload-text")}>Tải ảnh lên</span>
+                <div className={cx("upload-icon")}>
+                  <img src="https://i.ibb.co/5cQkzZN/img-upload.png" />
+                </div>
+                <Form.Control
+                  type="file"
+                  multiple
+                  className={cx("fui-input-upload")}
+                  hidden
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+                <span className={cx("fui-upload-text")}>Tải ảnh lên</span>
               </Form.Label>
               {showImages &&
-              showImages.map((image, index) => (
-                <img
-                  src={image}
-                  alt={`Preview Image ${index}`}
-                  key={index}
-                  style={{ width: "100px", height: "100px", marginTop: "10px" }}
-                />
-              ))}
+                showImages.map((image, index) => (
+                  <img
+                    src={image}
+                    alt={`Preview Image ${index}`}
+                    key={index}
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      marginTop: "10px",
+                    }}
+                  />
+                ))}
             </Form.Group>
 
             <Form.Group as={Row} className="mb-3" controlId="formEventTitle">
@@ -261,21 +322,20 @@ export default function NewTick() {
                   onChange={(e) =>
                     setFormData({ ...formData, eventTitle: e.target.value })
                   }
+                  
                 />
               </Col>
             </Form.Group>
 
             <Form.Group as={Row} className="mb-3" controlId="formEventDate">
               <Form.Label column sm="2">
-                Event Date (Hạn vé)
+                Event Date
               </Form.Label>
               <Col sm="10">
                 <Form.Control
                   type="date"
                   value={formData.eventDate}
-                  onChange={(e) =>
-                    setFormData({ ...formData, eventDate: e.target.value })
-                  }
+                  onChange={handleEventDateChange}
                 />
               </Col>
             </Form.Group>
@@ -287,27 +347,49 @@ export default function NewTick() {
               <Col sm="10">
                 <DropdownButton
                   title={ticketType}
-                  onSelect={handleSelect}
+                  onSelect={(e) => handleSelectedTicketType(e)}
                   variant="outline-secondary"
                 >
-                  <Dropdown.Item eventKey="Event tickets">
-                    Event tickets
+                  <Dropdown.Item eventKey="Standard">
+                  Standard
                   </Dropdown.Item>
-                  <Dropdown.Item eventKey="Sports tickets">
-                    Sports tickets
+                  <Dropdown.Item eventKey="Premium">
+                  Premium
                   </Dropdown.Item>
-                  <Dropdown.Item eventKey="Travel tickets">
-                    Travel tickets
+                  <Dropdown.Item eventKey="VIP">
+                  VIP
                   </Dropdown.Item>
-                  <Dropdown.Item eventKey="Tourist attraction tickets">
-                    Tourist attraction tickets
+                  <Dropdown.Item eventKey="Group">
+                  Group
                   </Dropdown.Item>
-                  <Dropdown.Item eventKey="Movie tickets">
-                    Movie tickets
+                  <Dropdown.Item eventKey="Student">
+                  Student
                   </Dropdown.Item>
-                  <Dropdown.Item eventKey="Fair tickets">
-                    Fair tickets
+                  <Dropdown.Item eventKey="Family">
+                  Family
                   </Dropdown.Item>
+                </DropdownButton>
+              </Col>
+            </Form.Group>
+
+            <Form.Group as={Row} className="mb-3" controlId="formTicketType">
+              <Form.Label column sm="2">
+                Category
+              </Form.Label>
+              <Col sm="10">
+                <DropdownButton
+                  title={selectedCategory}
+                  onSelect={(e) => {
+                    const selectedCat = categories.find(cat => cat.id === parseInt(e));
+                    handleCategorySelect(e, selectedCat.name);
+                  }}
+                  variant="outline-secondary"
+                >
+                  {Array.isArray(categories) && categories.map((category)=>(
+                    <Dropdown.Item eventKey={category.id}>
+                    {category.name}
+                    </Dropdown.Item>
+                  ))}
                 </DropdownButton>
               </Col>
             </Form.Group>
@@ -330,15 +412,15 @@ export default function NewTick() {
 
             <Form.Group as={Row} className="mb-3" controlId="formOriginalPrice">
               <Form.Label column sm="2">
-                Original Price
+                Price $
               </Form.Label>
               <Col sm="10">
                 <Form.Control
                   type="number"
-                  placeholder="Enter original price"
-                  value={formData.originalPrice}
+                  placeholder="Enter price"
+                  value={formData.price}
                   onChange={(e) =>
-                    setFormData({ ...formData, originalPrice: e.target.value })
+                    setFormData({ ...formData, price: e.target.value })
                   }
                 />
               </Col>
@@ -350,18 +432,59 @@ export default function NewTick() {
               controlId="formDiscountedPrice"
             >
               <Form.Label column sm="2">
-                Discounted Price
+                Sale Price $ 
               </Form.Label>
               <Col sm="10">
                 <Form.Control
                   type="number"
-                  placeholder="Enter discounted price"
-                  value={formData.discountedPrice}
+                  placeholder="Enter sale price"
+                  value={formData.salePrice}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      discountedPrice: e.target.value,
+                      salePrice: e.target.value,
                     })
+                  }
+                />
+              </Col>
+            </Form.Group>
+
+            <Form.Group
+              as={Row}
+              className="mb-3"
+              controlId="formQuantity"
+            >
+              <Form.Label column sm="2">
+                Quantity
+              </Form.Label>
+              <Col sm="10">
+                <Form.Control
+                  type="number"
+                  placeholder="Enter quantity"
+                  value={formData.quantity}
+                  onChange={(e) =>{
+                    let value = parseInt(e.target.value, 10);
+                    if (isNaN(value)) {
+                      setFormData({
+                        ...formData,
+                        quantity: 0,
+                      })
+                    } else if (value > 30) {
+                      setFormData({
+                        ...formData,
+                        quantity: 30,
+                      })  
+                    }else if (value < 1) {
+                      setFormData({
+                        ...formData,
+                        quantity: 1,
+                      })
+                    } else {
+                      setFormData({
+                        ...formData,
+                        quantity: value,
+                      })
+                    }}
                   }
                 />
               </Col>
