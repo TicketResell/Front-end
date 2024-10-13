@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom'; // For navigation
 import Footer from '../../layouts/components/Footer';
 import NavigationBar from '../../layouts/components/NavBar';
-import { Bar, Line, Pie } from 'react-chartjs-2'; // Import các loại biểu đồ cần thiết
+import { Bar, Line, Pie } from 'react-chartjs-2'; // Import the necessary chart types
 import styles from './Admin.module.scss';
 
 const Admin = () => {
@@ -20,23 +20,37 @@ const Admin = () => {
         { id: 9, name: 'Nguyễn Thị I', phone: '0903500688', email: 'nguyenthii@gmail.com', birthdate: '1997-01-30', gender: 'Nữ', address: 'Lô E2a-15, Đường D9, Khu Công nghệ cao P.Long Thạnh Mỹ, Tp. Thủ Đức, TP.HCM.' },
         { id: 10, name: 'Lê Văn J', phone: '0903500689', email: 'levanj@gmail.com', birthdate: '1992-12-11', gender: 'Nam', address: 'Lô E2a-16, Đường D10, Khu Công nghệ cao P.Long Thạnh Mỹ, Tp. Thủ Đức, TP.HCM.' },
     ];
-    
 
     const handleUpdateProfile = () => {
         navigate('/updateprofile'); // Navigate to the update profile page
     };
 
     const handleEditUser = (id) => {
-        // Xử lý chỉnh sửa người dùng
+        // Handle user edit
         console.log(`Edit user with ID: ${id}`);
     };
 
     const handleDeleteUser = (id) => {
-        // Xử lý xóa người dùng
+        // Handle user delete
         console.log(`Delete user with ID: ${id}`);
     };
 
-    // Dữ liệu cho biểu đồ
+    // Count males and females for the gender chart
+    const maleCount = users.filter(user => user.gender === 'Nam').length;
+    const femaleCount = users.filter(user => user.gender === 'Nữ').length;
+
+    const genderChartData = {
+        labels: ['Nam', 'Nữ'],
+        datasets: [
+            {
+                data: [maleCount, femaleCount],
+                backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+                borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
+                borderWidth: 1,
+            },
+        ],
+    };
+
     const chartData1 = {
         labels: ['January', 'February', 'March', 'April', 'May'],
         datasets: [
@@ -102,8 +116,8 @@ const Admin = () => {
                         <Bar data={chartData2} options={chartOptions} />
                     </div>
                     <div className="col-md-4">
-                        <h3>Biểu đồ hình tròn</h3>
-                        <Pie data={chartData2} options={chartOptions} />
+                        <h3>Biểu đồ giới tính</h3>
+                        <Pie data={genderChartData} options={chartOptions} />
                     </div>
                 </div>
 
@@ -115,33 +129,32 @@ const Admin = () => {
                             <th>ID</th>
                             <th>Tên</th>
                             <th>Email</th>
-                            <th>Vai trò</th>
-                            <th>Hành động</th>
+                            <th>Ngày sinh</th>
+                            <th>Giới tính</th>
+                            <th>Địa chỉ</th>
+                            <th>Điện thoại</th>
+                            <th>Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map((user) => (
+                        {users.map(user => (
                             <tr key={user.id}>
                                 <td>{user.id}</td>
                                 <td>{user.name}</td>
                                 <td>{user.email}</td>
-                                <td>{user.role}</td>
+                                <td>{user.birthdate}</td>
+                                <td>{user.gender}</td>
+                                <td>{user.address}</td>
+                                <td>{user.phone}</td>
                                 <td>
-                                    <button
-                                        className="btn btn-primary btn-sm me-2"
-                                        onClick={() => handleEditUser(user.id)}>
-                                        Chỉnh sửa
-                                    </button>
-                                    <button
-                                        className="btn btn-danger btn-sm"
-                                        onClick={() => handleDeleteUser(user.id)}>
-                                        Xóa
-                                    </button>
+                                    <button className="btn btn-primary" onClick={() => handleEditUser(user.id)}>Edit</button>
+                                    <button className="btn btn-danger" onClick={() => handleDeleteUser(user.id)}>Delete</button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
+
             </main>
             <Footer />
         </div>

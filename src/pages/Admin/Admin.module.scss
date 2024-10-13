@@ -1,112 +1,105 @@
-/* General Styles */
-.profilePage {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f0f0f0;
-  
-    /* Main Content Styles */
-    .profileContainer {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-      background-color: white;
-      margin: 20px auto;
-      width: 80%;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-  
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+// General Styles for the Admin Page
+.adminPage {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f5f7fa;
+  padding-bottom: 40px;
 
-    .profilePage {
-      padding-top: 80px; /* Điều chỉnh giá trị tùy theo chiều cao của NavigationBar */
-      /* Các kiểu khác của bạn */
+  main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
   }
-  
-  .profileContainer {
-      /* Các kiểu khác của profile container */
+
+  h1 {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 30px;
+      color: #2c3e50;
+  }
+
+  // Chart Section Styles
+  .row {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 40px;
+
+      .col-md-4 {
+          background-color: white;
+          border-radius: 8px;
+          box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+          padding: 20px;
+          text-align: center;
+      }
+
+      h3 {
+          font-size: 1.5rem;
+          margin-bottom: 20px;
+          color: #34495e;
+      }
+  }
+
+  // Table Section Styles
+  h2 {
+      font-size: 2rem;
+      color: #34495e;
+      margin-top: 40px;
+      text-align: center;
+  }
+
+  table {
+      width: 100%;
       margin-top: 20px;
-  }
-  
-  
-    .uploadSection {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
-  
-      .imageContainer {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        overflow: hidden;
-        background-color: #f0f0f0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+      border-collapse: collapse;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+      
+      th, td {
+          padding: 15px;
+          text-align: left;
       }
-  
-      .cameraIcon {
-        font-size: 40px;
-        cursor: pointer;
-        color: #007bff;
-        transition: color 0.3s ease;
-  
-        &:hover {
-          color: #0056b3;
-        }
+
+      th {
+          background-color: #2980b9;
+          color: white;
       }
-    }
-  
-    .contactInfo {
-      width: 45%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-  
-      form {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-  
-        label {
-          margin-bottom: 15px;
-  
-          input,
-          textarea {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+
+      td {
+          border-bottom: 1px solid #ddd;
+          color: #2c3e50;
+      }
+
+      tr:hover {
+          background-color: #f2f2f2;
+      }
+
+      .btn {
+          margin-right: 10px;
+          padding: 8px 12px;
+          border-radius: 4px;
+          font-size: 0.875rem;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+
+          &.btn-primary {
+              background-color: #3498db;
+              color: white;
+              border: none;
+
+              &:hover {
+                  background-color: #2980b9;
+              }
           }
-        }
-  
-        textarea {
-          resize: none;
-        }
+
+          &.btn-danger {
+              background-color: #e74c3c;
+              color: white;
+              border: none;
+
+              &:hover {
+                  background-color: #c0392b;
+              }
+          }
       }
-  
-      /* Update Button */
-      .updateButton {
-        padding: 10px 20px;
-        margin-top: 20px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-        transition: background-color 0.3s ease;
-  
-        &:hover {
-          background-color: #0056b3;
-        }
-      }
-    }
   }
-  
+}
