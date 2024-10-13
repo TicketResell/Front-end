@@ -30,8 +30,8 @@ function TicketCard({ticket}) {
               <ListGroup.Item>Type : {ticket.ticketType}</ListGroup.Item>
               <ListGroup.Item>Location : {ticket.location}</ListGroup.Item>
               <ListGroup.Item>Date : {ticket.eventDate}</ListGroup.Item>
-              <ListGroup.Item><span className={cx("price-original")}>{ticket.price}</span> 
-              <span className={cx("price-sale")}>{ticket.salePrice}</span></ListGroup.Item>
+              <ListGroup.Item><span className={cx("price-original")}>{ticket.price}£</span> 
+              <span className={cx("price-sale")}>{ticket.salePrice}£</span></ListGroup.Item>
             </ListGroup>
           </Col>
         </Row>

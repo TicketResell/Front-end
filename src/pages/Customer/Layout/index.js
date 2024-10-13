@@ -21,12 +21,6 @@ export default function CustomerLayout() {
   console.log("Location Ticket",ticket);
   const [user,setUser] = useState(null);
 
-  const seller = {
-    name: "Karthi Madesh",
-    role: "Seller",
-    image: noImg,
-  };
-
   const listTransactions = [{
     transactionID : "1",
     userID : "2",
@@ -42,15 +36,15 @@ export default function CustomerLayout() {
     transactionType : "refund",
     transactionDate : "16/09/2024"
   }]
-  const userSession = () =>{
-    const userCustomer = JSON.parse(localStorage.getItem("user"));
-    if(userCustomer){
-      try {
+  
+  const fetchUser = () =>{
+    try {
+      const userCustomer =  JSON.parse(localStorage.getItem("user"));
+        console.log("User Customer",userCustomer)
         setUser(userCustomer);
       } catch (error) {
         console.error("Không có người dùng", error);
       }
-    }
   }
 
   const handleLayoutClick = (view) => {
@@ -79,7 +73,7 @@ export default function CustomerLayout() {
   };
 
   useEffect(() => {
-    userSession();
+    fetchUser();
     setCurrentLayout(location.state?.currentLayout);
   }, []);
 
@@ -87,7 +81,7 @@ export default function CustomerLayout() {
     <Container fluid className={cx("container")}>
       <Row className={cx("rowFullHeight")}>
         <Col xs={2} className={cx("wrapper", "p-3")}>
-          <Sidebar seller={seller} onLayoutClick={handleLayoutClick} />
+          <Sidebar customer={user} onLayoutClick={handleLayoutClick} />
         </Col>
         <Col xs={10} className={cx("rowFullHeight")}>
           {renderLayout()}
