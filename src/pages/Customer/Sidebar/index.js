@@ -11,9 +11,21 @@ import { MdContactSupport } from "react-icons/md";
 import classNames from "classnames/bind";
 import styles from "./Sidebar.module.scss";
 
+import { useNavigate } from "react-router-dom";
+
 const cx = classNames.bind(styles);
 
 export default function Sidebar({ seller, onLayoutClick }) {
+
+  const navigate = useNavigate(); // Initialize navigation
+
+  const handleLogout = () => {
+    // Clear session or localStorage (Assuming you store the token in localStorage)
+    localStorage.removeItem('authToken'); // Or remove any session or cookie information
+
+    // Redirect to login page
+    navigate('/login'); 
+  };
   return (
     <Container className={cx("sidebar")}>
       <Row className={cx("dashboardTitle")}>
@@ -68,8 +80,8 @@ export default function Sidebar({ seller, onLayoutClick }) {
           >
             <CgProfile /> Profile
           </div>
-          <div className={cx("menuItem")} onClick={() => onLayoutClick('support')}>
-            <MdContactSupport /> Help & Support 
+          <div className={cx("menuItem")} onClick={() => onLayoutClick('feedback')}>
+            <MdContactSupport /> Feedback 
           </div>
         </Col>
       </Row>
