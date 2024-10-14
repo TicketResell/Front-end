@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Button, Form, Row } from "react-bootstrap";
 import classNames from "classnames/bind";
 import styles from "./TicketEdit.module.scss";
-import { ToastContainer,toast,Bounce } from "react-toastify";
+import { ToastContainer, toast, Bounce } from "react-toastify";
 
 function TicketEdit({ ticket, onSave }) {
   const cx = classNames.bind(styles);
   const [formData, setFormData] = useState(ticket);
-  const [showImages, setShowImages] = useState(ticket.images || []);
+  const [showImages, setShowImages] = useState(ticket.imageUrls || []);
 
   const apiKey = "a393ae4d99828767ecd403ef4539e170";
 
@@ -21,21 +21,20 @@ function TicketEdit({ ticket, onSave }) {
         body: formData,
       })
         .then((response) => response.json())
-        .then((data) => data.data.url) // Trả về URL sau khi upload xong
+        .then((data) => data.data.url)
         .catch((error) => {
           console.log("Upload error:", error);
-          return null; // Trả về null nếu lỗi xảy ra
+          return null;
         });
     });
 
-    // Chờ tất cả các ảnh được upload xong và trả về danh sách URL
     return Promise.all(uploadPromises);
   }
 
   const handleImageChange = async (e) => {
-    const imageList = Array.from(e.target.files); // Chuyển các file thành mảng
+    const imageList = Array.from(e.target.files);
 
-    if (imageList.length > 5) { //Nếu lớn hơn 5 tấm sẽ dừng tại đây 
+    if (imageList.length > 5) {
       toast.error("Bạn chỉ có thể tải lên tối đa 5 ảnh", {
         position: "top-center",
         autoClose: 5000,
@@ -51,33 +50,59 @@ function TicketEdit({ ticket, onSave }) {
     }
 
     let previewImages = [];
-    console.log(imageList);
-    // Hiển thị ảnh xem trước
     imageList.forEach((image) => {
       const reader = new FileReader();
       reader.onloadend = () => {
         previewImages = [...previewImages, reader.result];
-        setShowImages(previewImages); // Cập nhật danh sách xem trước
+        setShowImages(previewImages);
       };
       reader.readAsDataURL(image);
     });
 
-    // Upload tất cả ảnh lên ImgBB cùng lúc
     const uploadedUrls = await uploadImgBB(imageList);
-    const validUrls = uploadedUrls.filter((url) => url !== null); // Loại bỏ URL null nếu có lỗi
+    const validUrls = uploadedUrls.filter((url) => url !== null);
 
-    // Cập nhật formData với danh sách URL ảnh
     setFormData({ ...formData, images: validUrls });
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === "eventDate") {
+      const today = new Date();
+      const inputDate = new Date(value);
+
+      // Kiểm tra nếu ngày nhập nhỏ hơn ngày hiện tại thì reset về ngày ban đầu
+      if (inputDate < today) {
+        toast.error("Ngày sự kiện không thể là quá khứ. Đặt lại ngày ban đầu.", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+        setFormData({ ...formData, eventDate: ticket.eventDate });
+        return;
+      }
+    }
+
+    if (name === "quantity") {
+      // Giới hạn số lượng tối đa là 30
+      const newQuantity = Math.min(Number(value), 30);
+      setFormData({ ...formData, quantity: newQuantity });
+      return;
+    }
+
     setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(formData); // Gọi hàm onSave với dữ liệu đã chỉnh sửa
+    onSave(formData);
   };
 
   return (
@@ -97,11 +122,12 @@ function TicketEdit({ ticket, onSave }) {
               accept="image/*"
               onChange={handleImageChange}
             />
-            <span className={cx("fui-upload-text")}>Tải ảnh lên</span>
+            <span className={cx("fui-upload-text")}>Upload a photo</span>
           </Form.Label>
           {showImages &&
             showImages.map((image, index) => (
               <img
+                key={index}
                 src={image}
                 alt={`Preview Image ${index}`}
                 style={{ width: "100px", height: "100px", marginTop: "10px" }}
@@ -113,29 +139,36 @@ function TicketEdit({ ticket, onSave }) {
         <Form.Label>Event Title</Form.Label>
         <Form.Control
           type="text"
-          name="title"
-          value={formData.title}
+          name="eventTitle"
+          value={formData.eventTitle}
           onChange={handleInputChange}
         />
       </Form.Group>
+
       <Form.Group>
         <Form.Label>Ticket Type</Form.Label>
         <Form.Control
-          type="text"
-          name="type"
-          value={formData.type}
+          as="select"
+          name="ticketType"
+          value={formData.ticketType}
           onChange={handleInputChange}
-        />
+        >
+          <option value="Premium">Premium</option>
+          <option value="VIP">VIP</option>
+          <option value="Standard">Standard</option>
+        </Form.Control>
       </Form.Group>
+
       <Form.Group>
         <Form.Label>Event Date</Form.Label>
         <Form.Control
-          type="text"
-          name="date"
-          value={formData.date}
+          type="date"
+          name="eventDate"
+          value={formData.eventDate}
           onChange={handleInputChange}
         />
       </Form.Group>
+
       <Form.Group>
         <Form.Label>Location</Form.Label>
         <Form.Control
@@ -145,24 +178,27 @@ function TicketEdit({ ticket, onSave }) {
           onChange={handleInputChange}
         />
       </Form.Group>
+
       <Form.Group>
         <Form.Label>Price</Form.Label>
         <Form.Control
-          type="text"
+          type="number"
           name="price"
           value={formData.price}
           onChange={handleInputChange}
         />
       </Form.Group>
+
       <Form.Group>
-        <Form.Label>Sale Price</Form.Label>
+        <Form.Label>Quantity</Form.Label>
         <Form.Control
-          type="text"
-          name="salePrice"
-          value={formData.salePrice}
+          type="number"
+          name="quantity"
+          value={formData.quantity}
           onChange={handleInputChange}
         />
       </Form.Group>
+
       <Button variant="primary" type="submit">
         Save
       </Button>
