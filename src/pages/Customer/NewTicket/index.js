@@ -93,24 +93,40 @@ export default function NewTick({ user }) {
     setFormData({ ...formData, imageUrls: validUrls });
   };
 
-  const handleEventDateChange = (e) => {
-    const selectedDate = new Date(e.target.value);
-    const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
-    if (selectedDate < currentDate) {
-      // Reset lại ngày về hiện tại
-      const today = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
-      setFormData({ ...formData, eventDate: today});
-      toast.error("The event date was not selected in the past. Reset to current date", {
-        position: "top-center",
-        autoClose: 5000,
-        theme: "light",
-        transition: Bounce,
-      });
-    } else {
-      setFormData({ ...formData, eventDate: e.target.value });
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+  
+    if (name === "eventDate") {
+      const currentDate = new Date();
+      const selectedDate = new Date(value);
+      currentDate.setHours(0, 0, 0, 0);
+
+      // Nếu ngày nhập nhỏ hơn ngày hiện tại thì reset về ngày hôm nay
+      if (selectedDate < currentDate) {
+        const today = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
+        setFormData({ ...formData, eventDate: today});
+        toast.error("The event date was not selected in the past. Reset to current date", {
+          position: "top-center",
+          autoClose: 5000,
+          theme: "light",
+          transition: Bounce,
+        });
+        return;
+      }else{
+        setFormData({ ...formData, eventDate: selectedDate });
+      }
     }
+  
+    if (name === "quantity") {
+      // Giới hạn số lượng tối đa là 30 và không nhỏ hơn 1
+      const newQuantity = Math.max(Math.min(Number(value), 30), 1);
+      setFormData({ ...formData, quantity: newQuantity });
+      return;
+    }
+  
+    setFormData({ ...formData, [name]: value });
   };
+  
 
   const handleCategorySelect = (categoryId, categoryName) => {
     console.log("Category",categoryId);
@@ -317,12 +333,10 @@ export default function NewTick({ user }) {
               <Col sm="10">
                 <Form.Control
                   type="text"
+                  name="eventTitle"
                   placeholder="Enter event title"
                   value={formData.eventTitle}
-                  onChange={(e) =>
-                    setFormData({ ...formData, eventTitle: e.target.value })
-                  }
-                  
+                  onChange={handleInputChange}
                 />
               </Col>
             </Form.Group>
@@ -334,8 +348,9 @@ export default function NewTick({ user }) {
               <Col sm="10">
                 <Form.Control
                   type="date"
+                  name="eventDate"
                   value={formData.eventDate}
-                  onChange={handleEventDateChange}
+                  onChange={handleInputChange}
                 />
               </Col>
             </Form.Group>
@@ -401,11 +416,10 @@ export default function NewTick({ user }) {
               <Col sm="10">
                 <Form.Control
                   type="text"
+                  name="location"
                   placeholder="Enter event location"
                   value={formData.location}
-                  onChange={(e) =>
-                    setFormData({ ...formData, location: e.target.value })
-                  }
+                  onChange={handleInputChange}
                 />
               </Col>
             </Form.Group>
@@ -417,34 +431,10 @@ export default function NewTick({ user }) {
               <Col sm="10">
                 <Form.Control
                   type="number"
+                  name="price"
                   placeholder="Enter price"
                   value={formData.price}
-                  onChange={(e) =>
-                    setFormData({ ...formData, price: e.target.value })
-                  }
-                />
-              </Col>
-            </Form.Group>
-
-            <Form.Group
-              as={Row}
-              className="mb-3"
-              controlId="formDiscountedPrice"
-            >
-              <Form.Label column sm="2">
-                Sale Price $ 
-              </Form.Label>
-              <Col sm="10">
-                <Form.Control
-                  type="number"
-                  placeholder="Enter sale price"
-                  value={formData.salePrice}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      salePrice: e.target.value,
-                    })
-                  }
+                  onChange={handleInputChange}
                 />
               </Col>
             </Form.Group>
@@ -460,32 +450,10 @@ export default function NewTick({ user }) {
               <Col sm="10">
                 <Form.Control
                   type="number"
+                  name="quantity"
                   placeholder="Enter quantity"
                   value={formData.quantity}
-                  onChange={(e) =>{
-                    let value = parseInt(e.target.value, 10);
-                    if (isNaN(value)) {
-                      setFormData({
-                        ...formData,
-                        quantity: 0,
-                      })
-                    } else if (value > 30) {
-                      setFormData({
-                        ...formData,
-                        quantity: 30,
-                      })  
-                    }else if (value < 1) {
-                      setFormData({
-                        ...formData,
-                        quantity: 1,
-                      })
-                    } else {
-                      setFormData({
-                        ...formData,
-                        quantity: value,
-                      })
-                    }}
-                  }
+                  onChange={handleInputChange}
                 />
               </Col>
             </Form.Group>

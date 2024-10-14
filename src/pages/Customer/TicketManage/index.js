@@ -81,12 +81,12 @@ function TicketManage({user}) {
                 <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >TicketID</th>
                 <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Image</th>
                 <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Event Title</th>
+                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Category</th>
                 <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Ticket Type</th>
                 <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Event Date</th>
                 <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Ticket Detail</th>
                 <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Location</th>
                 <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Price</th>
-                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >SalePrice</th>
                 <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Status</th>
                 <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Quantity</th>
                 <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Actions</th>
@@ -107,12 +107,12 @@ function TicketManage({user}) {
                     ))}
                   </td>
                   <td>{ticket.eventTitle}</td>
+                  <td>{ticket.categoryId}</td>
                   <td>{ticket.ticketType}</td>
                   <td>{ticket.eventDate}</td>
                   <td>{ticket.ticketDetails}</td>
                   <td>{ticket.location}</td>
                   <td>{ticket.price}</td>
-                  <td>{ticket.salePrice}</td>
                   <td>{ticket.quantity}</td>
                   <td>
                     <MDBBadge
