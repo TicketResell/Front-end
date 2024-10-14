@@ -12,12 +12,12 @@
   text-align: center; /* Center the dashboard title */
 }
 
-.sellerInfo {
+.customerInfo {
   text-align: center;
   margin-bottom: 30px;
 }
 
-.sellerImage {
+.customerImage {
   width: 100px;
   height: 100px;
   margin-bottom: 10px;
@@ -25,12 +25,12 @@
   border-radius: 50%;
 }
 
-.sellerName {
+.customerName {
   font-size: 18px;
   font-weight: bold;
 }
 
-.sellerRole {
+.customerRole {
   color: #f0f0f0;
   margin-bottom: 20px;
 }
@@ -92,3 +92,4 @@
   margin-left: 10px;
   font-size: 20px; /* Consistent icon size */
 }
+

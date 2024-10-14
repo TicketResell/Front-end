@@ -10,18 +10,16 @@ import NewTick from "../NewTicket";
 import TicketManage from "../TicketManage";
 import Profile from "../../Profile";
 import Support from "../Support";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 const cx = classNames.bind(styles);
 
 export default function CustomerLayout() {
+  const location = useLocation();
   const [currentLayout, setCurrentLayout] = useState("overview");
-
-  const seller = {
-    name: "Karthi Madesh",
-    role: "Seller",
-    image: noImg,
-  };
+  const ticket = location.state?.ticket;
+  console.log("Location Ticket",ticket);
+  const [user,setUser] = useState(null);
 
   const listTransactions = [{
     transactionID : "1",
@@ -38,6 +36,16 @@ export default function CustomerLayout() {
     transactionType : "refund",
     transactionDate : "16/09/2024"
   }]
+  
+  const fetchUser = () =>{
+    try {
+      const userCustomer =  JSON.parse(localStorage.getItem("user"));
+        console.log("User Customer",userCustomer)
+        setUser(userCustomer);
+      } catch (error) {
+        console.error("Không có người dùng", error);
+      }
+  }
 
   const handleLayoutClick = (view) => {
     setCurrentLayout(view);
@@ -50,11 +58,11 @@ export default function CustomerLayout() {
       case "transaction":
         return <Transaction listTransactions={listTransactions}/>;
       case "chat":
-        return <Chat />;
+        return <Chat ticket={ticket} userId={user.id}/>;
       case "newTicket":
-        return <NewTick/>
+        return <NewTick user={user}/>
       case "setTicket":
-        return <TicketManage/>
+        return <TicketManage user={user} />
       case "profile":
         return <Profile/>
       case "support":
@@ -63,11 +71,17 @@ export default function CustomerLayout() {
         return <Overview />;
     }
   };
+
+  useEffect(() => {
+    fetchUser();
+    setCurrentLayout(location.state?.currentLayout);
+  }, []);
+
   return (
     <Container fluid className={cx("container")}>
       <Row className={cx("rowFullHeight")}>
         <Col xs={2} className={cx("wrapper", "p-3")}>
-          <Sidebar seller={seller} onLayoutClick={handleLayoutClick} />
+          <Sidebar customer={user} onLayoutClick={handleLayoutClick} />
         </Col>
         <Col xs={10} className={cx("rowFullHeight")}>
           {renderLayout()}

@@ -3,10 +3,11 @@ import classNames from 'classnames/bind';
 import styles from './Login.module.scss';
 import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
-import { confirmEmail, confirmUsername } from '../../services/api/RegisterAPI'; // Import email and username validation functions
+import { confirmEmail, confirmUsername } from '../../services/api/RegisterAPI';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { GoogleLogin } from '@react-oauth/google';
+import jwtDecode from "jwt-decode";
 import api from "../../config";
 
 function Login() {
@@ -16,7 +17,7 @@ function Login() {
     const [identifier, setIdentifier] = useState(''); // Unified input for email/username
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({
-        identifier: '', // Error field for email/username
+        identifier: '', 
         password: '',
     });
     const [showPassword, setShowPassword] = useState(false);
@@ -36,8 +37,8 @@ function Login() {
     const checkPass = (e) => {
         const value = e.target.value;
         setPassword(value);
-        if (value.length <= 8) {
-            setErrors((prev) => ({ ...prev, password: 'Mật khẩu phải trên 8 ký tự' }));
+        if (value.length < 8) {
+            setErrors((prev) => ({ ...prev, password: 'Mật khẩu phải từ 8 ký tự' }));
         } else {
             setErrors((prev) => ({ ...prev, password: '' }));
         }
@@ -68,26 +69,30 @@ function Login() {
 
         try {
             const response = await api.post('/accounts/login', {
-                identifier, // Either email or username
+                identifier, 
                 password
             });
-            // Successful login
-            toast.success('Đăng nhập thành công!', {
-                position: "top-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                transition: Bounce,
-            });
 
-            navigate('/');
+            if (response && response.status === 200) {
+                toast.success('Đăng nhập thành công!', {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
 
+                const { jwt } = response.data;
+                const decodedUser = jwtDecode(jwt);
+                localStorage.setItem("token", jwt); 
+                localStorage.setItem("user", JSON.stringify(decodedUser)); 
+                navigate("/");
+            }
         } catch (error) {
-            // Login failed
             toast.error('Đăng nhập không thành công! Vui lòng kiểm tra lại thông tin đăng nhập.', {
                 position: "top-center",
                 autoClose: 5000,
@@ -124,10 +129,10 @@ function Login() {
                                     isInvalid={!!errors.identifier}
                                     isValid={!errors.identifier && identifier.length > 0}
                                 />
-                                {errors.identifier ? (
-                                    <Form.Control.Feedback type="invalid">{errors.identifier}</Form.Control.Feedback>
-                                ) : (
-                                    <Form.Control.Feedback></Form.Control.Feedback>
+                                {errors.identifier && (
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.identifier}
+                                    </Form.Control.Feedback>
                                 )}
                             </Form.Group>
 
@@ -144,10 +149,10 @@ function Login() {
                                 <span className={cx('password-toggle-icon')} onClick={toggleShowPassword}>
                                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                                 </span>
-                                {errors.password ? (
-                                    <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
-                                ) : (
-                                    <Form.Control.Feedback></Form.Control.Feedback>
+                                {errors.password && (
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.password}
+                                    </Form.Control.Feedback>
                                 )}
                             </Form.Group>
 
@@ -239,7 +244,7 @@ function Login() {
                                         theme: "light",
                                         transition: Bounce,
                                     });
-                                    console.error('Google login error:', error);
+                                    console.error('Login Failed:', error);
                                 }}
                             />
                         </div>

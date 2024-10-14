@@ -17,7 +17,6 @@ const publicRoutes = [
     { path: '/register', component: Register, layout: null },
     { path: '/login', component: Login, layout: null },
     {path: '/aboutUs',component: AboutUs, layout: null},
-    {path: '/admin',component: Admin, layout: null},
     {path: '/ticketDetail',component: TicketDetail},
 ];
 
@@ -26,6 +25,7 @@ const privateRoutes = [
     { path: '/updateProfile', component: UpdateProfile},
     { path: '/forgot-password', component: ForgotPassword, layout: null},
     { path: '/payment', component: Payment, layout: HeaderOnly},
+    {path: '/admin',component: Admin, layout: null},
     { path: '/customer', component: CustomerLayout,layout : null},
     { path: '/staff', component: StaffLayout, layout: null},
 ];
