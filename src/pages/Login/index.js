@@ -7,7 +7,7 @@ import { confirmEmail, confirmUsername } from '../../services/api/RegisterAPI';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { GoogleLogin } from '@react-oauth/google';
-import jwtDecode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import api from "../../config";
 
 function Login() {

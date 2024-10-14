@@ -11,8 +11,8 @@ import TicketManage from "../TicketManage";
 import Profile from "../../Profile";
 
 import Feedback from "../Feedback";
-
-import { useState } from "react";
+import { useLocation } from "react-router-dom";
+import { useState , useEffect} from "react";
 
 const cx = classNames.bind(styles);
 

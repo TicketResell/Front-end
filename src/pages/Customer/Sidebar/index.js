@@ -10,12 +10,12 @@ import { CgProfile } from "react-icons/cg";
 import { MdContactSupport } from "react-icons/md";
 import classNames from "classnames/bind";
 import styles from "./Sidebar.module.scss";
-
+import Spinner from "react-bootstrap/Spinner";
 import { useNavigate } from "react-router-dom";
 
 const cx = classNames.bind(styles);
 
-export default function Sidebar({ seller, onLayoutClick }) {
+export default function Sidebar({ customer, onLayoutClick }) {
 
   const navigate = useNavigate(); // Initialize navigation
 
