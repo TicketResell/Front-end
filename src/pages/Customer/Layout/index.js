@@ -62,7 +62,7 @@ export default function CustomerLayout() {
       case "newTicket":
         return <NewTick user={user}/>
       case "setTicket":
-        return <TicketManage/>
+        return <TicketManage user={user} />
       case "profile":
         return <Profile/>
       case "support":
