@@ -2,6 +2,9 @@ import { Card, ListGroup, Button, Container, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import styles from "./TicketCard.module.scss"
 import classNames from "classnames/bind";
+import { IoLocationSharp } from "react-icons/io5";
+import { MdOutlineDateRange } from "react-icons/md";
+import { IoPricetagsSharp } from "react-icons/io5";
 
 function TicketCard({ticket}) {
   const cx = classNames.bind(styles);
@@ -28,10 +31,10 @@ function TicketCard({ticket}) {
           <Col xs={9}>
             <ListGroup className="list-group-flush">
               <ListGroup.Item>Type : {ticket.ticketType}</ListGroup.Item>
-              <ListGroup.Item>Location : {ticket.location}</ListGroup.Item>
-              <ListGroup.Item>Date : {ticket.eventDate}</ListGroup.Item>
-              <ListGroup.Item><span className={cx("price-original")}>{ticket.price}</span> 
-              <span className={cx("price-sale")}>{ticket.salePrice}</span></ListGroup.Item>
+              <ListGroup.Item>Location <IoLocationSharp /> : {ticket.location}</ListGroup.Item>
+              <ListGroup.Item>Date <MdOutlineDateRange /> : {ticket.eventDate}</ListGroup.Item>
+              <ListGroup.Item>
+              <span className={cx("price-sale")}><IoPricetagsSharp /> {ticket.price}$</span></ListGroup.Item>
             </ListGroup>
           </Col>
         </Row>

@@ -9,8 +9,9 @@ import AboutUs from '../AboutUs';
 import Payment from '../Payment';
 import Admin from '../Admin';
 import CustomerLayout from '../Customer/Layout';
-import TicketDetail from '../TicketDetail';
 import Order from '../Order';
+import StaffLayout from '../Staff/Layout';
+import TicketManage from '../Staff/TicketManage'
 
 const publicRoutes = [
     { path: '/', component: Home},
@@ -18,7 +19,6 @@ const publicRoutes = [
     { path: '/login', component: Login, layout: null },
     { path: '/order', component: Order, layout: null },
     {path: '/aboutUs',component: AboutUs, layout: null},
-    {path: '/ticketDetail',component: TicketDetail},
 ];
 
 const privateRoutes = [
@@ -28,6 +28,9 @@ const privateRoutes = [
     { path: '/payment', component: Payment, layout: HeaderOnly},
     {path: '/admin',component: Admin, layout: null},
     { path: '/customer', component: CustomerLayout,layout : null},
+    { path: '/admin',component: Admin, layout: null},
+    { path: '/staff',component: StaffLayout, layout: null},
+    { path: '/ticketManage',component: TicketManage, layout: null},
 ];
 
 export { publicRoutes, privateRoutes };

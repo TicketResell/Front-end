@@ -4,6 +4,9 @@ import { Container, Row, Col, Button, Form, InputGroup } from "react-bootstrap";
 import { useState } from "react";
 import { TiTicket } from "react-icons/ti";
 import { LuMessagesSquare } from "react-icons/lu";
+import { IoLocationSharp } from "react-icons/io5";
+import { MdOutlineDateRange } from "react-icons/md";
+import { IoPricetagsSharp } from "react-icons/io5";
 import soldout from '../../assets/images/soldout-logo.png'
 import onsale from "../../assets/images/onsale-logo.jpg"
 import styles from "./TicketDetail.module.scss"
@@ -98,14 +101,12 @@ function TicketDetail() {
             </p>
 
             <dl className={cx("row")}>
-              <dt className={cx("col-3")}>Date:</dt>
+              <dt className={cx("col-3")}>Date<MdOutlineDateRange /> :</dt>
               <dd className={cx("col-9")}>{ticket.eventDate}</dd>
-              <dt className={cx("col-3")}>Location:</dt>
+              <dt className={cx("col-3")}>Location<IoLocationSharp />:</dt>
               <dd className={cx("col-9")}>{ticket.location}</dd>
-              <dt className={cx("col-3")}>Price:</dt>
-              <dd className={cx("col-9")}>{ticket.price}</dd>
-              <dt className={cx("col-3")}>Sale Price:</dt>
-              <dd className={cx("col-9")}>{ticket.salePrice}</dd>
+              <dt className={cx("col-3")}>Price<IoPricetagsSharp /> :</dt>
+              <dd className={cx("col-9")}>{ticket.price}$</dd>
               <dt className={cx("col-3")}>Quantity:</dt>
               <dd className={cx("col-9")}>{ticket.quantity}</dd>
             </dl>

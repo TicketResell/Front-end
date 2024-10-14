@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import {
   Container,
   Row,
@@ -13,21 +13,11 @@ import {
   MDBTableBody,
 } from "mdb-react-ui-kit";
 import TicketEdit from "./TicketEdit"; 
+import api from "../../../config";
+import { ToastContainer, toast, Bounce } from 'react-toastify';
 
-function TicketManage() {
-  const [tickets, setTickets] = useState([
-    {
-      id: 1,
-      images: ["https://mdbootstrap.com/img/new/avatars/8.jpg","https://mdbootstrap.com/img/new/avatars/8.jpg","https://mdbootstrap.com/img/new/avatars/8.jpg"],
-      title: "Vé ca nhạc",
-      type: "Sự kiện",
-      date: "15/9/2024",
-      location: "157/32/14 Lý liên kiệt",
-      price: "50,000 VND",
-      salePrice: "30,000 VND",
-      status: "Expired Soon",
-    },
-  ]);
+function TicketManage({user}) {
+  const [tickets, setTickets] = useState([]);
 
   const [editRowId, setEditRowId] = useState(null);
   const [showEditForm, setShowEditForm] = useState(false); // Điều khiển form chỉnh sửa
@@ -50,8 +40,34 @@ function TicketManage() {
     setTickets(tickets.filter((ticket) => ticket.id !== id));
   };
 
+  const fetchTicketsByUserID = async () => {
+    //call api get tickets
+    try {
+      console.log(" userID trong Ticket Manager",user.id)
+      const response = await api.get(`/tickets/used/${user.id}`);
+      console.log("Ticketsby userID List",response.data);
+      setTickets(response.data);
+    } catch (err) {
+        toast.error(err.response.data, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+        return;
+    }
+  };
+  useEffect(() => {
+    fetchTicketsByUserID();
+  }, []);
   return (
     <Container>
+      <ToastContainer/>
       <Row>
         {showEditForm ? (
           <TicketEdit
@@ -65,12 +81,14 @@ function TicketManage() {
                 <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >TicketID</th>
                 <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Image</th>
                 <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Event Title</th>
+                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Category</th>
                 <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Ticket Type</th>
                 <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Event Date</th>
+                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Ticket Detail</th>
                 <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Location</th>
                 <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Price</th>
-                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >SalePrice</th>
                 <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Status</th>
+                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Quantity</th>
                 <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Actions</th>
               </tr>
             </MDBTableHead>
@@ -79,9 +97,8 @@ function TicketManage() {
                 <tr key={ticket.id}>
                   <td>{ticket.id}</td>
                   <td>
-                  {ticket.images.map((imgSrc, index) => (
+                  {ticket.imageUrls.map((imgSrc) => (
                       <img
-                        key={index}
                         src={imgSrc}
                         alt="ticket"
                         style={{ width: "45px", height: "45px", marginRight: "10px" }}
@@ -89,12 +106,14 @@ function TicketManage() {
                       />
                     ))}
                   </td>
-                  <td>{ticket.title}</td>
-                  <td>{ticket.type}</td>
-                  <td>{ticket.date}</td>
+                  <td>{ticket.eventTitle}</td>
+                  <td>{ticket.categoryId}</td>
+                  <td>{ticket.ticketType}</td>
+                  <td>{ticket.eventDate}</td>
+                  <td>{ticket.ticketDetails}</td>
                   <td>{ticket.location}</td>
                   <td>{ticket.price}</td>
-                  <td>{ticket.salePrice}</td>
+                  <td>{ticket.quantity}</td>
                   <td>
                     <MDBBadge
                       color={

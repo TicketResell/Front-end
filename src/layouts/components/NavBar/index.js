@@ -2,7 +2,7 @@ import { Navbar, Nav, Container,Button } from "react-bootstrap";
 import styles from "../NavBar/NavigationBar.module.scss";
 import logo from "../../../assets/images/ticket-logo.png";
 import classNames from "classnames/bind";
-import { GoBell,GoGear } from "react-icons/go";
+import { GoBell } from "react-icons/go";
 import { TbLogout } from "react-icons/tb";
 import { useEffect, useState } from "react";
 import Notification from "./Nofitication";
@@ -20,7 +20,7 @@ function NavigationBar() {
   const response = await api.get("nofiticationList");
   setListNofitication(response.data)
 }*/
-const userSession = () =>{
+const fetchUser = () =>{
   const userLogin = JSON.parse(localStorage.getItem("user"));
   if(userLogin){
     try {
@@ -28,7 +28,7 @@ const userSession = () =>{
       setUser(userLogin);
       setSignedIn(true);
     } catch (error) {
-      console.error("Token không hợp lệ", error);
+      console.error("Không có người dùng", error);
     }
   }
 }
@@ -39,7 +39,7 @@ const fetchCategoryNav = async () =>{
 
   
   useEffect(()=>{
-    userSession();
+    fetchUser();
     fetchCategoryNav();
   },[])
 
@@ -76,16 +76,13 @@ const fetchCategoryNav = async () =>{
         </Navbar.Collapse>
         {signedIn ? (          
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Button variant="outline-light" style={{ marginRight: "10px" }} title="Setting" >
-              <GoGear />
-            </Button>
             <Button variant="outline-light" style={{ marginRight: "10px" }} title="Notification" onClick={()=>(setShowNofitication(!showNofitication))}>
               <GoBell /> 
             </Button>
             {showNofitication && (<Notification listNofitication={listNofitication}/>)}
-            <Button variant="outline-light" style={{ marginRight: "10px" }}>
-              <img src="" alt="User" style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
-              <span style={{ marginLeft: '10px', color: '#fff' }}>{user.sub}</span>
+            <Button variant="outline-light" style={{ marginRight: "10px" }} href="/customer">
+              <img src={user.user_image} alt="User" style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
+              <span style={{ marginLeft: '10px', color: '#fff' }}>{user.fullname}</span>
             </Button>
             <Button variant="outline-light" style={{ marginRight: "10px" }} onClick={handleLogout}>
             <span style={{ marginLeft: '10px', color: '#fff' }} >Logout</span>

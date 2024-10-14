@@ -2,69 +2,103 @@ import React, { useState } from 'react';
 import { Form, Button, Container, Row, Col, Spinner } from 'react-bootstrap';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import styles from './ForgotPassword.module.scss'; // Import SCSS module
-import api from "../../config"; // Assuming you have a pre-configured API service
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
-    const [otp, setOtp] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const [step, setStep] = useState('enterEmail');
+    const [step, setStep] = useState('enterEmail'); // 'enterEmail' or 'resetPassword'
+    
+    // State to toggle password visibility
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const handleRequestOTP = async (e) => {
+    //Send link function here
+    const handleSendResetLink = (e) => {
         e.preventDefault();
         setLoading(true);
-        try {
-            const response = await api.post('/auth/request-otp', { email });
-            toast.success('OTP đã được gửi tới email của bạn!', { transition: Bounce });
-            setStep('verifyOTP');
-        } catch (error) {
-            toast.error('Lỗi khi gửi OTP!', { transition: Bounce });
-        } finally {
-            setLoading(false);
-        }
+    
+        // Define the API request body
+        const requestBody = {
+            email: email,
+        };
+    
+        // API call to send the reset link
+        fetch('https://your-backend-api.com/api/auth/forgot-password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+        })
+            .then((response) => {
+                if (response.ok) {
+                    toast.success('Link đặt lại mật khẩu đã được gửi tới email của bạn!', { transition: Bounce });
+                    setStep('resetPassword'); // Switch to the reset password page
+                } else {
+                    toast.error('Đã xảy ra lỗi khi gửi email. Vui lòng thử lại.');
+                }
+            })
+            .catch((error) => {
+                toast.error('Đã xảy ra lỗi khi gửi yêu cầu.');
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     };
 
-    const handleVerifyOTP = async (e) => {
+    //Reset password function here
+    const handleResetPassword = (e) => {
         e.preventDefault();
         setLoading(true);
-        try {
-            const response = await api.post('/auth/verify-otp', { otp });
-            toast.success('OTP hợp lệ!', { transition: Bounce });
-            setStep('resetPassword');
-        } catch (error) {
-            toast.error('OTP không chính xác!', { transition: Bounce });
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleResetPassword = async (e) => {
-        e.preventDefault();
-        setLoading(true);
+    
         if (newPassword !== confirmPassword) {
             toast.error('Mật khẩu xác nhận không khớp!', { transition: Bounce });
             setLoading(false);
             return;
         }
+    
+        // Define the API request body
+        const requestBody = {
+            email: email, // Assuming you keep track of the user's email during the reset process
+            newPassword: newPassword,
+        };
+    
+        // API call to reset the password
+        fetch('https://your-backend-api.com/api/auth/reset-password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+        })
+            .then((response) => {
+                if (response.ok) {
+                    toast.success('Mật khẩu của bạn đã được đặt lại thành công!', { transition: Bounce });
+                } else {
+                    toast.error('Đã xảy ra lỗi khi đặt lại mật khẩu.');
+                }
+            })
+            .catch((error) => {
+                toast.error('Đã xảy ra lỗi khi gửi yêu cầu.');
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    };
 
-        try {
-            const response = await api.post('/auth/reset-password', { newPassword });
-            toast.success('Mật khẩu của bạn đã được đặt lại thành công!', { transition: Bounce });
-            setEmail('');
-            setOtp('');
-            setNewPassword('');
-            setConfirmPassword('');
-            setStep('enterEmail');
-        } catch (error) {
-            toast.error('Lỗi khi đặt lại mật khẩu!', { transition: Bounce });
-        } finally {
-            setLoading(false);
-        }
+    // Toggle password visibility for New Password
+    const toggleNewPasswordVisibility = () => {
+        setShowNewPassword(!showNewPassword);
+    };
+
+    // Toggle password visibility for Confirm Password
+    const toggleConfirmPasswordVisibility = () => {
+        setShowConfirmPassword(!showConfirmPassword);
     };
 
     return (
@@ -73,9 +107,8 @@ const ForgotPassword = () => {
             <Row className="justify-content-center">
                 <Col md={10} lg={12} className="d-flex justify-content-center">
                     <div className={styles.forgotPasswordContainer}>
-                        {/* Back to login button */}
                         <div className={styles.backToLogin}>
-                            <Link to="/login">
+                            <Link to={step === 'enterEmail' ? "/login" : "#"} onClick={() => setStep('enterEmail')}>
                                 <FontAwesomeIcon icon={faArrowLeft} />
                             </Link>
                         </div>
@@ -84,8 +117,8 @@ const ForgotPassword = () => {
                         {step === 'enterEmail' && (
                             <>
                                 <h2 className={styles.formTitle}>Quên mật khẩu</h2>
-                                <p className={styles.formDescription}>Vui lòng nhập email của bạn để nhận mã OTP.</p>
-                                <Form onSubmit={handleRequestOTP}>
+                                <p className={styles.formDescription}>Vui lòng nhập email của bạn để nhận liên kết đặt lại mật khẩu.</p>
+                                <Form onSubmit={handleSendResetLink}>
                                     <div className={styles.formWrapper}>
                                         <Form.Group controlId="formEmail" className={styles.formGroup}>
                                             <Form.Label>Email</Form.Label>
@@ -98,65 +131,58 @@ const ForgotPassword = () => {
                                             />
                                         </Form.Group>
                                         <Button className={styles.submitButton} variant="primary" type="submit" disabled={loading}>
-                                            {loading ? <Spinner animation="border" size="sm" /> : 'Gửi OTP'}
+                                            {loading ? <Spinner animation="border" size="sm" /> : 'Gửi liên kết'}
                                         </Button>
                                     </div>
                                 </Form>
                             </>
                         )}
 
-                        {/* Step 2: Verify OTP */}
-                        {step === 'verifyOTP' && (
-                            <>
-                                <h2 className={styles.formTitle}>Xác nhận OTP</h2>
-                                <p className={styles.formDescription}>Vui lòng nhập mã OTP đã được gửi tới email của bạn.</p>
-                                <Form onSubmit={handleVerifyOTP}>
-                                    <div className={styles.formWrapper}>
-                                        <Form.Group controlId="formOTP" className={styles.formGroup}>
-                                            <Form.Label>Mã OTP</Form.Label>
-                                            <Form.Control
-                                                type="text"
-                                                placeholder="Nhập mã OTP"
-                                                value={otp}
-                                                onChange={(e) => setOtp(e.target.value)}
-                                                required
-                                            />
-                                        </Form.Group>
-                                        <Button className={styles.submitButton} variant="primary" type="submit" disabled={loading}>
-                                            {loading ? <Spinner animation="border" size="sm" /> : 'Xác nhận OTP'}
-                                        </Button>
-                                    </div>
-                                </Form>
-                            </>
-                        )}
-
-                        {/* Step 3: Reset Password */}
+                        {/* Step 2: Reset Password */}
                         {step === 'resetPassword' && (
                             <>
                                 <h2 className={styles.formTitle}>Đặt lại mật khẩu</h2>
-                                <p className={styles.formDescription}>Nhập mật khẩu mới của bạn.</p>
+                                <p className={styles.formDescription}>Vui lòng nhập mật khẩu mới của bạn.</p>
                                 <Form onSubmit={handleResetPassword}>
                                     <div className={styles.formWrapper}>
+                                        {/* New Password Field */}
                                         <Form.Group controlId="formNewPassword" className={styles.formGroup}>
                                             <Form.Label>Mật khẩu mới</Form.Label>
-                                            <Form.Control
-                                                type="password"
-                                                placeholder="Nhập mật khẩu mới"
-                                                value={newPassword}
-                                                onChange={(e) => setNewPassword(e.target.value)}
-                                                required
-                                            />
+                                            <div className={styles.passwordWrapper}>
+                                                <Form.Control
+                                                    type={showNewPassword ? 'text' : 'password'}
+                                                    placeholder="Nhập mật khẩu mới"
+                                                    value={newPassword}
+                                                    onChange={(e) => setNewPassword(e.target.value)}
+                                                    required
+                                                />
+                                                <FontAwesomeIcon
+                                                    icon={showNewPassword ? faEyeSlash : faEye}
+                                                    onClick={toggleNewPasswordVisibility}
+                                                    className={styles.passwordToggleIcon}
+                                                />
+                                            </div>
                                         </Form.Group>
+
+                                        {/* Confirm Password Field */}
                                         <Form.Group controlId="formConfirmPassword" className={styles.formGroup}>
                                             <Form.Label>Xác nhận mật khẩu</Form.Label>
-                                            <Form.Control
-                                                type="password"
-                                                placeholder="Nhập lại mật khẩu mới"
-                                                value={confirmPassword}
-                                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                                required
-                                            />
+                                            <div className={styles.passwordWrapper}>
+                                                <Form.Control
+                                                    type={showConfirmPassword ? 'text' : 'password'}
+                                                    placeholder="Nhập lại mật khẩu mới"
+                                                    value={confirmPassword}
+                                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                                    required
+                                                />
+                                                <FontAwesomeIcon
+                                                    icon={showConfirmPassword ? faEyeSlash : faEye}
+                                                    onClick={toggleConfirmPasswordVisibility}
+                                                    className={styles.passwordToggleIcon}
+                                                />
+                                            </div>
                                         </Form.Group>
+
                                         <Button className={styles.submitButton} variant="primary" type="submit" disabled={loading}>
                                             {loading ? <Spinner animation="border" size="sm" /> : 'Đặt lại mật khẩu'}
                                         </Button>

@@ -2,6 +2,7 @@ import React from 'react';
 import { Container, Row, Col, Card ,Image, Button} from 'react-bootstrap';
 import classNames from 'classnames/bind';
 import styles from "./Categories.module.scss"
+import Filter from '../Filter';
 
 function Categories({categories,clickCategory,clickAll}) {
   const cx = classNames.bind(styles);
@@ -16,7 +17,8 @@ function Categories({categories,clickCategory,clickAll}) {
                 </div>
             </Col>
           ))}
-            <Button variant="outline-dark"  onClick={() => clickAll()} >All</Button>
+            <Button variant="outline-dark"  onClick={() => clickAll()}>All</Button>
+            <Filter/>
         </Row>
       </Container>
       );

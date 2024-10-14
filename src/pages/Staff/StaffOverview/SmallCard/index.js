@@ -56,14 +56,14 @@ export default function SmallCard ({types}){
             {types.name === "Revenue" ? (<GrMoney style={{ fontSize: '2rem', color: '#5e46ff' }} />) : (<FaDollarSign style={{ fontSize: '2rem', color: '#5e46ff' }} />) }
             </Col>
             <Col>
-              <Card.Title>{types.name} this quarter</Card.Title>
+              <Card.Title>{types.name} this week</Card.Title>
             </Col>
           </Row>
           <Row>
             <Col>
               <h1>{types.name === "Revenue" ? "$" : ""}{types.number}</h1>
               <p style={{ color: types.status === "up" ? '#17B26A' : '#F04438' }}>
-                {types.status === "up" ? (<PiChartLineUpBold />):(<PiChartLineDownBold/>) } {types.percent}% vs last quarter
+                {types.status === "up" ? (<PiChartLineUpBold />):(<PiChartLineDownBold/>) } {types.percent}% vs last week
               </p>
             </Col>
             <Col xs={4}>

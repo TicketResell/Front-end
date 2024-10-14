@@ -1,30 +1,80 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FaCamera } from 'react-icons/fa'; // Import camera icon
 import styles from './Profile.module.scss';
+import axios from 'axios'; // Sử dụng axios để gọi API
 
-const Profile = () => {
+const Profile = ({ role }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
-        fullName: "Nguyễn Văn A",
-        phone: "0903500680",
-        email: "nguyenvana@gmail.com",
-        birthDate: "1993-08-09",
-        gender: "Nam",
-        address: "Lô E2a-7, Đường D1, Khu Công nghệ cao P.Long Thạnh Mỹ, Tp. Thủ Đức, TP.HCM."
+        fullName: "",
+        phone: "",
+        email: "",
+        birthDate: "",
+        gender: "",
+        address: ""
     });
     const [imageSrc, setImageSrc] = useState(""); // State for image source
     const [imageUploaded, setImageUploaded] = useState(false); // State to track image upload
 
-    // Tạo ref cho input file
     const fileInputRef = useRef(null);
+
+    // API call to fetch profile based on role
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                let response;
+                if (role === 'admin') {
+                    response = await axios.get('/api/admin/profile');
+                } else if (role === 'staff') {
+                    response = await axios.get('/api/staff/profile');
+                } else if (role === 'user') {
+                    response = await axios.get('/api/user/profile');
+                }
+                
+                if (response && response.data) {
+                    setFormData({
+                        fullName: response.data.fullName,
+                        phone: response.data.phone,
+                        email: response.data.email,
+                        birthDate: response.data.birthDate,
+                        gender: response.data.gender,
+                        address: response.data.address,
+                    });
+                    setImageSrc(response.data.profileImage || "https://via.placeholder.com/150");
+                }
+            } catch (error) {
+                console.error('Error fetching profile:', error);
+            }
+        };
+
+        fetchProfile();
+    }, [role]); // Call this function whenever the role changes
 
     const handleUpdateProfile = () => {
         if (isEditing) {
-            // Logic to save updated data (if necessary)
-            setIsEditing(false);
+            // Logic to save updated data (API call to update)
+            const updateProfile = async () => {
+                try {
+                    let response;
+                    if (role === 'admin') {
+                        response = await axios.put('/api/admin/profile', formData);
+                    } else if (role === 'staff') {
+                        response = await axios.put('/api/staff/profile', formData);
+                    } else if (role === 'user') {
+                        response = await axios.put('/api/user/profile', formData);
+                    }
+                    if (response) {
+                        setIsEditing(false);
+                    }
+                } catch (error) {
+                    console.error('Error updating profile:', error);
+                }
+            };
+
+            updateProfile();
         } else {
             setIsEditing(true);
-            setImageUploaded(false); // Reset the imageUploaded state when editing is toggled on
+            setImageUploaded(false);
         }
     };
 
@@ -38,17 +88,17 @@ const Profile = () => {
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                setImageSrc(reader.result); // Set the image source to the data URL
-                setImageUploaded(true); // Mark image as uploaded
+                setImageSrc(reader.result);
+                setImageUploaded(true);
             };
             reader.readAsDataURL(file);
         }
     };
 
     const handleChangeImage = () => {
-        setImageUploaded(false); // Allow user to upload a new image
+        setImageUploaded(false);
         if (fileInputRef.current) {
-            fileInputRef.current.click(); // Trigger the file input click
+            fileInputRef.current.click();
         }
     };
 
@@ -63,21 +113,20 @@ const Profile = () => {
                                 alt="Avatar"
                                 className={styles.avatar}
                             />
-                            {isEditing && !imageUploaded && ( // Hiện icon camera khi ở chế độ chỉnh sửa và chưa upload hình
+                            {isEditing && !imageUploaded && (
                                 <label htmlFor="image-upload" className={styles.cameraIcon} onClick={handleChangeImage}>
                                     <FaCamera />
                                     <input
                                         type="file"
-                                        ref={fileInputRef} // Sử dụng ref
+                                        ref={fileInputRef}
                                         className={styles.uploadImage}
                                         accept="image/*"
                                         onChange={handleImageUpload}
-                                        style={{ display: 'none' }} // Ẩn input mặc định
+                                        style={{ display: 'none' }}
                                     />
                                 </label>
                             )}
                         </div>
-                        {/* Button to change image after uploading */}
                         {imageUploaded && isEditing && (
                             <button className={styles.changeImageButton} onClick={handleChangeImage}>
                                 Thay đổi hình ảnh

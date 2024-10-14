@@ -7,6 +7,7 @@ import { differenceInDays, parse } from "date-fns";
 import Categories from "../../layouts/components/Categories";
 import Pagination from "../../layouts/components/Pagination";
 
+
 function Home() {
   const [nearlyExpiredTickets, setNearlyExpiredTickets] = useState([]);
   const [normalTickets, setNormalTickets] = useState([]);
@@ -17,8 +18,9 @@ function Home() {
   
   const itemsPerPage = 4;
   //Sau khi lấy được vé từ search
-  const handleSearchResults = (ticket) => {
-    ticketClassification(ticket);
+  const handleSearchResults = async (ticket) => {
+    console.log("Vé được search đã ra ngoài trang Home",ticket)
+      ticketClassification(ticket);
   };
   //Phân loại vé
   const ticketClassification = (tickets) => {
@@ -78,7 +80,8 @@ function Home() {
 
   const handleCategoryClick = async (categoryId) => {
     try {
-      const response = await api.get(`/categories/${categoryId}`);
+      console.log("Category hien tai dang lấy vé theo id",categoryId)
+      const response = await api.get(`/tickets/category/${categoryId}`);
       console.log("Ticket by Category ID",response.data);
       ticketClassification(response.data);
     } catch (error) {
