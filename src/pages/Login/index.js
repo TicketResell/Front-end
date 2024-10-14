@@ -87,7 +87,9 @@ function Login() {
                 });
 
                 const { jwt } = response.data;
+                console.log("JWT",jwt);
                 const decodedUser = jwtDecode(jwt);
+                console.log("User",decodedUser);
                 localStorage.setItem("token", jwt); 
                 localStorage.setItem("user", JSON.stringify(decodedUser)); 
                 navigate("/");

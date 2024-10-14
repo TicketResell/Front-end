@@ -31,8 +31,8 @@ export default function NewTick({ user }) {
     categoryId: "",
     location: "",
     ticketType: "",
-    salePrice: "",
     ticketDetails: "",
+    createddate: new Date(),
     imageUrls: [],
     status: "onsale",
     quantity : "",
@@ -163,7 +163,7 @@ export default function NewTick({ user }) {
       ticketType === "Select Ticket Type" ||
       !formData.location ||
       !formData.price ||
-      !formData.salePrice ||
+      selectedCategory === "Select Category" ||
       !formData.imageUrls ||
       formData.imageUrls.length === 0
     ) {
@@ -206,6 +206,16 @@ export default function NewTick({ user }) {
       return;
     }
 
+    if (selectedCategory === "Select Category") {
+      toast.error("Vui lòng chọn sự kiện", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+
     if (!formData.location) {
       toast.error("Vui lòng nhập địa điểm sự kiện", {
         position: "top-center",
@@ -226,17 +236,7 @@ export default function NewTick({ user }) {
       return;
     }
 
-    if (!formData.salePrice) {
-      toast.error("Vui lòng nhập giá đã giảm", {
-        position: "top-center",
-        autoClose: 5000,
-        theme: "light",
-        transition: Bounce,
-      });
-      return;
-    }
-
-    if (!formData.images || formData.images.length === 0) {
+    if (!formData.imageUrls || formData.imageUrls.length === 0) {
       toast.error("Vui lòng tải lên ít nhất một ảnh", {
         position: "top-center",
         autoClose: 5000,
@@ -262,7 +262,8 @@ export default function NewTick({ user }) {
       console.log("Form data",formData);
       const response = await api.post("/tickets/create", formData);
       console.log(response.data);
-      toast.success('Tickets found', {
+      if(response.status === 200)
+      toast.success('Đã tạo vé thành công ', {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -406,6 +407,21 @@ export default function NewTick({ user }) {
                     </Dropdown.Item>
                   ))}
                 </DropdownButton>
+              </Col>
+            </Form.Group>
+
+            <Form.Group as={Row} className="mb-3" controlId="formTicketDetails">
+              <Form.Label column sm="2">
+              Ticket Details
+              </Form.Label>
+              <Col sm="10">
+                <Form.Control
+                  as="textarea" rows={3}
+                  name="ticketDetails"
+                  placeholder="Enter Ticket Details"
+                  value={formData.ticketDetails}
+                  onChange={handleInputChange}
+                />
               </Col>
             </Form.Group>
 
