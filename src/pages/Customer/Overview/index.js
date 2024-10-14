@@ -7,7 +7,18 @@ import OrdersToday from "./OrdersToday";
 const cx = classNames.bind(styles);
 
 export default function Overview() {
-  const listOrder = [
+  //Call API listOrder
+  /*const fetchListOrder = async () => {
+    try {
+      const response = await api.get("order");
+      setListOrderToday(response.data);
+    } catch (err) {
+      console.log(err.data);
+    }
+  }; 
+  
+  */
+  const listOrderToday = [
     {
       orderID : "1",
       buyerID : "1",
@@ -57,7 +68,7 @@ export default function Overview() {
         </Col>
       </Row>
       <Row className={cx("rowHalfDown")}>
-          <OrdersToday listOrder={listOrder}/>
+          <OrdersToday listOrder={listOrderToday}/>
       </Row>
     </>
   );

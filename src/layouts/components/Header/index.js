@@ -21,8 +21,8 @@ function Header() {
             }}
           ></div>
           <Carousel.Caption>
-            <h3>First Slide</h3>
-            <p>Description for the first slide.</p>
+            <h3>Buy tickets easily, attractive prices!</h3>
+            <p>Last chance! There are very few tickets left for your favorite events, don't miss out!</p>
           </Carousel.Caption>
         </Carousel.Item>
   
@@ -34,8 +34,8 @@ function Header() {
             }}
           ></div>
           <Carousel.Caption>
-            <h3>Second Slide</h3>
-            <p>Description for the second slide.</p>
+            <h3>Golden opportunity - Buy tickets immediately</h3>
+            <p>Discount today! Buy tickets at discounted prices for only 24 hours!</p>
           </Carousel.Caption>
         </Carousel.Item>
   
@@ -47,8 +47,8 @@ function Header() {
             }}
           ></div>
           <Carousel.Caption>
-            <h3>Third Slide</h3>
-            <p>Description for the third slide.</p>
+            <h3>Buy tickets very quickly - Great deals!</h3>
+            <p>Experience memorable moments, tickets are just a click away!</p>
           </Carousel.Caption>
         </Carousel.Item>
         

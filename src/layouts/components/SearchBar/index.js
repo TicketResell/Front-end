@@ -1,84 +1,142 @@
 import React, { useState } from "react";
-import { FaSearch} from "react-icons/fa";
-import { Container, Row, Col, Form,InputGroup, Button } from "react-bootstrap";
+import { FaSearch } from "react-icons/fa";
+import { Container, Row, Form, InputGroup, Button } from "react-bootstrap";
 import api from "../../../config";
-import { useNavigate } from "react-router-dom";
-import styles from "./SearchBar.module.scss" 
+import styles from "./SearchBar.module.scss";
+import { ToastContainer, toast, Bounce } from 'react-toastify';
 
-function Search ({ onSearch }){
-  const [tickName,setTickName] = useState("")
-  const [tickCategory,setTickCategory] = useState("")
-  const [location,setLocation] = useState("")
-  const [tickNum,setTickNum] = useState(1)
+function Search({ onSearch }) {
+  const [tickName, setTickName] = useState("");
+  const [tickDate, setTickDate] = useState("");
 
-  const handleSearch = async () =>{
-    const infoSearch = {
-      tickName,
-      tickCategory,
-      location,
-      tickNum
+  const handleSearch = async (e) => {
+    e.preventDefault(); 
+
+    if (!tickName && !tickDate) {
+      toast.error("Please enter at least one search criteria (event title or date).", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      return; // Dừng hàm nếu không có thông tin tìm kiếm
     }
 
-    try {
-      const response = await api.post("search",infoSearch)
-      onSearch(response.data)
-    } catch (err) {
-      console.log(err)
+    const selectedDate = new Date(tickDate);
+    console.log("Selected Date",selectedDate)
+    const currentDate = new Date();
+    console.log("Current date",currentDate)
+    currentDate.setHours(0, 0, 0, 0);
+    
+    if (selectedDate < currentDate) {
+      // Nếu tickDate bé hơn currentDate thì  thông báo cảnh báo (quá khứ)
+      toast.warn('Selected date cannot be in the past. Resetting to today\'s date.', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+
+      const today = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`; // Định dạng ISO là YYYY-MM-DDTHH:mm:ss.sssZ   ,T: Ký tự phân cách giữa ngày và giờ.
+      console.log("Today",today);
+      setTickDate(today);
     }
     
-  }
+    const infoSearch = {
+      eventTitle : tickName,
+      date : tickDate,
+    };
+
+
+    try {
+      console.log("Thông tin search sẽ gửi lên api",infoSearch)
+      const response = await api.post("/tickets/search-date", infoSearch);
+      console.log("Vé đã search",response.data)
+      toast.success('Tickets found', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      onSearch(response.data);
+    } catch (error) {
+      toast.error(error.response.data, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+  };
 
   return (
     <div className="container p-4">
-    <Container className={`  ${styles.wrapper} p-4 `} style={{maxWidth: "500px"}}>
-      <h2 className={` ${styles.header} text-center`}>SEARCH TICKET</h2>
-      <Form onSubmit={handleSearch}>
-        <InputGroup className="mb-3">
-          <InputGroup.Text><FaSearch /></InputGroup.Text>
-          <Form.Control placeholder="Nhập vé cần tìm"  value={tickName} onChange={(e) =>{setTickName(e.target.value)}}/>
-        </InputGroup>
+      <ToastContainer/>
+      <Container
+        className={`  ${styles.wrapper} p-4 `}
+        style={{ maxWidth: "500px" }}
+      >
+        <h2 className={` ${styles.header} text-center`}>SEARCH TICKET</h2>
+        <Form onSubmit={handleSearch}>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>
+              <FaSearch />
+            </InputGroup.Text>
+            <Form.Control
+              placeholder="Enter the ticket you want to find"
+              value={tickName}
+              onChange={(e) => {
+                setTickName(e.target.value);
+              }}
+            />
+          </InputGroup>
 
-        <Row className="mb-3">
-          <Col>
+          <Row className="mb-3">
             <Form.Group>
-              <Form.Label>CATEGORY</Form.Label>
-              <Form.Select defaultValue={"Movie"} value={tickCategory} onChange={(e) =>{setTickCategory(e.target.value)}}>
-                <option value={"Movie"}>Movie tickets</option>
-                <option value={"Event"}>Event tickets</option>
-                <option value={"Sports"}>Sports tickets</option>
-              </Form.Select>
+              <Form.Label>DATE</Form.Label>
+              <Form.Control
+                type="date"
+                value={tickDate}
+                onChange={(e) => setTickDate(e.target.value)}
+                placeholder="yyyy-MM-dd"
+              />
             </Form.Group>
-          </Col>
+          </Row>
 
-          <Col>
-            <Form.Group>
-              <Form.Label>LOCATION</Form.Label>
-              <Form.Select defaultValue={"TP HCM"} value={location} onChange={(e) =>{setLocation(e.target.value)}}>
-                <option value={"TP HCM"}>TP HCM</option>
-                <option value={"Ha Noi"}>Ha Noi</option>
-                <option value={"Khánh Hòa"}>Khanh Hoa</option>
-              </Form.Select>
-            </Form.Group>
-          </Col>
-        </Row>
 
-        <Form.Group className="mb-3">
-          <Form.Label>SỐ LƯỢNG</Form.Label>
-          <Form.Select defaultValue={1} value={tickNum} onChange={(e) =>{setTickNum(parseInt(e.target.value,10))}}>
-            <option value={1}>1 ticket</option>
-            <option value={2}>2 ticket</option>
-            <option value={3}>3 ticket</option>
-            <option value={4}>4 ticket</option>
-          </Form.Select>
-        </Form.Group>
-
-        <Button variant="primary" type="submit" className="w-100" style={{ backgroundColor: '##4562EB' }}>
-          SEARCH
-        </Button>
-      </Form>
-    </Container>
-  </div>
+          <Button
+            variant="primary"
+            type="submit"
+            className="w-100"
+            style={{ backgroundColor: "##4562EB" }}
+          >
+            SEARCH
+          </Button>
+        </Form>
+      </Container>
+    </div>
   );
-};
+}
 
 export default Search;

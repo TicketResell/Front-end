@@ -10,6 +10,7 @@ import TicketManage from "../TicketManage";
 import Feedback from "../Feedback";
 
 import { useState } from "react";
+
 const cx = classNames.bind(styles);
 
 export default function StaffLayout() {
@@ -57,11 +58,12 @@ export default function StaffLayout() {
         return <Overview />;
     }
   };
+
   return (
     <Container fluid className={cx("container")}>
       <Row className={cx("rowFullHeight")}>
         <Col xs={2} className={cx("wrapper", "p-3")}>
-          <Sidebar staff={staff} onLayoutClick={handleLayoutClick} />
+          <Sidebar staff={staff} onLayoutClick={handleLayoutClick} /> {/* Sidebar for staff */}
         </Col>
         <Col xs={10} className={cx("rowFullHeight")}>
           {renderLayout()}
