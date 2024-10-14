@@ -12,25 +12,25 @@
     text-align: center; /* Center the dashboard title */
   }
   
-  .staffInfo {
+  .sellerInfo {
     text-align: center;
     margin-bottom: 30px;
   }
   
-  .staffImage {
+  .sellerImage {
     width: 100px;
     height: 100px;
     margin-bottom: 10px;
     object-fit: cover; /* Ensures the image maintains its aspect ratio */
-    border-radius: 100%;
+    border-radius: 50%;
   }
   
-  .staffName {
+  .sellerName {
     font-size: 18px;
     font-weight: bold;
   }
   
-  .staffRole {
+  .sellerRole {
     color: #f0f0f0;
     margin-bottom: 20px;
   }
@@ -69,7 +69,6 @@
   .menuItem:hover {
     background-color: #7591f9 !important;
   }
-  
   
   .logoutSection {
     margin-top: auto;

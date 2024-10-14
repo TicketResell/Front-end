@@ -1,23 +1,32 @@
 import { Container, Row, Col, Button, Image } from "react-bootstrap";
-import { FaRegChartBar, FaDollarSign, FaComments, FaSignOutAlt, FaTicketAlt} from "react-icons/fa"; // Add FaLifeRing for support
+import { FaRegChartBar, FaDollarSign, FaComments, FaSignOutAlt, FaTicketAlt } from "react-icons/fa"; // Add FaLifeRing for support
 import { CgProfile } from "react-icons/cg";
-import { MdContactSupport } from "react-icons/md";
 import classNames from "classnames/bind";
 import styles from "./Sidebar.module.scss";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 
 const cx = classNames.bind(styles);
 
-export default function Sidebar({ seller, onLayoutClick }) {
+export default function Sidebar({ staff, onLayoutClick }) {
+  const navigate = useNavigate(); // Initialize navigation
+
+  const handleLogout = () => {
+    // Clear session or localStorage (Assuming you store the token in localStorage)
+    localStorage.removeItem('authToken'); // Or remove any session or cookie information
+
+    // Redirect to login page
+    navigate('/login'); 
+  };
+
   return (
     <Container className={cx("sidebar")}>
       <Row className={cx("dashboardTitle")}>
         <Col>DASHBOARD</Col>
       </Row>
-      <Row className={cx("sellerInfo")}>
-        <Image src={seller.image} roundedCircle className={cx("sellerImage")} />
-        <div className={cx("sellerName")}>{seller.name}</div>
-        <div className={cx("sellerRole")}>User</div>
-        <Button className={cx("addProductButton")} onClick={() => onLayoutClick('newTicket')}>Add New Ticket</Button>
+      <Row className={cx("staffInfo")}>
+        <Image src={staff.image} roundedCircle className={cx("staffImage")} />
+        <div className={cx("staffName")}>{staff.name}</div>
+        <div className={cx("staffRole")}>Staff</div>
       </Row>
       <Row className={cx("menu")}>
         <Col>
@@ -27,23 +36,20 @@ export default function Sidebar({ seller, onLayoutClick }) {
           <div className={cx("menuItem")} onClick={() => onLayoutClick('transaction')}>
             <FaDollarSign /> Transaction
           </div>
-          <div className={cx("menuItem")} onClick={() => onLayoutClick('chat')}>
-            <FaComments /> Chat
+          <div className={cx("menuItem")} onClick={() => onLayoutClick('feedback')}>
+            <FaComments /> Feedback
           </div>
-          <div className={cx("menuItem")} onClick={() => onLayoutClick('setTicket')}>
-            <FaTicketAlt /> My Ticket
+          <div className={cx("menuItem")} onClick={() => onLayoutClick('ticketManage')}>
+            <FaTicketAlt /> Ticket Manage
           </div>
           <div className={cx("menuItem")} onClick={() => onLayoutClick('profile')}>
             <CgProfile /> Profile
-          </div>
-          <div className={cx("menuItem")} onClick={() => onLayoutClick('support')}>
-            <MdContactSupport /> Help & Support 
           </div>
         </Col>
       </Row>
       <Row className={cx("menuItem")}>
         <Col>
-          <div className={cx("logoutItem")}>
+          <div className={cx("logoutItem")} onClick={handleLogout}>
             Logout <FaSignOutAlt />
           </div>
         </Col>

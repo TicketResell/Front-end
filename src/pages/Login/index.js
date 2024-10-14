@@ -3,11 +3,11 @@ import classNames from 'classnames/bind';
 import styles from './Login.module.scss';
 import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
-import { confirmEmail, confirmUsername } from '../../services/api/RegisterAPI'; // Import email and username validation functions
+import { confirmEmail, confirmUsername } from '../../services/api/RegisterAPI';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { GoogleLogin } from '@react-oauth/google';
-import {jwtDecode} from "jwt-decode"
+import jwtDecode from "jwt-decode";
 import api from "../../config";
 
 function Login() {
@@ -17,7 +17,7 @@ function Login() {
     const [identifier, setIdentifier] = useState(''); // Unified input for email/username
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({
-        identifier: '', // Error field for email/username
+        identifier: '', 
         password: '',
     });
     const [showPassword, setShowPassword] = useState(false);
@@ -69,12 +69,11 @@ function Login() {
 
         try {
             const response = await api.post('/accounts/login', {
-                identifier, // Either email or username
+                identifier, 
                 password
             });
-            console.log("Response",response)
-            console.log("Response Status",response.status)
-            if(response && response.status === 200){
+
+            if (response && response.status === 200) {
                 toast.success('Đăng nhập thành công!', {
                     position: "top-center",
                     autoClose: 5000,
@@ -86,18 +85,15 @@ function Login() {
                     theme: "light",
                     transition: Bounce,
                 });
+
                 const { jwt } = response.data;
-                console.log(jwt);
                 const decodedUser = jwtDecode(jwt);
-                console.log(decodedUser);
                 localStorage.setItem("token", jwt); 
                 localStorage.setItem("user", JSON.stringify(decodedUser)); 
-                console.log("JSON",JSON.stringify(decodedUser))
-                navigate("/")
+                navigate("/");
             }
         } catch (error) {
-            // Login failed
-            toast.error(error.response.data, {
+            toast.error('Đăng nhập không thành công! Vui lòng kiểm tra lại thông tin đăng nhập.', {
                 position: "top-center",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -107,8 +103,7 @@ function Login() {
                 progress: undefined,
                 theme: "light",
                 transition: Bounce,
-              });
-              return;
+            });
         } finally {
             setLoading(false);
         }
@@ -134,10 +129,10 @@ function Login() {
                                     isInvalid={!!errors.identifier}
                                     isValid={!errors.identifier && identifier.length > 0}
                                 />
-                                {errors.identifier ? (
-                                    <Form.Control.Feedback type="invalid">{errors.identifier}</Form.Control.Feedback>
-                                ) : (
-                                    <Form.Control.Feedback></Form.Control.Feedback>
+                                {errors.identifier && (
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.identifier}
+                                    </Form.Control.Feedback>
                                 )}
                             </Form.Group>
 
@@ -154,10 +149,10 @@ function Login() {
                                 <span className={cx('password-toggle-icon')} onClick={toggleShowPassword}>
                                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                                 </span>
-                                {errors.password ? (
-                                    <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
-                                ) : (
-                                    <Form.Control.Feedback></Form.Control.Feedback>
+                                {errors.password && (
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.password}
+                                    </Form.Control.Feedback>
                                 )}
                             </Form.Group>
 
@@ -249,7 +244,7 @@ function Login() {
                                         theme: "light",
                                         transition: Bounce,
                                     });
-                                    console.error('Google login error:', error);
+                                    console.error('Login Failed:', error);
                                 }}
                             />
                         </div>
@@ -259,4 +254,5 @@ function Login() {
         </Container>
     );
 }
+
 export default Login;
