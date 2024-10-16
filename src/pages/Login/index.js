@@ -7,7 +7,7 @@ import { confirmEmail, confirmUsername } from '../../services/api/RegisterAPI';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { GoogleLogin } from '@react-oauth/google';
-import jwtDecode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import api from "../../config";
 
 function Login() {
@@ -113,9 +113,9 @@ function Login() {
         <Container fluid className={cx('vh-100', 'login-screen')}>
             <ToastContainer />
             <Row className={cx('h-100')}>
-                <Col md={6} className={cx('d-none', 'd-md-block', 'gradient-background')}></Col>
+                <Col md={12} className={cx('d-none', 'd-md-block', 'gradient-background')}></Col>
 
-                <Col md={6} className={cx('d-flex', 'align-items-center', 'justify-content-center')}>
+                <Col md={12} className={cx('d-flex', 'align-items-center', 'justify-content-center')}>
                     <div className={cx('form-container')}>
                         <h2 className={cx('mb-4')} style={{ paddingBottom: '20px' }}>Đăng nhập</h2>
                         <Form style={{ marginTop: '-20px' }} onSubmit={handleSubmit}>

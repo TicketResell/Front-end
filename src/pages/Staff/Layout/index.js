@@ -8,13 +8,18 @@ import noImg from "../../../assets/images/crowd-background.jpg";
 import Profile from "../../Profile";
 import TicketManage from "../TicketManage";
 import Feedback from "../Feedback";
-
 import { useState } from "react";
+import { useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const cx = classNames.bind(styles);
 
 export default function StaffLayout() {
+  const location = useLocation();
   const [currentLayout, setCurrentLayout] = useState("overview");
+  const ticket = location.state?.ticket;
+  console.log("Location Ticket",ticket);
+  const [user,setUser] = useState(null);
 
   const staff = {
     name: "Karthi Madesh",
@@ -38,6 +43,16 @@ export default function StaffLayout() {
     transactionDate : "16/09/2024"
   }]
 
+  const fetchUser = () =>{
+    try {
+      const userStaff =  JSON.parse(localStorage.getItem("user"));
+        console.log("User Staff",userStaff)
+        setUser(userStaff);
+      } catch (error) {
+        console.error("Không có người dùng", error);
+      }
+  }
+
   const handleLayoutClick = (view) => {
     setCurrentLayout(view);
   };
@@ -49,15 +64,20 @@ export default function StaffLayout() {
       case "transaction":
         return <Transaction listTransactions={listTransactions}/>;
       case "profile":
-        return <Profile/>
+        return <Profile user={user}/>
       case "ticketManage":
-        return <TicketManage/>
+        return <TicketManage user={user}/>
       case "feedback":
-        return <Feedback/>
+        return <Feedback user={user}/>
       default:
         return <Overview />;
     }
   };
+
+  useEffect(() => {
+    fetchUser();
+    setCurrentLayout(location.state?.currentLayout);
+  }, []);
 
   return (
     <Container fluid className={cx("container")}>

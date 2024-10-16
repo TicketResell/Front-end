@@ -80,7 +80,7 @@ const fetchCategoryNav = async () =>{
               <GoBell /> 
             </Button>
             {showNofitication && (<Notification listNofitication={listNofitication}/>)}
-            <Button variant="outline-light" style={{ marginRight: "10px" }} href="/customer">
+            <Button variant="outline-light"  className={cx("custom-button")}  style={{ marginRight: "10px" }} href={user.role === "user" ? "/customer" : user.role === "staff" ? "/staff" : "/admin"}>
               <img src={user.user_image} alt="User" style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
               <span style={{ marginLeft: '10px', color: '#fff' }}>{user.fullname}</span>
             </Button>

@@ -1,15 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FaCamera } from 'react-icons/fa'; // Import camera icon
 import styles from './Profile.module.scss';
-import axios from 'axios'; // Sử dụng axios để gọi API
+import api from '../../config';
 
-const Profile = ({ role }) => {
+const Profile = ({user}) => {
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
-        fullName: "",
+        fullname: "",
         phone: "",
         email: "",
-        birthDate: "",
         gender: "",
         address: ""
     });
@@ -18,51 +17,36 @@ const Profile = ({ role }) => {
 
     const fileInputRef = useRef(null);
 
+    // Memoize the fetchProfile function using useCallback
+    const fetchProfile = useCallback(async () => {
+        try {
+            const response = await api.get(`accounts/profile/${user.sub}`)
+            if (response.status === 200) {
+                setFormData({
+                    fullname: response.data.fullname,
+                    phone: response.data.phone,
+                    email: response.data.email,
+                    gender: response.data.gender,
+                    address: response.data.address,
+                });
+                setImageSrc(response.data.profileImage || "https://via.placeholder.com/150");
+            }
+        } catch (error) {
+            console.error('Error fetching profile:', error);
+        }
+    }, []);
+
     // API call to fetch profile based on role
     useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                let response;
-                if (role === 'admin') {
-                    response = await axios.get('/api/admin/profile');
-                } else if (role === 'staff') {
-                    response = await axios.get('/api/staff/profile');
-                } else if (role === 'user') {
-                    response = await axios.get('/api/user/profile');
-                }
-                
-                if (response && response.data) {
-                    setFormData({
-                        fullName: response.data.fullName,
-                        phone: response.data.phone,
-                        email: response.data.email,
-                        birthDate: response.data.birthDate,
-                        gender: response.data.gender,
-                        address: response.data.address,
-                    });
-                    setImageSrc(response.data.profileImage || "https://via.placeholder.com/150");
-                }
-            } catch (error) {
-                console.error('Error fetching profile:', error);
-            }
-        };
-
         fetchProfile();
-    }, [role]); // Call this function whenever the role changes
+    }, [fetchProfile]); // Now fetchProfile is in the dependency array
 
     const handleUpdateProfile = () => {
         if (isEditing) {
             // Logic to save updated data (API call to update)
             const updateProfile = async () => {
                 try {
-                    let response;
-                    if (role === 'admin') {
-                        response = await axios.put('/api/admin/profile', formData);
-                    } else if (role === 'staff') {
-                        response = await axios.put('/api/staff/profile', formData);
-                    } else if (role === 'user') {
-                        response = await axios.put('/api/user/profile', formData);
-                    }
+                    const response = await api.put(`accounts/profile/${user.sub}`)
                     if (response) {
                         setIsEditing(false);
                     }
@@ -142,7 +126,7 @@ const Profile = ({ role }) => {
                                 <input
                                     type="text"
                                     name="fullName"
-                                    value={formData.fullName}
+                                    value={formData.fullname}
                                     onChange={handleInputChange}
                                     readOnly={!isEditing}
                                 />
@@ -163,16 +147,6 @@ const Profile = ({ role }) => {
                                     type="email"
                                     name="email"
                                     value={formData.email}
-                                    onChange={handleInputChange}
-                                    readOnly={!isEditing}
-                                />
-                            </label>
-                            <label>
-                                Ngày sinh:
-                                <input
-                                    type="date"
-                                    name="birthDate"
-                                    value={formData.birthDate}
                                     onChange={handleInputChange}
                                     readOnly={!isEditing}
                                 />

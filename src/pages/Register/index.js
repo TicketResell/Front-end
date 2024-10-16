@@ -205,8 +205,8 @@ function Register() {
     <Container fluid className={cx("vh-100", "register-screen")}>
       <ToastContainer />
       <Row className={cx("h-100")}>
-        <Col md={6} className={cx("d-none", "d-md-block", "gradient-background")}></Col>
-        <Col md={6} className={cx("d-flex", "align-items-center", "justify-content-center")}>
+        <Col md={12} className={cx("d-none", "d-md-block", "gradient-background")}></Col>
+        <Col md={12} className={cx("d-flex", "align-items-center", "justify-content-center")}>
           <div className={cx("form-container")}>
             <h2 className={cx("form-title", "mb-4")}>Register an account</h2>
             <Form onSubmit={handleSubmit}>

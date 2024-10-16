@@ -105,7 +105,7 @@ const ForgotPassword = () => {
         <Container className={styles.forgotPasswordPage}>
             <ToastContainer />
             <Row className="justify-content-center">
-                <Col md={10} lg={12} className="d-flex justify-content-center">
+                <Col md={12} className="d-flex justify-content-center">
                     <div className={styles.forgotPasswordContainer}>
                         <div className={styles.backToLogin}>
                             <Link to={step === 'enterEmail' ? "/login" : "#"} onClick={() => setStep('enterEmail')}>

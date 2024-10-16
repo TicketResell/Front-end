@@ -10,18 +10,18 @@ import { CgProfile } from "react-icons/cg";
 import { MdContactSupport } from "react-icons/md";
 import classNames from "classnames/bind";
 import styles from "./Sidebar.module.scss";
-
 import { useNavigate } from "react-router-dom";
+import { Spinner } from 'react-bootstrap';
 
 const cx = classNames.bind(styles);
 
-export default function Sidebar({ seller, onLayoutClick }) {
+export default function Sidebar({ customer, onLayoutClick }) {
 
   const navigate = useNavigate(); // Initialize navigation
 
   const handleLogout = () => {
     // Clear session or localStorage (Assuming you store the token in localStorage)
-    localStorage.removeItem('authToken'); // Or remove any session or cookie information
+    localStorage.removeItem('token'); // Or remove any session or cookie information
 
     // Redirect to login page
     navigate('/login'); 
