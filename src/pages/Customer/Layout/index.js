@@ -60,7 +60,7 @@ export default function CustomerLayout() {
       case "transaction":
         return <Transaction listTransactions={listTransactions}/>;
       case "chat":
-        return <Chat ticket={ticket} userId={user.id}/>;
+        return <Chat ticket={ticket} user={user}/>;
       case "newTicket":
         return <NewTick user={user}/>
       case "setTicket":

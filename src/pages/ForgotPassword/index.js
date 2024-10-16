@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Button, Container, Row, Col, Spinner } from 'react-bootstrap';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom';
+import { Link, useLocation,useNavigate } from 'react-router-dom'; // Sử dụng useLocation
 import styles from './ForgotPassword.module.scss'; // Import SCSS module
+import api from '../../config';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
@@ -12,91 +13,113 @@ const ForgotPassword = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [step, setStep] = useState('enterEmail'); // 'enterEmail' or 'resetPassword'
-    
+
     // State to toggle password visibility
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    //Send link function here
-    const handleSendResetLink = (e) => {
+    // Lấy email từ URL query parameters
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const searchParams = new URLSearchParams(location.search);
+        const emailFromURL = searchParams.get('email');
+        console.log("emailFromURL",emailFromURL)
+        if (emailFromURL) {
+            // Nếu có email trong URL, chuyển sang bước reset password và dừng loading
+            setEmail(emailFromURL);
+            setStep('resetPassword');
+            setLoading(false);
+        }
+    }, [location]);
+
+    // Gửi liên kết đặt lại mật khẩu
+    const handleSendResetLink = async (e) => {
         e.preventDefault();
         setLoading(true);
-    
-        // Define the API request body
-        const requestBody = {
-            email: email,
-        };
-    
-        // API call to send the reset link
-        fetch('https://your-backend-api.com/api/auth/forgot-password', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestBody),
-        })
-            .then((response) => {
-                if (response.ok) {
-                    toast.success('Link đặt lại mật khẩu đã được gửi tới email của bạn!', { transition: Bounce });
-                    setStep('resetPassword'); // Switch to the reset password page
-                } else {
-                    toast.error('Đã xảy ra lỗi khi gửi email. Vui lòng thử lại.');
-                }
-            })
-            .catch((error) => {
-                toast.error('Đã xảy ra lỗi khi gửi yêu cầu.');
-            })
-            .finally(() => {
-                setLoading(false);
+
+        try {
+            const response = await api.post('/accounts/reset', { email });
+            if (response && response.status === 200) {
+                toast.success(response.data, {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
+            }
+        } catch (error) {
+            toast.error(error.data, {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
             });
+        }
     };
 
-    //Reset password function here
-    const handleResetPassword = (e) => {
+    // Đặt lại mật khẩu
+    const handleResetPassword = async (e) => {
         e.preventDefault();
         setLoading(true);
-    
+
         if (newPassword !== confirmPassword) {
             toast.error('Mật khẩu xác nhận không khớp!', { transition: Bounce });
             setLoading(false);
             return;
         }
-    
-        // Define the API request body
-        const requestBody = {
-            email: email, // Assuming you keep track of the user's email during the reset process
-            newPassword: newPassword,
-        };
-    
-        // API call to reset the password
-        fetch('https://your-backend-api.com/api/auth/reset-password', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestBody),
-        })
-            .then((response) => {
-                if (response.ok) {
-                    toast.success('Mật khẩu của bạn đã được đặt lại thành công!', { transition: Bounce });
-                } else {
-                    toast.error('Đã xảy ra lỗi khi đặt lại mật khẩu.');
-                }
-            })
-            .catch((error) => {
-                toast.error('Đã xảy ra lỗi khi gửi yêu cầu.');
-            })
-            .finally(() => {
-                setLoading(false);
+
+        try {
+            const response = await api.post('/accounts/update-password', { email, newPassword });
+            if (response && response.status === 200) {
+                toast.success(response.data, {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
+            
+            }
+            setTimeout(() => {
+                navigate("/login");
+            }, 2000);
+        } catch (error) {
+            toast.error(error.data, {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
             });
+        }
     };
 
-    // Toggle password visibility for New Password
+    // Toggle visibility cho mật khẩu mới
     const toggleNewPasswordVisibility = () => {
         setShowNewPassword(!showNewPassword);
     };
 
-    // Toggle password visibility for Confirm Password
+    // Toggle visibility cho mật khẩu xác nhận
     const toggleConfirmPasswordVisibility = () => {
         setShowConfirmPassword(!showConfirmPassword);
     };
@@ -113,7 +136,7 @@ const ForgotPassword = () => {
                             </Link>
                         </div>
 
-                        {/* Step 1: Enter Email */}
+                        {/* Bước 1: Nhập email */}
                         {step === 'enterEmail' && (
                             <>
                                 <h2 className={styles.formTitle}>Quên mật khẩu</h2>
@@ -138,14 +161,14 @@ const ForgotPassword = () => {
                             </>
                         )}
 
-                        {/* Step 2: Reset Password */}
+                        {/* Bước 2: Đặt lại mật khẩu */}
                         {step === 'resetPassword' && (
                             <>
                                 <h2 className={styles.formTitle}>Đặt lại mật khẩu</h2>
                                 <p className={styles.formDescription}>Vui lòng nhập mật khẩu mới của bạn.</p>
                                 <Form onSubmit={handleResetPassword}>
                                     <div className={styles.formWrapper}>
-                                        {/* New Password Field */}
+                                        {/* Mật khẩu mới */}
                                         <Form.Group controlId="formNewPassword" className={styles.formGroup}>
                                             <Form.Label>Mật khẩu mới</Form.Label>
                                             <div className={styles.passwordWrapper}>
@@ -164,7 +187,7 @@ const ForgotPassword = () => {
                                             </div>
                                         </Form.Group>
 
-                                        {/* Confirm Password Field */}
+                                        {/* Xác nhận mật khẩu */}
                                         <Form.Group controlId="formConfirmPassword" className={styles.formGroup}>
                                             <Form.Label>Xác nhận mật khẩu</Form.Label>
                                             <div className={styles.passwordWrapper}>

@@ -21,7 +21,7 @@ export default function Sidebar({ customer, onLayoutClick }) {
 
   const handleLogout = () => {
     // Clear session or localStorage (Assuming you store the token in localStorage)
-    localStorage.removeItem('authToken'); // Or remove any session or cookie information
+    localStorage.removeItem('token'); // Or remove any session or cookie information
 
     // Redirect to login page
     navigate('/login'); 
