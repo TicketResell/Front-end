@@ -1,0 +1,117 @@
+// Variables for colors, fonts, and spacing
+$primary-color: #007BFF;
+$text-color: #333;
+$background-color: #f9f9f9;
+$secondary-color: #555;
+$border-color: #eaeaea;
+$spacing: 20px;
+$font-family: 'Arial', sans-serif;
+$heading-font-size: 36px;
+$subheading-font-size: 28px;
+
+// Mixin for flexbox centering
+@mixin flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+// Global styles
+body {
+    font-family: $font-family;
+    background-color: $background-color;
+    color: $text-color;
+    margin: 0;
+    padding: 0;
+}
+
+// About Page Container
+.about-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: $spacing;
+
+    // Header Section
+    .about-header {
+        background-color: $background-color;
+        text-align: center;
+        padding: 40px 0;
+        border-bottom: 2px solid $border-color;
+        margin-bottom: $spacing;
+
+        h1 {
+            font-size: $heading-font-size;
+            color: $primary-color;
+        }
+
+        p {
+            font-size: 18px;
+            color: $secondary-color;
+        }
+    }
+
+    // About Content
+    .about-content {
+        margin-top: 40px;
+        
+        h2 {
+            font-size: $subheading-font-size;
+            color: $text-color;
+            margin-bottom: 15px;
+        }
+
+        .about-mission, 
+        .about-values, 
+        .about-team {
+            margin-bottom: 30px;
+            padding: $spacing;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid $border-color;
+        }
+
+        .about-values {
+            ul {
+                list-style-type: square;
+                padding-left: 20px;
+
+                li {
+                    margin-bottom: 8px;
+                    font-size: 16px;
+                    color: $secondary-color;
+                }
+            }
+        }
+    }
+
+    // Contact Section
+    .about-contact {
+        background-color: $background-color;
+        padding: $spacing;
+        border-radius: 8px;
+        margin-top: 40px;
+
+        h2 {
+            font-size: $subheading-font-size;
+            color: $text-color;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+
+            li {
+                margin-bottom: 8px;
+                font-size: 16px;
+                color: $secondary-color;
+
+                &::before {
+                    content: '• ';
+                    color: $primary-color;
+                    margin-right: 5px;
+                }
+            }
+        }
+    }
+}

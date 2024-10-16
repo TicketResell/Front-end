@@ -1,5 +1,5 @@
 import { Navbar, Nav, Container,Button } from "react-bootstrap";
-import styles from "../NavBar/NavigationBar.module.scss";
+import styles from "./NavigationBar.module.scss";
 import logo from "../../../assets/images/ticket-logo.png";
 import classNames from "classnames/bind";
 import { GoBell } from "react-icons/go";
@@ -81,10 +81,12 @@ const fetchCategoryNav = async () =>{
             </Button>
             {showNofitication && (<Notification listNofitication={listNofitication}/>)}
             <Button variant="outline-light"  className={cx("custom-button")}  style={{ marginRight: "10px" }} href={user.role === "user" ? "/customer" : user.role === "staff" ? "/staff" : "/admin"}>
+
               <img src={user.user_image} alt="User" style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
+
               <span style={{ marginLeft: '10px', color: '#fff' }}>{user.fullname}</span>
             </Button>
-            <Button variant="outline-light" style={{ marginRight: "10px" }} onClick={handleLogout}>
+            <Button variant="outline-light"  className={cx("custom-button")}  style={{ marginRight: "10px" }} onClick={handleLogout}>
             <span style={{ marginLeft: '10px', color: '#fff' }} >Logout</span>
             <TbLogout /> 
             </Button>

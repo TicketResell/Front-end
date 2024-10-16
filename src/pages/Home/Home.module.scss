@@ -1,0 +1,45 @@
+.notification-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #55cfeb; /* Màu vàng nhạt */
+    border-radius: 5px;
+    padding: 20px;
+    color: #55cfeb; /* Màu chữ vàng nhạt */
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    width: 100%;
+    max-width: 800px; /* Điều chỉnh độ rộng tối đa */
+    margin: 20px auto; /* Căn giữa thông báo */
+  }
+  
+  .notification-icon {
+    margin-bottom: 12px;
+    font-size: 35px;
+  }
+.span-flame {
+    background-image: url("https://dl.dropbox.com/s/r2s8s2r17wi0xm6/flame.png?dl=0");
+    background-position: 0 -1000px;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: fire 4s linear infinite;
+  }
+  
+  h1 {
+    color: black;
+    font-size: 80px;
+    text-align: center;
+  }
+  
+  @keyframes fire {
+    0% {
+      background-position: 0% -50%;
+    }
+    100% {
+      background-position: 0% -25%;
+    }
+  }
+
+  
+
+

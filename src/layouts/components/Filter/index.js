@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { Container, Row, Col, Form } from "react-bootstrap";
 import { Range } from "react-range";
 
-function Filter() {
+function Filter({onFilterChange}) {
   const STEP = 0.1;
   const MIN = 0;
-  const MAX = 200;
+  const MAX = 300;
   const MAX_QUANTITY = 30;
-  const [priceRange, setPriceRange] = useState([0, 100]); 
+  const [priceRange, setPriceRange] = useState([MIN, MAX]); 
   const [quantity, setQuantity] = useState(1); 
 
   const handleQuantityChange = (e) => {
@@ -21,8 +21,12 @@ function Filter() {
     } else {
       setQuantity(value); 
     }
+    onFilterChange(priceRange,value);
   };
-
+const handlePriceRange = (newPriceRange) =>{
+  setPriceRange(newPriceRange);
+  onFilterChange(newPriceRange, quantity);
+}
   return (
     <Container className="p-4">
       <h2 className="text-center mb-4">Product Filter</h2>
@@ -36,7 +40,7 @@ function Filter() {
             min={MIN}
             max={MAX}
             values={priceRange}
-            onChange={(e) => setPriceRange(e)}
+            onChange={handlePriceRange}
             renderTrack={({ props, children }) => (
               <div
                 onMouseDown={props.onMouseDown}
@@ -98,7 +102,7 @@ function Filter() {
       <Row>
         <Col>
           <div style={{ fontSize: "24px", fontWeight: "bold", padding: "10px 0" }}>
-            <strong>Price:</strong> £{priceRange[0].toFixed(2)} — £{priceRange[1].toFixed(2)}
+            <strong>Price:</strong> ${priceRange[0].toFixed(2)} — ${priceRange[1].toFixed(2)}
           </div>
           <div style={{ fontSize: "24px", fontWeight: "bold", padding: "10px 0" }}>
             <strong>Selected Quantity:</strong> {quantity} 

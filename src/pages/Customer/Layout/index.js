@@ -10,9 +10,9 @@ import NewTick from "../NewTicket";
 import TicketManage from "../TicketManage";
 import Profile from "../../Profile";
 import Feedback from "../Feedback";
-import { useState } from "react";
-import { useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useLocation } from "react-router-dom";
+import { useState , useEffect} from "react";
+
 
 const cx = classNames.bind(styles);
 
@@ -60,7 +60,7 @@ export default function CustomerLayout() {
       case "transaction":
         return <Transaction listTransactions={listTransactions}/>;
       case "chat":
-        return <Chat ticket={ticket} userId={user.id}/>;
+        return <Chat ticket={ticket} user={user}/>;
       case "newTicket":
         return <NewTick user={user}/>
       case "setTicket":

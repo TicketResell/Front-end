@@ -62,9 +62,6 @@ export default function SmallCard ({types}){
           <Row>
             <Col>
               <h1>{types.name === "Revenue" ? "$" : ""}{types.number}</h1>
-              <p style={{ color: types.status === "up" ? '#17B26A' : '#F04438' }}>
-                {types.status === "up" ? (<PiChartLineUpBold />):(<PiChartLineDownBold/>) } {types.percent}% vs last quarter
-              </p>
             </Col>
             <Col xs={4}>
               <div style={{ height: '50px' }}> 
