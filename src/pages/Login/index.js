@@ -115,9 +115,9 @@ function Login() {
         <Container fluid className={cx('vh-100', 'login-screen')}>
             <ToastContainer />
             <Row className={cx('h-100')}>
-                <Col md={6} className={cx('d-none', 'd-md-block', 'gradient-background')}></Col>
+                <Col md={12} className={cx('d-none', 'd-md-block', 'gradient-background')}></Col>
 
-                <Col md={6} className={cx('d-flex', 'align-items-center', 'justify-content-center')}>
+                <Col md={12} className={cx('d-flex', 'align-items-center', 'justify-content-center')}>
                     <div className={cx('form-container')}>
                         <h2 className={cx('mb-4')} style={{ paddingBottom: '20px' }}>Đăng nhập</h2>
                         <Form style={{ marginTop: '-20px' }} onSubmit={handleSubmit}>

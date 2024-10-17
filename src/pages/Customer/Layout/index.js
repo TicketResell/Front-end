@@ -9,10 +9,10 @@ import noImg from "../../../assets/images/crowd-background.jpg";
 import NewTick from "../NewTicket";
 import TicketManage from "../TicketManage";
 import Profile from "../../Profile";
-
 import Feedback from "../Feedback";
 import { useLocation } from "react-router-dom";
 import { useState , useEffect} from "react";
+
 
 const cx = classNames.bind(styles);
 
@@ -66,9 +66,9 @@ export default function CustomerLayout() {
       case "setTicket":
         return <TicketManage user={user} />
       case "profile":
-        return <Profile/>
+        return <Profile user={user}/>
       case "feedback":
-        return <Feedback/>
+        return <Feedback user={user}/>
       default:
         return <Overview />;
     }

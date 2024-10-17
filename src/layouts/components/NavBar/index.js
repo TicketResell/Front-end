@@ -81,7 +81,9 @@ const fetchCategoryNav = async () =>{
             </Button>
             {showNofitication && (<Notification listNofitication={listNofitication}/>)}
             <Button variant="outline-light"  className={cx("custom-button")}  style={{ marginRight: "10px" }} href={user.role === "user" ? "/customer" : user.role === "staff" ? "/staff" : "/admin"}>
-              <img src="https://i.ibb.co/dgqkgmG/449599615-3620590704862022-5850338827335267447-n.jpg"alt="User" style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
+
+              <img src={user.user_image} alt="User" style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
+
               <span style={{ marginLeft: '10px', color: '#fff' }}>{user.fullname}</span>
             </Button>
             <Button variant="outline-light"  className={cx("custom-button")}  style={{ marginRight: "10px" }} onClick={handleLogout}>
