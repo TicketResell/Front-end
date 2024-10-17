@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { differenceInDays, parse } from "date-fns";
 import Categories from "../../layouts/components/Categories";
 import Pagination from "../../layouts/components/Pagination";
-import Filter from "../../layouts/components/Filter";
+import Filter from "../../layouts/components/Filter"; // Vẫn giữ import Filter
 import styles from "./Home.module.scss";
 import { IoWarning } from "react-icons/io5";
 import classNames from "classnames/bind";
@@ -16,49 +16,43 @@ function Home() {
   const [nearlyExpiredTickets, setNearlyExpiredTickets] = useState([]);
   const [normalTickets, setNormalTickets] = useState([]);
   const [categories, setCategories] = useState([]);
-  // State phân trang của từng mục vé
   const [nearlyExpiredPage, setNearlyExpiredPage] = useState(0);
   const [normalPage, setNormalPage] = useState(0);
   const [filteredNearlyExpired, setFilteredNearlyExpired] = useState([]);
   const [filteredNormal, setFilteredNormal] = useState([]);
   const itemsPerPage = 4;
 
-  const filterTickets = (tickets, priceRange, quantity) => {
+  const filterTickets = (tickets, priceRange) => {
     return tickets.filter(
       (ticket) =>
         ticket.price >= priceRange[0] &&
-        ticket.price <= priceRange[1] &&
-        ticket.quantity >= quantity
+        ticket.price <= priceRange[1]
     );
   };
 
-  const handleFilterChange = (priceRange, quantity) => {
+  const handleFilterChange = (priceRange) => {
     const filteredNearlyExpired = filterTickets(
       nearlyExpiredTickets.slice(
         nearlyExpiredPage * itemsPerPage,
         (nearlyExpiredPage + 1) * itemsPerPage
       ),
-      priceRange,
-      quantity
+      priceRange
     );
     const filteredNormal = filterTickets(
       normalTickets.slice(
         normalPage * itemsPerPage,
         (normalPage + 1) * itemsPerPage
       ),
-      priceRange,
-      quantity
+      priceRange
     );
     setFilteredNearlyExpired(filteredNearlyExpired);
     setFilteredNormal(filteredNormal);
   };
 
-  // Sau khi lấy được vé từ search
   const handleSearchResults = async (ticket) => {
     ticketClassification(ticket);
   };
 
-  // Phân loại vé
   const ticketClassification = (tickets) => {
     const ticketArray = Array.isArray(tickets) ? tickets : [tickets];
     const now = new Date();
@@ -82,9 +76,9 @@ function Home() {
   };
 
   const fetchTickets = async () => {
-    // Call API get tickets
     try {
       const response = await api.get("/tickets");
+      console.log("Tickets List", response.data);
       ticketClassification(response.data);
     } catch (err) {
       console.error(err);
@@ -109,11 +103,14 @@ function Home() {
     }
   };
 
-  // Mỗi lần load lại trang lấy dữ liệu
   useEffect(() => {
     fetchTickets();
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    handleFilterChange([0, 100]); // Giá trị mặc định của bộ lọc ban đầu
+  }, [nearlyExpiredPage, normalPage, nearlyExpiredTickets, normalTickets]);
 
   return (
     <>
@@ -135,11 +132,9 @@ function Home() {
                 border="0"
               />
             </span>{" "}
-            <img src="https://i.ibb.co/Vq72zMp/icons8-fire.gif" alt="icons8-fire" border="0"/>
-            <img src="https://i.ibb.co/Vq72zMp/icons8-fire.gif" alt="icons8-fire" border="0"/>
+            <img src="https://i.ibb.co/Vq72zMp/icons8-fire.gif" alt="icons8-fire" border="0" />
+            <img src="https://i.ibb.co/Vq72zMp/icons8-fire.gif" alt="icons8-fire" border="0" />
           </h1>
-          <h1 className={cx("flame")}></h1>
-          <h1 className={cx("glow")}></h1>
           {filteredNearlyExpired.length === 0 ? (
             <div className={cx("notification-container")}>
               <span className={cx("notification-icon")}>
@@ -161,7 +156,7 @@ function Home() {
             onPageChange={(selectedPage) => setNearlyExpiredPage(selectedPage)}
           />
 
-          <h1>Normal Tickets</h1>
+          <h1>Hot Deal Tickets</h1>
           {filteredNormal.length === 0 ? (
             <div className={cx("notification-container")}>
               <span className={cx("notification-icon")}>

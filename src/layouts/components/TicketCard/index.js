@@ -31,7 +31,7 @@ function TicketCard({ticket}) {
           <Col xs={9}>
             <ListGroup className="list-group-flush">
               <ListGroup.Item>Type : {ticket.ticketType}</ListGroup.Item>
-              <ListGroup.Item>Location <IoLocationSharp /> : {ticket.location}</ListGroup.Item>
+              <ListGroup.Item className={cx("card-location")} >Location <IoLocationSharp /> : {ticket.location}</ListGroup.Item>
               <ListGroup.Item>Date <MdOutlineDateRange /> : {ticket.eventDate}</ListGroup.Item>
               <ListGroup.Item>
               <span className={cx("price-sale")}><IoPricetagsSharp /> {ticket.price}$</span></ListGroup.Item>

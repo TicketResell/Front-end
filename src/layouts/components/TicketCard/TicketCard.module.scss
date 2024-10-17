@@ -26,9 +26,21 @@
   .card-title {
     font-size: 20px;
     transition: text-decoration 0.3s ease;
+    display: -webkit-box; 
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;  
+    overflow: hidden; 
+    text-overflow: ellipsis; 
     &:hover{
       text-decoration: underline;
     }
+  }
+  .card-location{
+    display: -webkit-box; // Sử dụng flexbox để xử lý chiều cao
+    -webkit-box-orient: vertical; // Xoay hướng hiển thị
+    -webkit-line-clamp: 2; // Giới hạn số dòng hiển thị (1 dòng)
+    overflow: hidden; // Ẩn phần văn bản vượt quá
+    text-overflow: ellipsis; // Hiển thị "..." cho văn bản bị cắt
   }
 }
 .price-original {

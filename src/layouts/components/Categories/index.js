@@ -25,24 +25,21 @@ function Categories({ categories, clickCategory, clickAll }) {
               </div>
             </Col>
           ))}
-
-          {/* "All Categories" as a Card */}
-          <Col xs={12} md={6} lg={3} className={cx("mb-4")}>
-            <div className={cx("card")} onClick={clickAll}>
-              <img
-                src="https://i.ibb.co/sVqtRrc/raffle-tickets-600x600.jpg"
-                alt="All Categories"
-              />
-              <div className={cx("info")}>
-                <h1>All Categories</h1>
-                <p></p>
-                <button className={cx("all-button")}>
-                  View More
-                </button>
-              </div>
-            </div>
-          </Col>
         </div>
+        {/* "All Categories" as a Card */}
+        <Row>
+          <div className={cx("card")} onClick={clickAll}>
+            <img
+              src="https://i.ibb.co/sVqtRrc/raffle-tickets-600x600.jpg"
+              alt="All Categories"
+            />
+            <div className={cx("info")}>
+              <h1>All Categories</h1>
+              <p></p>
+              <button className={cx("all-button")}>View More</button>
+            </div>
+          </div>
+        </Row>
       </Row>
     </Container>
   );
