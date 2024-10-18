@@ -1,11 +1,145 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@800&display=swap');
-.contain{
-  font-family: "Nunito", sans-serif;
-}
-.navbar-brand {
-  font-optical-sizing: auto;
-  font-weight: 800;
-  font-style: normal;
+// Set primary colors and common variables
+$primary-color: #fff;
+$secondary-color: #f8b400;
+$background-color: rgba(0, 0, 0, 0.7);
+
+.navbar {
+  background-color: $background-color !important;
+  font-family: 'Roboto', sans-serif;
+  padding: 10px 0;
+
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+
+    img {
+      max-width: 180px;
+      height: auto;
+    }
+
+    h1 {
+      margin-left: 15px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: $primary-color;
+    }
+  }
+
+  .nav-link {
+    color: $primary-color !important;
+    font-size: 18px;
+    font-weight: 600;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      color: $secondary-color !important;
+      transform: scale(1.1);
+    }
+
+    &.active {
+      border-bottom: 2px solid $secondary-color;
+    }
+  }
+
+  .contain {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .me-auto {
+    margin-right: auto;
+  }
+
+  .navbar-toggler {
+    border-color: $primary-color;
+
+    &:focus {
+      box-shadow: none;
+    }
+
+    .navbar-toggler-icon {
+      color: $primary-color;
+    }
+  }
+
+  .btn-outline-light {
+    color: $primary-color;
+    border-color: $primary-color;
+    margin-right: 10px;
+
+    &:hover {
+      color: $secondary-color;
+      border-color: $secondary-color;
+      background-color: transparent;
+    }
+  }
+
+  .notification-btn, .user-btn, .logout-btn {
+    margin-right: 10px;
+    color: $primary-color;
+    font-size: 18px;
+  }
+
+  .user-btn img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+  }
+
+  .logout-btn {
+    display: flex;
+    align-items: center;
+
+    span {
+      margin-right: 10px;
+    }
+
+    &:hover {
+      color: $secondary-color;
+    }
+  }
 }
 
-  
+@media (max-width: 992px) {
+  .navbar-brand img {
+    width: 140px;
+  }
+
+  .nav-link {
+    font-size: 16px;
+  }
+
+  .btn-outline-light {
+    font-size: 14px;
+  }
+
+  .user-btn img {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 5px 0;
+
+    .navbar-brand {
+      flex-direction: column;
+      align-items: flex-start;
+
+      h1 {
+        margin-left: 0;
+        margin-top: 10px;
+      }
+    }
+
+    .nav-link {
+      font-size: 14px;
+    }
+
+    .btn-outline-light {
+      font-size: 12px;
+    }
+  }
+}
