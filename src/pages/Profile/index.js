@@ -3,79 +3,106 @@ import { FaCamera } from 'react-icons/fa'; // Import camera icon
 import styles from './Profile.module.scss';
 import api from '../../config';
 
-const Profile = ({user}) => {
+const Profile = ({ user }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
         fullname: "",
         phone: "",
         email: "",
-        gender: "",
-        address: ""
+        address: "",
+        userImage: "",
     });
     const [imageSrc, setImageSrc] = useState(""); // State for image source
     const [imageUploaded, setImageUploaded] = useState(false); // State to track image upload
-
+    const apiKey = "a393ae4d99828767ecd403ef4539e170"; // API Key cho imgbb
     const fileInputRef = useRef(null);
 
-    // Memoize the fetchProfile function using useCallback
+    // Fetch profile data
     const fetchProfile = useCallback(async () => {
         try {
-            const response = await api.get(`accounts/profile/${user.sub}`)
+            const response = await api.get(`accounts/profile/${user.sub}`);
             if (response.status === 200) {
                 setFormData({
                     fullname: response.data.fullname,
                     phone: response.data.phone,
                     email: response.data.email,
-                    gender: response.data.gender,
                     address: response.data.address,
+                    userImage: response.data.userImage || "",
                 });
-                setImageSrc(response.data.profileImage || "https://via.placeholder.com/150");
+                setImageSrc(response.data.userImage || "https://via.placeholder.com/150");
             }
         } catch (error) {
             console.error('Error fetching profile:', error);
         }
-    }, []);
+    }, [user.sub]);
 
-    // API call to fetch profile based on role
+    // Fetch profile on component mount
     useEffect(() => {
         fetchProfile();
-    }, [fetchProfile]); // Now fetchProfile is in the dependency array
+    }, [fetchProfile]);
 
-    const handleUpdateProfile = () => {
+    const handleUpdateProfile = async () => {
         if (isEditing) {
-            // Logic to save updated data (API call to update)
-            const updateProfile = async () => {
-                try {
-                    const response = await api.put(`accounts/profile/${user.sub}`)
-                    if (response) {
-                        setIsEditing(false);
-                    }
-                } catch (error) {
-                    console.error('Error updating profile:', error);
-                }
-            };
+            // Cập nhật profile với thông tin và ảnh mới (URL từ imgBB)
+            try {
+                // Log data being sent
+                console.log("Updating profile with data:", {
+                    ...formData,
+                    userImage: imageSrc, // Ensure imageSrc is used here
+                });
+                const response = await api.put(`accounts/profile/${user.sub}`, {
+                    ...formData,
+                    userImage: imageSrc, // Sử dụng URL đã lưu trong imageSrc
+                });
 
-            updateProfile();
+                if (response.status === 200) {
+                    setIsEditing(false);
+                    console.log("Profile updated successfully.");
+                } else {
+                    console.error("Failed to update profile. Status:", response.status);
+                }
+            } catch (error) {
+                console.error("Error updating profile:", error.response ? error.response.data : error.message);
+            }
         } else {
             setIsEditing(true);
             setImageUploaded(false);
         }
     };
 
-    const handleInputChange = (e) => {
+    const handleInputChange = useCallback((e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: value,
+        }));
+    }, []);
 
-    const handleImageUpload = (e) => {
+    // Handle Image Upload with imgBB
+    const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImageSrc(reader.result);
-                setImageUploaded(true);
-            };
-            reader.readAsDataURL(file);
+            const formData = new FormData();
+            formData.append("image", file);
+
+            try {
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const data = await response.json();
+
+                if (data && data.data && data.data.url) {
+                    setImageSrc(data.data.url); // Sử dụng URL ảnh từ imgBB
+                    setFormData((prevFormData) => ({ ...prevFormData, userImage: data.data.url })); // Update formData with new image URL
+                    setImageUploaded(true); // Đánh dấu đã upload ảnh
+                } else {
+                    console.error('Không thể tải ảnh lên imgBB');
+                }
+            } catch (error) {
+                console.error('Lỗi khi tải ảnh lên imgBB:', error);
+            }
         }
     };
 
@@ -117,7 +144,6 @@ const Profile = ({user}) => {
                             </button>
                         )}
                     </div>
-
                     <div className={styles.contactInfo}>
                         <h2>{isEditing ? "Cập nhật thông tin" : "Thông tin liên hệ"}</h2>
                         <form>
@@ -125,7 +151,7 @@ const Profile = ({user}) => {
                                 Họ và tên:
                                 <input
                                     type="text"
-                                    name="fullName"
+                                    name="fullname"
                                     value={formData.fullname}
                                     onChange={handleInputChange}
                                     readOnly={!isEditing}
@@ -152,16 +178,6 @@ const Profile = ({user}) => {
                                 />
                             </label>
                             <label>
-                                Giới tính:
-                                <input
-                                    type="text"
-                                    name="gender"
-                                    value={formData.gender}
-                                    onChange={handleInputChange}
-                                    readOnly={!isEditing}
-                                />
-                            </label>
-                            <label>
                                 Địa chỉ:
                                 <textarea
                                     name="address"
@@ -171,7 +187,6 @@ const Profile = ({user}) => {
                                 />
                             </label>
                         </form>
-
                         <button className={styles.updateButton} onClick={handleUpdateProfile}>
                             {isEditing ? "Lưu thông tin" : "Cập nhật thông tin"}
                         </button>
