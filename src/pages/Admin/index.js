@@ -92,6 +92,8 @@ const Admin = () => {
     };
 
     const chartOptions = {
+        responsive: true,  // Make the charts responsive
+        maintainAspectRatio: false,  // Allow changing size based on container
         scales: {
             y: {
                 beginAtZero: true,
@@ -101,7 +103,6 @@ const Admin = () => {
 
     return (
         <div className={styles.adminPage}>
-            {/* <NavigationBar /> */}
             <main className="container">
                 <h1 className="mt-4">Trang Quản Trị</h1>
 
@@ -109,15 +110,21 @@ const Admin = () => {
                 <div className="row">
                     <div className="col-md-4">
                         <h3>Doanh thu tháng</h3>
-                        <Line data={chartData1} options={chartOptions} />
+                        <div style={{ height: '300px' }}>
+                            <Line data={chartData1} options={chartOptions} />
+                        </div>
                     </div>
                     <div className="col-md-4">
                         <h3>Bình chọn</h3>
-                        <Bar data={chartData2} options={chartOptions} />
+                        <div style={{ height: '300px' }}>
+                            <Bar data={chartData2} options={chartOptions} />
+                        </div>
                     </div>
                     <div className="col-md-4">
                         <h3>Biểu đồ giới tính</h3>
-                        <Pie data={genderChartData} options={chartOptions} />
+                        <div style={{ height: '300px' }}>
+                            <Pie data={genderChartData} options={chartOptions} />
+                        </div>
                     </div>
                 </div>
 
@@ -131,9 +138,7 @@ const Admin = () => {
                             <th>Email</th>
                             <th>Ngày sinh</th>
                             <th>Giới tính</th>
-                            <th>Địa chỉ</th>
-                            <th>Điện thoại</th>
-                            <th>Thao tác</th>
+                            <th>Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -144,18 +149,17 @@ const Admin = () => {
                                 <td>{user.email}</td>
                                 <td>{user.birthdate}</td>
                                 <td>{user.gender}</td>
-                                <td>{user.address}</td>
-                                <td>{user.phone}</td>
                                 <td>
-                                    <button className="btn btn-primary" onClick={() => handleEditUser(user.id)}>Edit</button>
-                                    <button className="btn btn-danger" onClick={() => handleDeleteUser(user.id)}>Delete</button>
+                                    <button className="btn btn-primary btn-sm me-2" onClick={() => handleEditUser(user.id)}>Edit</button>
+                                    <button className="btn btn-danger btn-sm" onClick={() => handleDeleteUser(user.id)}>Delete</button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
-
             </main>
+
+            {/* Footer */}
             <Footer />
         </div>
     );
