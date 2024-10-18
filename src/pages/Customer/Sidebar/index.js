@@ -12,8 +12,6 @@ import classNames from "classnames/bind";
 import styles from "./Sidebar.module.scss";
 import Spinner from "react-bootstrap/Spinner";
 import { useNavigate } from "react-router-dom";
-import { Spinner } from 'react-bootstrap';
-
 const cx = classNames.bind(styles);
 
 export default function Sidebar({ customer, onLayoutClick }) {

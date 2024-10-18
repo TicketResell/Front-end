@@ -42,7 +42,8 @@ function TicketDetail() {
     navigate("/order",{ state: { data: ticket } })
   }
   const handleBargain = () =>{
-    navigate("/customer",{ state: { data: ticket,currentLayout : "chat" } })
+    console.log("Ticket handleBargain",ticket);
+    navigate("/customer",{ state: { ticket : ticket , currentLayout : "chat" } })
   }
   return (
     <section className={cx("py-5")}>
