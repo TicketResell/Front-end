@@ -6,6 +6,7 @@ import GlobalStyles from "./components/GlobalStyle";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 
 
 const root = ReactDOM.createRoot(document.getElementById("root"));

@@ -136,4 +136,13 @@
       font-size: 42px;
     }
   }
+  .message-sender {
+    display: flex;
+    justify-content: flex-start; // Đẩy tin nhắn của người gửi sang trái
+  }
+  
+  .message-receiver {
+    display: flex;
+    justify-content: flex-end; // Đẩy tin nhắn của người nhận sang phải
+  }  
   
