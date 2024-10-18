@@ -9,6 +9,7 @@ import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { GoogleLogin } from '@react-oauth/google';
 import {jwtDecode} from "jwt-decode";
 import api from "../../config";
+import ticketLogo from '../../assets/images/ticket-logo.png';
 
 function Login() {
     const cx = classNames.bind(styles);
@@ -115,11 +116,16 @@ function Login() {
         <Container fluid className={cx('vh-100', 'login-screen')}>
             <ToastContainer />
             <Row className={cx('h-100')}>
-                <Col md={12} className={cx('d-none', 'd-md-block', 'gradient-background')}></Col>
+                <Col md={6} className={cx('d-none', 'd-flex','d-md-block', 'gradient-background')}>
+                <img src={ticketLogo} alt="Logo" className={cx('logo')} />
+                <h3 className={cx('welcome-text')}>Chào mừng đến với TicketResell!</h3>
+                </Col>
 
-                <Col md={12} className={cx('d-flex', 'align-items-center', 'justify-content-center')}>
+                <Col md={6} className={cx('d-flex', 'align-items-center', 'justify-content-center')}>
                     <div className={cx('form-container')}>
-                        <h2 className={cx('mb-4')} style={{ paddingBottom: '20px' }}>Đăng nhập</h2>
+
+                    <h2 className={cx('mb-4', 'form-title')} style={{ paddingBottom: '20px' }}>Đăng nhập</h2>
+
                         <Form style={{ marginTop: '-20px' }} onSubmit={handleSubmit}>
                             <Form.Group controlId="formBasicIdentifier" className={cx('mt-3', 'form-group')}>
                                 <Form.Control

@@ -13,6 +13,7 @@ const apiWithoutPrefix = axios.create({
 // Thêm interceptor cho instance API nếu cần
 const handleBefore = (config) => {
   const token = localStorage.getItem("token");
+
   if (token) {
     config.headers["Authorization"] = `Bearer ${token}`;
   }
