@@ -11,12 +11,19 @@
     display: flex;
   }
   .message-bubble {
-    background-color: #007bff; 
-    color: #fff; 
-    border-radius: 15px;
-    padding: 10px 15px; 
+    max-width: 60%;
     margin-bottom: 10px;
-    max-width: 70%;
+    padding: 10px;
+    border-radius: 15px;
+  }
+  .sent-message {
+    background-color: #0d6efd; 
+    align-self: flex-start; 
+  }
+  
+  .received-message {
+    background-color: #ffffff; 
+    align-self: flex-end;
   }
   .button-mess{
     width: 100%;
