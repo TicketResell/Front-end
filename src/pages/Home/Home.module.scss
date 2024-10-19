@@ -1,3 +1,5 @@
+
+
 .notification-container {
     display: flex;
     align-items: center;
@@ -13,6 +15,14 @@
     margin: 20px auto; /* Căn giữa thông báo */
   }
   
+  // Ensure the Categories component takes up the full height
+.Categories {
+  min-height: 100%; // Force it to take the full available height
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
   .notification-icon {
     margin-bottom: 12px;
     font-size: 35px;

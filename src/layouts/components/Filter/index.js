@@ -15,7 +15,7 @@ function Filter({ onFilterChange }) {
 
   return (
     <Container className="p-4">
-      <h2 className="text-center mb-4">Product Filter</h2>
+      {/* <h2 className="text-center mb-4">Product Filter</h2> */}
 
       {/* Input range cho giá tiền */}
       <Row className="mb-3">

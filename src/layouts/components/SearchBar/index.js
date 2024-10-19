@@ -97,7 +97,6 @@ function Search({ onSearch }) {
         className={`  ${styles.wrapper} p-4 `}
         style={{ maxWidth: "500px" }}
       >
-        <h2 className={` ${styles.header} text-center`}>SEARCH TICKET</h2>
         <Form onSubmit={handleSearch}>
           <InputGroup className="mb-3">
             <InputGroup.Text>
@@ -129,7 +128,7 @@ function Search({ onSearch }) {
             variant="primary"
             type="submit"
             className="w-100"
-            style={{ backgroundColor: "##4562EB" }}
+            // style={{ backgroundColor: "##4562EB" }}
           >
             SEARCH
           </Button>
