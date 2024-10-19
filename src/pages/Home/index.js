@@ -114,7 +114,7 @@ function Home() {
 
   return (
     <>
-     <Container style={{ paddingTop: '30px', backgroundColor: 'black' }}>
+     <Container style={{ paddingTop: '30px' }}>
   {/* Row for Search and Categories */}
   <Row>
     <Col xs={12} md={4} className="mb-4">
