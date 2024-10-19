@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import Notification from "./Nofitication";
 import api from "../../../config";
 import Search from "../SearchBar";
+import api from "../../../config/axios";
+
 
 function NavigationBar() {
   const cx = classNames.bind(styles);

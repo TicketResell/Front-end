@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { Link, useLocation,useNavigate } from 'react-router-dom'; // Sử dụng useLocation
 import styles from './ForgotPassword.module.scss'; // Import SCSS module
-import api from '../../config';
+import api from '../../config/axios';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');

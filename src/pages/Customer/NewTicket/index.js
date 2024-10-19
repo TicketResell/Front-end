@@ -11,7 +11,8 @@ import {
 import classNames from "classnames/bind";
 import styles from "./NewTick.module.scss";
 import { ToastContainer, toast, Bounce } from "react-toastify";
-import api from "../../../config";
+import api from "../../../config/axios";
+import uploadImgBB from "../../../config/imgBB";
 
 const cx = classNames.bind(styles);
 
@@ -37,28 +38,6 @@ export default function NewTick({ user }) {
     status: "onsale",
     quantity : "",
   });
-
-  const apiKey = "a393ae4d99828767ecd403ef4539e170";
-
-  async function uploadImgBB(files) {
-    const uploadPromises = files.map((file) => {
-      const formData = new FormData();
-      formData.append("image", file);
-
-      return fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
-        method: "POST",
-        body: formData,
-      })
-        .then((response) => response.json())
-        .then((data) => data.data.url)
-        .catch((error) => {
-          console.log("Upload error:", error);
-          return null;
-        });
-    });
-
-    return Promise.all(uploadPromises);
-  }
 
   const handleImageChange = async (e) => {
     const imageList = Array.from(e.target.files);

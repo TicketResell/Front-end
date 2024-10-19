@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import { confirmEmail, confirmPhone } from "../../services/api/RegisterAPI";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { ToastContainer, toast, Bounce } from "react-toastify";
-import api from "../../config";
+import api from "../../config/axios";
 
 function Register() {
   const cx = classNames.bind(styles);
