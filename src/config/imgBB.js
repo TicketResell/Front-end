@@ -8,7 +8,7 @@ async function uploadImgBB(files) {
         method: "POST",
         body: formData,
       })
-        .then((response) => response.json())
+        .then((response) => response.json()) 
         .then((data) => data.data.url)
         .catch((error) => {
           console.log("Upload error:", error);

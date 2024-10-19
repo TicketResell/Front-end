@@ -10,23 +10,18 @@ import {
   Conversation,
   Avatar,
   ConversationHeader,
-  Button,Search 
+  Search 
 } from "@chatscope/chat-ui-kit-react";
-import styles from "./Chat.module.scss";
 import { Client } from "@stomp/stompjs";
 import { ToastContainer, toast, Bounce } from "react-toastify";
-import classNames from "classnames/bind";
 import api from "../../../config/axios";
 
 
 export default function Chat({ ticket, user }) {
-  const cx = classNames.bind(styles);
-  const [messageContent, setMessageContent] = useState("");
   const [messages, setMessages] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isBuyer, setIsBuyer] = useState(false); // Sử dụng isBuyer để xác định vai trò
   const [userName, setUserName] = useState("");
-  const [chatType, setChatType] = useState("");
   const [connected, setConnected] = useState(false);
   const socket = useRef(null);
 
@@ -48,8 +43,6 @@ export default function Chat({ ticket, user }) {
 
   const handleSendMessage = (mess) => {
     console.log("User message:", mess);
-    setMessageContent(mess);
-    setChatType("text");
     if (!connected) {
       console.error("WebSocket is not connected");
       return;
@@ -57,9 +50,12 @@ export default function Chat({ ticket, user }) {
 
     const senderId = user.id;
     const receiverId = isBuyer ? ticket.userID : messages[0]?.senderId; // Xác định receiverId
-    if (!senderId || !messageContent.trim() || !receiverId || !chatType) {
+    console.log("senderId",senderId)
+    console.log("messageContent",mess)
+    console.log("receiverId",receiverId)
+    if (!senderId || !mess.trim() || !receiverId) {
       toast.error(
-        "Please enter full message content.",
+        "Please enter message content.",
         {
           position: "top-center",
           autoClose: 5000,
@@ -78,37 +74,11 @@ export default function Chat({ ticket, user }) {
     const messageToSend = JSON.stringify({
       senderId,
       receiverId,
-      messageContent,
-      chatType,
+      messageContent: mess,
+      chatType:'text',
     });
 
     console.log("Sending message:", messageToSend);
-
-    socket.current.publish({
-      destination: "/app/sendMessage",
-      body: messageToSend,
-    });
-
-    setMessageContent("");
-  };
-
-  const handleSignal = (signal) => {
-    if (!connected) {
-      console.error("WebSocket is not connected");
-      return;
-    }
-
-    const senderId = user.id;
-    const receiverId = isBuyer ? ticket.userID : messages[0]?.senderId;
-
-    const messageToSend = JSON.stringify({
-      senderId,
-      receiverId,
-      messageContent: signal,
-      chatType: "system",
-    });
-
-    console.log("Sending signal message:", messageToSend);
 
     socket.current.publish({
       destination: "/app/sendMessage",
@@ -129,7 +99,6 @@ export default function Chat({ ticket, user }) {
         type: 'file', // Đánh dấu kiểu tin nhắn là file
       };
       console.log("File :",file);
-      setChatType("file");
       setMessages((prevMessages) => [...prevMessages, fileMessage]);
 
       // Gửi file qua WebSocket nếu cần thiết (chỉ nếu bạn muốn)
@@ -194,16 +163,6 @@ export default function Chat({ ticket, user }) {
     }
   };
 
-
-  const handleDeal = () => {};
-
-  /*const handleChangeMessInput = (event) => {
-    if (!event || !event.target) {
-      console.error("Event or target is undefined");
-      return;
-    }
-    setMessageContent(event.target.value);
-  };*/
   useEffect(() => {
     const determineRole = () => {
       if (ticket && ticket.userID !== user.id) {
@@ -263,6 +222,7 @@ export default function Chat({ ticket, user }) {
             avatarSpacer= {true}
           >
              <Avatar  src="https://i.ibb.co/wpnnQ3Q/a882ecea-527f-4cd7-b2c4-2587a2d10e23.jpg"/>
+             <Message.ImageContent/> 
           </Message>
         ))}
       </MessageList>
