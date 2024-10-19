@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { Container, Row, Form, InputGroup, Button } from "react-bootstrap";
-import api from "../../../config";
+import api from "../../../config/axios";
 import styles from "./SearchBar.module.scss";
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 

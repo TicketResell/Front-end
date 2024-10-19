@@ -1,56 +1,48 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  Container,
-  Row,
-  Col,
-  InputGroup,
-  FormControl,
-  Button,
-  ListGroup,
-} from "react-bootstrap";
-import {
   MainContainer,
   ChatContainer,
   MessageList,
   Message,
   MessageInput,
+  Sidebar,
+  ConversationList,
+  Conversation,
+  Avatar,
+  ConversationHeader,
+  Search 
 } from "@chatscope/chat-ui-kit-react";
-import styles from "./Chat.module.scss";
 import { Client } from "@stomp/stompjs";
 import { ToastContainer, toast, Bounce } from "react-toastify";
-import classNames from "classnames/bind";
-import api from "../../../config";
+import api from "../../../config/axios";
+
 
 export default function Chat({ ticket, user }) {
-  const cx = classNames.bind(styles);
-  const [messageContent, setMessageContent] = useState("");
   const [messages, setMessages] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isBuyer, setIsBuyer] = useState(false); // Sử dụng isBuyer để xác định vai trò
   const [userName, setUserName] = useState("");
-  const [chatType, setChatType] = useState("");
   const [connected, setConnected] = useState(false);
   const socket = useRef(null);
 
-  const channels = [
-    { name: "Channel 1", lastMessage: "This is a message", date: "2022-01-01" },
+  const users = [
+    { name: "User 1", lastMessage: "This is a message", date: "2022-01-01" },
     {
-      name: "Channel 2",
+      name: "User 2",
       lastMessage: "Hello, get started",
       date: "2021-12-03",
     },
-    { name: "Channel 3", lastMessage: "Rigth", date: "2021-12-03" },
-    { name: "Channel 4", lastMessage: "Gato", date: "2021-12-03" },
-    { name: "Channel 5", lastMessage: "Naruto", date: "2021-12-03" },
+    { name: "User 3", lastMessage: "Rigth", date: "2021-12-03" },
+    { name: "User 4", lastMessage: "Gato", date: "2021-12-03" },
+    { name: "User 5", lastMessage: "Naruto", date: "2021-12-03" },
   ];
 
-  const filteredChannels = channels.filter((channel) =>
-    channel.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleSendMessage = (mess) => {
     console.log("User message:", mess);
-    setMessageContent(mess);
     if (!connected) {
       console.error("WebSocket is not connected");
       return;
@@ -58,9 +50,12 @@ export default function Chat({ ticket, user }) {
 
     const senderId = user.id;
     const receiverId = isBuyer ? ticket.userID : messages[0]?.senderId; // Xác định receiverId
-    if (!senderId || !messageContent.trim() || !receiverId || !chatType) {
+    console.log("senderId",senderId)
+    console.log("messageContent",mess)
+    console.log("receiverId",receiverId)
+    if (!senderId || !mess.trim() || !receiverId) {
       toast.error(
-        "Please enter full recipient information, chat type and message content.",
+        "Please enter message content.",
         {
           position: "top-center",
           autoClose: 5000,
@@ -79,8 +74,8 @@ export default function Chat({ ticket, user }) {
     const messageToSend = JSON.stringify({
       senderId,
       receiverId,
-      messageContent,
-      chatType,
+      messageContent: mess,
+      chatType:'text',
     });
 
     console.log("Sending message:", messageToSend);
@@ -89,33 +84,42 @@ export default function Chat({ ticket, user }) {
       destination: "/app/sendMessage",
       body: messageToSend,
     });
-
-    setMessageContent("");
   };
 
-  const handleSignal = (signal) => {
-    if (!connected) {
-      console.error("WebSocket is not connected");
-      return;
+  const handleAttachFile = () =>{
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const fileMessage = {
+        messageContent: `File: ${file.name}`, // Hiển thị tên file trong tin nhắn
+        senderId: user.id,
+        timestamp: new Date().toISOString(),
+        type: 'file', // Đánh dấu kiểu tin nhắn là file
+      };
+      console.log("File :",file);
+      setMessages((prevMessages) => [...prevMessages, fileMessage]);
+
+      // Gửi file qua WebSocket nếu cần thiết (chỉ nếu bạn muốn)
+      const senderId = user.id;
+      const receiverId = isBuyer ? ticket.userID : messages[0]?.senderId; // Xác định receiverId
+
+      const messageToSend = JSON.stringify({
+        senderId,
+        receiverId,
+        messageContent: `File: ${file.name}`,
+        chatType: 'file',
+      });
+
+      socket.current.publish({
+        destination: "/app/sendMessage",
+        body: messageToSend,
+      });
     }
-
-    const senderId = user.id;
-    const receiverId = isBuyer ? ticket.userID : messages[0]?.senderId;
-
-    const messageToSend = JSON.stringify({
-      senderId,
-      receiverId,
-      messageContent: signal,
-      chatType: "system",
-    });
-
-    console.log("Sending signal message:", messageToSend);
-
-    socket.current.publish({
-      destination: "/app/sendMessage",
-      body: messageToSend,
-    });
   };
+  input.click();
+  }
 
   const connectWebSocket = () => {
     socket.current = new Client({
@@ -152,21 +156,13 @@ export default function Chat({ ticket, user }) {
     console.log("Id dùng để get userName của người đối phương", id);
     try {
       const response = await api.post(`/accounts/hidden-search-profile/${id}`); // Gửi id trong URL
+      console.log("UserName : ",response.data);
       setUserName(response.data);
     } catch (error) {
       console.error("Error fetching user name", error);
     }
   };
 
-  const handleDeal = () => {};
-
-  const handleChangeMessInput = (event) => {
-    if (!event || !event.target) {
-      console.error("Event or target is undefined");
-      return;
-    }
-    setMessageContent(event.target.value);
-  };
   useEffect(() => {
     const determineRole = () => {
       if (ticket && ticket.userID !== user.id) {
@@ -189,88 +185,49 @@ export default function Chat({ ticket, user }) {
   }, [messages]); // Khi danh sách tin nhắn thay đổi thì kiểm tra lại vai trò
 
   return (
-    <Container fluid>
-      <ToastContainer />
-      <Row>
-        <Col md={4} className="sidebar">
-          <h2>Search</h2>
-          <FormControl
-            type="text"
-            placeholder="Search..."
-            className="mb-3"
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <h2>Channels</h2>
-          <ListGroup>
-            {filteredChannels.map((channel, index) => (
-              <ListGroup.Item key={index}>
-                <strong>{channel.name}</strong>
-                <br />
-                <small>{channel.lastMessage} </small>
-                <span>{channel.date}</span>
-              </ListGroup.Item>
-            ))}
-          </ListGroup>
-        </Col>
-        <Col md={8}>
-          <h1>Chat</h1>
-          <div className={cx("chat-window")}>
-            <MainContainer>
-              <ChatContainer>
-                <MessageList>
-                  {messages.map((message) => (
-                    <Message
-                      model={{
-                        message: message.messageContent,
-                        sentTime: message.timestamp,
-                        sender: message.senderId === user.id ? "You" : userName,
-                        position: message.senderId === user.id ? "sender" : "receiver"
-                      }}
-                      className={message.senderId === user.id ? cx("message-sender") : cx("message-receiver")}
-                    />
-                  ))}
-                </MessageList>
-                <MessageInput placeholder="Type message here"  onSend={handleSendMessage}/>
-              </ChatContainer>
-            </MainContainer>
-          </div>
-          <InputGroup className={cx("input-container")}>
-            <FormControl
-              as="select"
-              id="chatType"
-              value={chatType}
-              onChange={(e) => setChatType(e.target.value)}
-            >
-              <option value="">Chọn loại chat</option>
-              <option value="text">Tin nhắn văn bản</option>
-              <option value="image">Hình ảnh</option>
-              <option value="bid">Đấu giá</option>
-            </FormControl>
-          </InputGroup>
-          <Row>
-            <Col xs={6}>
-              <Button
-                variant="success"
-                className={cx("button-mess")}
-                onClick={() =>
-                  handleSignal(isBuyer ? "DISCOUNT MORE" : "REJECT")
-                }
-              >
-                {isBuyer ? "DISCOUNT MORE" : "REJECT"}
-              </Button>
-            </Col>
-            <Col xs={6}>
-              <Button
-                variant="danger"
-                className={cx("button-mess")}
-                onClick={handleDeal}
-              >
-                DEAL
-              </Button>
-            </Col>
-          </Row>
-        </Col>
-      </Row>
-    </Container>
+    <MainContainer >
+    <ToastContainer />
+    <Sidebar position="left">
+    <Search placeholder="Search..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e)}
+          onClearClick={() => setSearchTerm("")} />
+      <ConversationList>
+        {filteredUsers.map((user, index) => (
+          <Conversation key={index} name={user.name} lastSenderName={user.name} info = {user.lastMessage} active = {false}>
+            <Avatar src='https://i.ibb.co/wpnnQ3Q/a882ecea-527f-4cd7-b2c4-2587a2d10e23.jpg'/> 
+            <p>{user.lastMessage}</p>
+            <small>{user.date}</small>
+          </Conversation>
+        ))}
+      </ConversationList>
+    </Sidebar>
+      <ChatContainer>
+        
+      <ConversationHeader>
+        <Avatar src="https://i.ibb.co/wpnnQ3Q/a882ecea-527f-4cd7-b2c4-2587a2d10e23.jpg" status="dnd"/>
+        <ConversationHeader.Content userName={userName}></ConversationHeader.Content>
+      </ConversationHeader>
+      <MessageList>
+        {messages.map((message, index) => (
+          <Message
+            key={index}
+            model={{
+              message: message.type === 'file' ? `📎 ${message.messageContent}` : message.messageContent,
+              sentTime: message.timestamp,
+              sender: message.senderId === user.id ? "You" : userName,
+              direction : message.senderId === user.id ? "outgoing" : "incoming",
+              position: message.senderId === user.id ? "normal" : ""
+            }}
+            avatarSpacer= {true}
+          >
+             <Avatar  src="https://i.ibb.co/wpnnQ3Q/a882ecea-527f-4cd7-b2c4-2587a2d10e23.jpg"/>
+             <Message.ImageContent/> 
+          </Message>
+        ))}
+      </MessageList>
+      <MessageInput placeholder="Type message here" onSend={handleSendMessage} onAttachClick={handleAttachFile} />
+    </ChatContainer>
+  </MainContainer>
   );
 }

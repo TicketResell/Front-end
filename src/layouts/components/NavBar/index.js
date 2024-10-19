@@ -6,7 +6,7 @@ import { GoBell } from "react-icons/go";
 import { TbLogout } from "react-icons/tb";
 import { useEffect, useState } from "react";
 import Notification from "./Nofitication";
-import api from "../../../config";
+import api from "../../../config/axios";
 
 function NavigationBar() {
   const cx = classNames.bind(styles);

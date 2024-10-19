@@ -1,6 +1,6 @@
 import Search from "../../layouts/components/SearchBar";
 import TicketCard from "../../layouts/components/TicketCard";
-import api from "../../config";
+import api from "../../config/axios";
 import { Container, Row, Col } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { differenceInDays, parse } from "date-fns";

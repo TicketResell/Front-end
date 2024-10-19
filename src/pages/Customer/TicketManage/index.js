@@ -11,9 +11,9 @@ import {
   MDBTableHead,
   MDBTableBody,
 } from "mdb-react-ui-kit";
-import TicketEdit from "./TicketEdit";
-import api from "../../../config";
-import { ToastContainer, toast, Bounce } from "react-toastify";
+import TicketEdit from "./TicketEdit"; 
+import api from "../../../config/axios";
+import { ToastContainer, toast, Bounce } from 'react-toastify';
 
 function TicketManage({ user }) {
   const [tickets, setTickets] = useState([]);

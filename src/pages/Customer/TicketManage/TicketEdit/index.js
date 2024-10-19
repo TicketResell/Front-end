@@ -3,38 +3,14 @@ import { Button, Form, Row } from "react-bootstrap";
 import classNames from "classnames/bind";
 import styles from "./TicketEdit.module.scss";
 import { ToastContainer, toast, Bounce } from "react-toastify";
-import api from "../../../../config";
+import uploadImgBB from "../../../../config/imgBB";
 
 function TicketEdit({ ticket, onSave }) {
   console.log('ticket',ticket);
   const cx = classNames.bind(styles);
   const [formData, setFormData] = useState(ticket);
   const [showImages, setShowImages] = useState(ticket.imageUrls || []);
-  
-  const apiKey = "a393ae4d99828767ecd403ef4539e170";
 
-  // Upload images to imgBB
-  async function uploadImgBB(files) {
-    const uploadPromises = files.map((file) => {
-      const formData = new FormData();
-      formData.append("image", file);
-      
-      return fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
-        method: "POST",
-        body: formData,
-      })
-        .then((response) => response.json())
-        .then((data) => data.data.url)
-        .catch((error) => {
-          console.log("Upload error:", error);
-          return null;
-        });
-    });
-
-    return Promise.all(uploadPromises);
-  }
-
-  // Handle image change for preview and upload
   const handleImageChange = async (e) => {
     const imageList = Array.from(e.target.files);
 

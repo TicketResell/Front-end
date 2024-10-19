@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FaCamera } from 'react-icons/fa'; // Import camera icon
 import styles from './Profile.module.scss';
-import api from '../../config';
+import api from '../../config/axios';
 
 const Profile = ({ user }) => {
     const [isEditing, setIsEditing] = useState(false);
