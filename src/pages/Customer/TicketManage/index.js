@@ -1,10 +1,9 @@
-import { useState , useEffect} from "react";
+import { useState, useEffect } from "react";
 import {
   Container,
   Row,
   ButtonGroup,
   ToggleButton,
-  Button,
 } from "react-bootstrap";
 import {
   MDBBadge,
@@ -16,9 +15,8 @@ import TicketEdit from "./TicketEdit";
 import api from "../../../config/axios";
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 
-function TicketManage({user}) {
+function TicketManage({ user }) {
   const [tickets, setTickets] = useState([]);
-
   const [editRowId, setEditRowId] = useState(null);
   const [showEditForm, setShowEditForm] = useState(false); // Điều khiển form chỉnh sửa
 
@@ -37,37 +35,71 @@ function TicketManage({user}) {
   };
 
   const handleDelete = (id) => {
-    setTickets(tickets.filter((ticket) => ticket.id !== id));
+    // Hiển thị hộp thoại xác nhận trước khi xóa
+    const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa vé này không?");
+    
+    // Nếu người dùng xác nhận, xóa vé
+    if (confirmDelete) {
+      api.delete(`/tickets/${id}`)
+        .then(() => {
+          // Cập nhật lại danh sách vé sau khi xóa
+          setTickets(tickets.filter((ticket) => ticket.id !== id));
+          toast.success("Vé đã được xóa thành công!", {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          });
+        })
+        .catch((err) => {
+          toast.error(err.response.data, {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          });
+        });
+    }
   };
 
   const fetchTicketsByUserID = async () => {
-    //call api get tickets
     try {
-      console.log(" userID trong Ticket Manager",user.id)
+      console.log(" userID trong Ticket Manager", user.id);
       const response = await api.get(`/tickets/used/${user.id}`);
-      console.log("Ticketsby userID List",response.data);
+      console.log("Ticketsby userID List", response.data);
       setTickets(response.data);
     } catch (err) {
-        toast.error(err.response.data, {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
-        return;
+      toast.error(err.response.data, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   };
+
   useEffect(() => {
     fetchTicketsByUserID();
-  }, []);
+  }, [user.id]);
+
   return (
     <Container>
-      <ToastContainer/>
+      <ToastContainer />
       <Row>
         {showEditForm ? (
           <TicketEdit
@@ -78,18 +110,18 @@ function TicketManage({user}) {
           <MDBTable align="middle">
             <MDBTableHead>
               <tr>
-                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >TicketID</th>
-                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Image</th>
-                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Event Title</th>
-                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Category</th>
-                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Ticket Type</th>
-                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Event Date</th>
-                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Ticket Detail</th>
-                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Location</th>
-                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Price</th>
-                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Status</th>
-                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Quantity</th>
-                <th scope="col"style={{backgroundColor : "#8e65ff",color : "white"}} >Actions</th>
+                <th scope="col" style={{ backgroundColor: "#8e65ff", color: "white" }}>TicketID</th>
+                <th scope="col" style={{ backgroundColor: "#8e65ff", color: "white" }}>Image</th>
+                <th scope="col" style={{ backgroundColor: "#8e65ff", color: "white" }}>Event Title</th>
+                <th scope="col" style={{ backgroundColor: "#8e65ff", color: "white" }}>Category</th>
+                <th scope="col" style={{ backgroundColor: "#8e65ff", color: "white" }}>Ticket Type</th>
+                <th scope="col" style={{ backgroundColor: "#8e65ff", color: "white" }}>Event Date</th>
+                <th scope="col" style={{ backgroundColor: "#8e65ff", color: "white" }}>Ticket Detail</th>
+                <th scope="col" style={{ backgroundColor: "#8e65ff", color: "white" }}>Location</th>
+                <th scope="col" style={{ backgroundColor: "#8e65ff", color: "white" }}>Price</th>
+                <th scope="col" style={{ backgroundColor: "#8e65ff", color: "white" }}>Status</th>
+                <th scope="col" style={{ backgroundColor: "#8e65ff", color: "white" }}>Quantity</th>
+                <th scope="col" style={{ backgroundColor: "#8e65ff", color: "white" }}>Actions</th>
               </tr>
             </MDBTableHead>
             <MDBTableBody>
@@ -97,7 +129,7 @@ function TicketManage({user}) {
                 <tr key={ticket.id}>
                   <td>{ticket.id}</td>
                   <td>
-                  {ticket.imageUrls.map((imgSrc) => (
+                    {ticket.imageUrls.map((imgSrc) => (
                       <img
                         src={imgSrc}
                         alt="ticket"
@@ -113,7 +145,6 @@ function TicketManage({user}) {
                   <td>{ticket.ticketDetails}</td>
                   <td>{ticket.location}</td>
                   <td>{ticket.price}</td>
-                  <td>{ticket.quantity}</td>
                   <td>
                     <MDBBadge
                       color={
@@ -130,6 +161,7 @@ function TicketManage({user}) {
                       {ticket.status}
                     </MDBBadge>
                   </td>
+                  <td>{ticket.quantity}</td>
                   <td>
                     <ButtonGroup>
                       <ToggleButton
