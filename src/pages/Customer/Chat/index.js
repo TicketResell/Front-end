@@ -15,6 +15,7 @@ import {
 import { Client } from "@stomp/stompjs";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import api from "../../../config/axios";
+import uploadImgBB from "../../../config/imgBB";
 
 
 export default function Chat({ ticket, user }) {
@@ -89,17 +90,20 @@ export default function Chat({ ticket, user }) {
   const handleAttachFile = () =>{
   const input = document.createElement('input');
   input.type = 'file';
+  input.accept = 'image/*';
   input.onchange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const fileMessage = {
-        messageContent: `File: ${file.name}`, // Hiển thị tên file trong tin nhắn
+    const img = e.target.files[0];
+    if (img) {
+      const imageUrl = uploadImgBB(img);
+      const imageMessage = {
+        messageContent: imageUrl, // Hiển thị hình ảnh trong tin nhắn
         senderId: user.id,
         timestamp: new Date().toISOString(),
-        type: 'file', // Đánh dấu kiểu tin nhắn là file
+        type: 'image', // Đánh dấu kiểu tin nhắn là file
       };
-      console.log("File :",file);
-      setMessages((prevMessages) => [...prevMessages, fileMessage]);
+      //Thên hình ảnh vào messagelist
+      console.log("Image :",img);
+      setMessages((prevMessages) => [...prevMessages, imageMessage]);
 
       // Gửi file qua WebSocket nếu cần thiết (chỉ nếu bạn muốn)
       const senderId = user.id;
@@ -108,8 +112,8 @@ export default function Chat({ ticket, user }) {
       const messageToSend = JSON.stringify({
         senderId,
         receiverId,
-        messageContent: `File: ${file.name}`,
-        chatType: 'file',
+        messageContent: imageUrl,
+        chatType: 'image',
       });
 
       socket.current.publish({
@@ -221,8 +225,10 @@ export default function Chat({ ticket, user }) {
             }}
             avatarSpacer= {true}
           >
-             <Avatar  src="https://i.ibb.co/wpnnQ3Q/a882ecea-527f-4cd7-b2c4-2587a2d10e23.jpg"/>
-             <Message.ImageContent/> 
+             <Avatar  src={message.senderId === user.id ? user.image : messages[0]?.senderId.image}/> {/*user chính diện và user đối diện */}
+          {message.type === 'image' && (
+        <Message.ImageContent src={message.messageContent} alt="attached" style={{ maxWidth: "200px", borderRadius: "8px" }}/>
+      )}
           </Message>
         ))}
       </MessageList>
