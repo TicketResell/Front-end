@@ -8,7 +8,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { GoogleLogin } from '@react-oauth/google';
 import {jwtDecode} from "jwt-decode";
-import api from "../../config";
+import api from "../../config/axios";
 import ticketLogo from '../../assets/images/ticket-logo.png';
 
 function Login() {

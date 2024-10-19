@@ -13,7 +13,7 @@ import {
   MDBTableBody,
 } from "mdb-react-ui-kit";
 import TicketEdit from "./TicketEdit"; 
-import api from "../../../config";
+import api from "../../../config/axios";
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 
 function TicketManage({user}) {
