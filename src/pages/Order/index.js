@@ -154,6 +154,7 @@ const OrderPage = () => {
                     checked={order.orderMethod === 'COD'}
                     onChange={handleRadioChange}
                   />
+
                   <Form.Check
                     type="radio"
                     name="order_method"

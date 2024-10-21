@@ -1,9 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { FaCamera } from 'react-icons/fa'; // Import camera icon
+import { FaCamera } from 'react-icons/fa';
 import styles from './Profile.module.scss';
 import api from '../../config/axios';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import { Modal, Button } from 'react-bootstrap'; // Import Modal và Button từ react-bootstrap
 
-const Profile = ({ user }) => {
+const Profile = () => {
+    const [user, setUser] = useState(null);
+    const navigate = useNavigate();
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
         fullname: "",
@@ -12,13 +17,28 @@ const Profile = ({ user }) => {
         address: "",
         userImage: "",
     });
-    const [imageSrc, setImageSrc] = useState(""); // State for image source
-    const [imageUploaded, setImageUploaded] = useState(false); // State to track image upload
-    const apiKey = "a393ae4d99828767ecd403ef4539e170"; // API Key cho imgbb
+    const [imageSrc, setImageSrc] = useState("https://via.placeholder.com/150");
+    const [imageUploaded, setImageUploaded] = useState(false);
+    const apiKey = "a393ae4d99828767ecd403ef4539e170";
     const fileInputRef = useRef(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [modalShow, setModalShow] = useState(false); // State để quản lý modal
+    const [modalMessage, setModalMessage] = useState(""); // State để lưu thông điệp modal
 
-    // Fetch profile data
+    useEffect(() => {
+        const storedUser = JSON.parse(localStorage.getItem("user"));
+        if (storedUser) {
+            setUser(storedUser);
+            console.log("Bố ở đây nè con", storedUser);
+        }
+    }, []);
+
     const fetchProfile = useCallback(async () => {
+        if (!user || !user.sub) {
+            console.error("User or sub not found.");
+            return;
+        }
+
         try {
             const response = await api.get(`accounts/profile/${user.sub}`);
             if (response.status === 200) {
@@ -34,35 +54,56 @@ const Profile = ({ user }) => {
         } catch (error) {
             console.error('Error fetching profile:', error);
         }
-    }, [user.sub]);
+    }, [user]);
 
-    // Fetch profile on component mount
     useEffect(() => {
         fetchProfile();
     }, [fetchProfile]);
 
     const handleUpdateProfile = async () => {
         if (isEditing) {
-            // Cập nhật profile với thông tin và ảnh mới (URL từ imgBB)
+            const isEmptyField = Object.values(formData).some(value => value.trim() === "");
+
+            if (isEmptyField) {
+                setModalMessage("Vui lòng điền tất cả các trường."); // Cập nhật thông điệp modal
+                setModalShow(true); // Hiển thị modal
+                return;
+            }
+
             try {
-                // Log data being sent
-                console.log("Updating profile with data:", {
-                    ...formData,
-                    userImage: imageSrc, // Ensure imageSrc is used here
-                });
                 const response = await api.put(`accounts/profile/${user.sub}`, {
                     ...formData,
-                    userImage: imageSrc, // Sử dụng URL đã lưu trong imageSrc
+                    userImage: imageSrc,
                 });
 
                 if (response.status === 200) {
+                    setModalMessage("Cập nhật hồ sơ thành công!"); // Thông báo thành công
+                    setModalShow(true); // Hiển thị modal
+
+                    // Điều hướng đến trang chính sau khi nhấn "Đóng" trong modal
+                    const isProfileCompleteResponse = await api.post(`/accounts/is-full-data/${user.id}`);
+                    
+                    if (!isProfileCompleteResponse.data) {
+                        setModalMessage("Hồ sơ của bạn vẫn chưa đầy đủ. Vui lòng điền tất cả các trường cần thiết.");
+                        setModalShow(true);
+                    } else {
+                        setModalMessage("Hồ sơ của bạn đã được cập nhật thành công!");
+                        setModalShow(true);
+                        setTimeout(() => {
+                            navigate("/"); // Điều hướng về trang chính sau 2 giây
+                        }, 2000);
+                    }
+
                     setIsEditing(false);
-                    console.log("Profile updated successfully.");
                 } else {
                     console.error("Failed to update profile. Status:", response.status);
+                    setModalMessage("Cập nhật hồ sơ không thành công."); // Thông báo lỗi
+                    setModalShow(true);
                 }
             } catch (error) {
                 console.error("Error updating profile:", error.response ? error.response.data : error.message);
+                setModalMessage("Có lỗi xảy ra khi cập nhật hồ sơ."); // Thông báo lỗi
+                setModalShow(true);
             }
         } else {
             setIsEditing(true);
@@ -78,12 +119,12 @@ const Profile = ({ user }) => {
         }));
     }, []);
 
-    // Handle Image Upload with imgBB
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (file) {
             const formData = new FormData();
             formData.append("image", file);
+            setIsLoading(true);
 
             try {
                 const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
@@ -94,14 +135,16 @@ const Profile = ({ user }) => {
                 const data = await response.json();
 
                 if (data && data.data && data.data.url) {
-                    setImageSrc(data.data.url); // Sử dụng URL ảnh từ imgBB
-                    setFormData((prevFormData) => ({ ...prevFormData, userImage: data.data.url })); // Update formData with new image URL
-                    setImageUploaded(true); // Đánh dấu đã upload ảnh
+                    setImageSrc(data.data.url);
+                    setFormData((prevFormData) => ({ ...prevFormData, userImage: data.data.url }));
+                    setImageUploaded(true);
                 } else {
                     console.error('Không thể tải ảnh lên imgBB');
                 }
             } catch (error) {
                 console.error('Lỗi khi tải ảnh lên imgBB:', error);
+            } finally {
+                setIsLoading(false);
             }
         }
     };
@@ -112,6 +155,9 @@ const Profile = ({ user }) => {
             fileInputRef.current.click();
         }
     };
+
+    // Hàm để đóng modal
+    const handleCloseModal = () => setModalShow(false);
 
     return (
         <div className={styles.profilePage}>
@@ -124,18 +170,22 @@ const Profile = ({ user }) => {
                                 alt="Avatar"
                                 className={styles.avatar}
                             />
-                            {isEditing && !imageUploaded && (
-                                <label htmlFor="image-upload" className={styles.cameraIcon} onClick={handleChangeImage}>
-                                    <FaCamera />
-                                    <input
-                                        type="file"
-                                        ref={fileInputRef}
-                                        className={styles.uploadImage}
-                                        accept="image/*"
-                                        onChange={handleImageUpload}
-                                        style={{ display: 'none' }}
-                                    />
-                                </label>
+                            {isLoading ? (
+                                <div>Loading...</div>
+                            ) : (
+                                isEditing && !imageUploaded && (
+                                    <label htmlFor="image-upload" className={styles.cameraIcon} onClick={handleChangeImage}>
+                                        <FaCamera />
+                                        <input
+                                            type="file"
+                                            ref={fileInputRef}
+                                            className={styles.uploadImage}
+                                            accept="image/*"
+                                            onChange={handleImageUpload}
+                                            style={{ display: 'none' }}
+                                        />
+                                    </label>
+                                )
                             )}
                         </div>
                         {imageUploaded && isEditing && (
@@ -192,6 +242,19 @@ const Profile = ({ user }) => {
                         </button>
                     </div>
                 </div>
+
+                {/* Modal để hiển thị thông báo */}
+                <Modal show={modalShow} onHide={handleCloseModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Thông báo</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>{modalMessage}</Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleCloseModal}>
+                            Đóng
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
             </main>
         </div>
     );
