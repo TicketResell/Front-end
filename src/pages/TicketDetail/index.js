@@ -39,7 +39,7 @@ function TicketDetail() {
     setQuantity((quantity)=>quantity+1)
   }
   const handleBuy = () =>{
-    navigate("/order",{ state: { data: ticket } })
+    navigate("/order",{ state: { ticket: ticket, quantityOrder : quantity } })
   }
   const handleBargain = () =>{
     console.log("Ticket handleBargain",ticket);

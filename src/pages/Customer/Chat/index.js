@@ -24,6 +24,10 @@ export default function Chat({ ticket, user }) {
   const [isBuyer, setIsBuyer] = useState(false); // Sử dụng isBuyer để xác định vai trò
   const [userName, setUserName] = useState("");
   const [connected, setConnected] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(null);
+  const [unreadCounts, setUnreadCounts] = useState(
+    [3,5,7,4,4,5]
+  );
   const socket = useRef(null);
 
   const users = [
@@ -54,6 +58,7 @@ export default function Chat({ ticket, user }) {
     console.log("senderId",senderId)
     console.log("messageContent",mess)
     console.log("receiverId",receiverId)
+    console.log("Đối phương",userName)
     if (!senderId || !mess.trim() || !receiverId) {
       toast.error(
         "Please enter message content.",
@@ -73,10 +78,11 @@ export default function Chat({ ticket, user }) {
     }
 
     const messageToSend = JSON.stringify({
-      senderId,
-      receiverId,
+      user1_id : senderId,
+      user2_id : receiverId,
       messageContent: mess,
-      chatType:'text',
+      messageType:'text',
+      user2Name : userName,
     });
 
     console.log("Sending message:", messageToSend);
@@ -110,10 +116,11 @@ export default function Chat({ ticket, user }) {
       const receiverId = isBuyer ? ticket.userID : messages[0]?.senderId; // Xác định receiverId
 
       const messageToSend = JSON.stringify({
-        senderId,
-        receiverId,
+        user1_id : senderId,
+        user2_id : receiverId,
         messageContent: imageUrl,
-        chatType: 'image',
+        messageType: 'image',
+        user2Name : userName,
       });
 
       socket.current.publish({
@@ -134,13 +141,15 @@ export default function Chat({ ticket, user }) {
         setConnected(true);
 
         socket.current.subscribe("/topic/messages", (message) => {
+          console.log("Message Body JSON",message)
           const msg = JSON.parse(message.body);
-          console.log("Message body", msg);
+          console.log("Message được trả về",msg);
           setMessages((prevMessages) => [...prevMessages, msg]);
         });
 
         socket.current.subscribe("/topic/history", (history) => {
           const chatHistory = JSON.parse(history.body);
+          console.log("Chat History",chatHistory)
           setMessages(chatHistory);
         });
       },
@@ -161,6 +170,7 @@ export default function Chat({ ticket, user }) {
     try {
       const response = await api.post(`/accounts/hidden-search-profile/${id}`); // Gửi id trong URL
       console.log("UserName : ",response.data);
+      console.log("Tên người bán",response.data)
       setUserName(response.data);
     } catch (error) {
       console.error("Error fetching user name", error);
@@ -170,6 +180,8 @@ export default function Chat({ ticket, user }) {
   useEffect(() => {
     const determineRole = () => {
       if (ticket && ticket.userID !== user.id) {
+        console.log("Ticket UserID Determinerole",ticket.userID);
+        console.log("UserID Login Determinerole",user.id)
         setIsBuyer(true);
         getUserNameByID(ticket.userID); // Người mua get user của người bán
       } else {
@@ -188,6 +200,14 @@ export default function Chat({ ticket, user }) {
     };
   }, [messages]); // Khi danh sách tin nhắn thay đổi thì kiểm tra lại vai trò
 
+        // Hàm xử lý khi click vào một Conversation
+  const handleChatClick = (index) => {
+    setActiveIndex(index); // Cập nhật conversation đang active
+    setUnreadCounts((prevUnreadCounts) => 
+      prevUnreadCounts.map((count, i) => (i === index ? 0 : count)) // Đặt unreadCnt về 0 cho conversation được click
+    );
+  };
+
   return (
     <MainContainer >
     <ToastContainer />
@@ -198,10 +218,9 @@ export default function Chat({ ticket, user }) {
           onClearClick={() => setSearchTerm("")} />
       <ConversationList>
         {filteredUsers.map((user, index) => (
-          <Conversation key={index} name={user.name} lastSenderName={user.name} info = {user.lastMessage} active = {false}>
+          <Conversation key={index} name={user.name} lastSenderName={user.name} info = {user.lastMessage} active = {activeIndex === index}  unreadCnt={unreadCounts[index]} lastActivityTime="43 min" onClick={() => handleChatClick(index)} >
             <Avatar src='https://i.ibb.co/wpnnQ3Q/a882ecea-527f-4cd7-b2c4-2587a2d10e23.jpg'/> 
             <p>{user.lastMessage}</p>
-            <small>{user.date}</small>
           </Conversation>
         ))}
       </ConversationList>
@@ -213,25 +232,38 @@ export default function Chat({ ticket, user }) {
         <ConversationHeader.Content userName={userName}></ConversationHeader.Content>
       </ConversationHeader>
       <MessageList>
-        {messages.map((message, index) => (
-          <Message
-            key={index}
-            model={{
-              message: message.type === 'file' ? `📎 ${message.messageContent}` : message.messageContent,
-              sentTime: message.timestamp,
-              sender: message.senderId === user.id ? "You" : userName,
-              direction : message.senderId === user.id ? "outgoing" : "incoming",
-              position: message.senderId === user.id ? "normal" : ""
-            }}
-            avatarSpacer= {true}
-          >
-             <Avatar  src={message.senderId === user.id ? user.image : messages[0]?.senderId.image}/> {/*user chính diện và user đối diện */}
-          {message.type === 'image' && (
-        <Message.ImageContent src={message.messageContent} alt="attached" style={{ maxWidth: "200px", borderRadius: "8px" }}/>
+  {messages.map((message, index) => (
+    <Message
+      key={index}
+      model={{
+        message: message.messageContent,
+        direction: message.user1_id === user.id ? "outgoing" : "incoming",
+        type: message.messageType,
+        sentTime: message.timestamp,
+        sender: message.user1_id === user.id ? "You" : userName, // Thay thế cho Header
+      }}
+      avatarSpacer={true}
+    >
+      {/* Avatar cho người gửi */}
+      <Avatar src={message.user1_id === user.id ? user.userImage : messages[0]?.user1_id.userImage} />
+
+      {/* Nếu là tin nhắn hình ảnh */}
+      {message.chatType === 'image' && (
+        <Message.ImageContent src={message.messageContent} alt="attached" style={{ maxWidth: "200px", borderRadius: "8px" }} />
       )}
-          </Message>
-        ))}
-      </MessageList>
+
+      {/* Nếu là tin nhắn text */}
+      {message.chatType === 'text' && (
+        <Message.CustomContent>
+          <div>{message.messageContent}</div>
+          <div style={{ fontSize: '12px', color: 'gray' }}>{message.user1_id === user.id ? "Sent" : "Received"}</div> {/* Thay cho Footer */}
+        </Message.CustomContent>
+      )}
+
+    </Message>
+  ))}
+</MessageList>
+
       <MessageInput placeholder="Type message here" onSend={handleSendMessage} onAttachClick={handleAttachFile} />
     </ChatContainer>
   </MainContainer>
