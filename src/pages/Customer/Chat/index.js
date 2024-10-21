@@ -26,7 +26,9 @@ export default function Chat({ ticket, user }) {
   const [connected, setConnected] = useState(false);
   const [activeIndex, setActiveIndex] = useState(null);
   const [unreadCounts, setUnreadCounts] = useState([3, 5, 7, 4, 4, 5]);
+  const [conversations, setConversations] = useState([]);
   const socket = useRef(null);
+  const msgListRef = useRef(null);
 
   const users = [
     { name: "User 1", lastMessage: "This is a message", date: "2022-01-01" },
@@ -103,6 +105,7 @@ export default function Chat({ ticket, user }) {
       destination: "/app/sendMessage",
       body: messageToSend,
     });
+    msgListRef.current?.scrollToBottom( "auto" )
   };
 
   const reconnectWebSocket = () => {
@@ -154,43 +157,13 @@ export default function Chat({ ticket, user }) {
     input.click();
   };
 
-  const connectWebSocket = () => {
-    socket.current = new Client({
-      brokerURL: "ws://localhost:8084/chat-websocket",
-      reconnectDelay: 5000,
-      onConnect: () => {
-        console.log("WebSocket connected");
-        setConnected(true);
-
-        // Kiểm tra kết nối trước khi subscribe
-        if (socket.current && socket.current.connected) {
-          socket.current.subscribe("/topic/messages", (message) => {
-            console.log("Message Body JSON", message);
-            const msg = JSON.parse(message.body);
-            console.log("Message được trả về", msg);
-            setMessages((prevMessages) => [...prevMessages, msg]);
-          });
-
-          socket.current.subscribe("/topic/history", (history) => {
-            const chatHistory = JSON.parse(history.body);
-            console.log("Chat History", chatHistory);
-            setMessages(chatHistory);
-          });
-        } else {
-          console.error("STOMP connection is not established");
-        }
-      },
-      onDisconnect: () => {
-        console.log("WebSocket disconnected");
-        setConnected(false);
-      },
-      onStompError: (frame) => {
-        console.error("Broker reported error:", frame.headers["message"]);
-      },
+  const fetchChatHistory = (id) => {
+    socket.current.publish({
+      destination: "/app/chat/history",
+      body: JSON.stringify(id)
     });
-
-    socket.current.activate();
   };
+
   //Lấy tên người dùng bằng id
   const getUserNameByID = async (id) => {
     console.log("Id dùng để get userName của người đối phương", id);
@@ -201,31 +174,80 @@ export default function Chat({ ticket, user }) {
       console.error("Error fetching user name", error);
     }
   };
+  //Xác định rằng bên nào mua bên nào bán
+  const determineRole = () => {
+    if (ticket && ticket.userID !== user.id) {
+      console.log("Ticket UserID Determinerole", ticket.userID);
+      console.log("UserID Login Determinerole", user.id);
+      setIsBuyer(true);
+      getUserNameByID(ticket.userID); // Người mua get user của người bán
+      getUserImageByID(ticket.userID);
+    } else {
+      setIsBuyer(false);
+      getUserNameByID(messages[0]?.user1_id); // Người bán get user của người mua
+      getUserImageByID(messages[0]?.user1_id);
+    }
+  };
 
   useEffect(() => {
-    const determineRole = () => {
-      if (ticket && ticket.userID !== user.id) {
-        console.log("Ticket UserID Determinerole", ticket.userID);
-        console.log("UserID Login Determinerole", user.id);
-        setIsBuyer(true);
-        getUserNameByID(ticket.userID); // Người mua get user của người bán
-        getUserImageByID(ticket.userID);
-      } else {
-        setIsBuyer(false);
-        getUserNameByID(messages[0]?.user1_id); // Người bán get user của người mua
-        getUserImageByID(messages[0]?.user1_id);
-      }
-    };
-
+    // Đảm bảo rằng WebSocket chỉ được kết nối một lần khi component được mount
     connectWebSocket();
-    determineRole(); // Gọi khi component mount
-
+  
     return () => {
       if (socket.current) {
         socket.current.deactivate();
       }
     };
-  }, [messages]); // Khi danh sách tin nhắn thay đổi thì kiểm tra lại vai trò
+  }, []);
+  
+  const connectWebSocket = () => {
+    socket.current = new Client({
+      brokerURL: "ws://localhost:8084/chat-websocket",
+      reconnectDelay: 10000,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
+      onConnect: () => {
+        console.log("WebSocket connected");
+        setConnected(true);
+  
+        // Kiểm tra kết nối trước khi subscribe
+        if (socket.current.connected) {
+          // Trả về tin nhắn đã gửi của users
+          socket.current.subscribe("/topic/messages", (message) => {
+            console.log("Message Body JSON", message);
+            const msg = JSON.parse(message.body);
+            console.log("Message được trả về", msg);
+            setMessages((prevMessages) => [...prevMessages, msg]);
+          });
+          // Kéo lịch sử chat của một user bằng userId
+          socket.current.subscribe("/topic/history", (history) => {
+            const chatHistory = JSON.parse(history.body);
+            console.log("Chat History", chatHistory);
+            setMessages(chatHistory);
+          });
+  
+          // Gọi fetchChatHistory ở đây để đảm bảo WebSocket đã kết nối thành công
+          fetchChatHistory(user.id);
+        } else {
+          console.error("STOMP connection is not established");
+        }
+  
+        // Xác định vai trò sau khi kết nối thành công
+        determineRole();
+      },
+      onDisconnect: () => {
+        console.log("WebSocket disconnected");
+        setConnected(false);
+      },
+      onStompError: (frame) => {
+        console.error("Broker reported error:", frame.headers["message"]);
+      },
+    });
+  
+    socket.current.activate();
+  };
+  
+  
 
   // Hàm xử lý khi click vào một Conversation
   const handleChatClick = (index) => {
@@ -234,6 +256,15 @@ export default function Chat({ ticket, user }) {
       (prevUnreadCounts) =>
         prevUnreadCounts.map((count, i) => (i === index ? 0 : count)) // Đặt unreadCnt về 0 cho conversation được click
     );
+  };
+
+  useEffect(() => {
+    const storedConversations = JSON.parse(localStorage.getItem("conversations")) || [];
+    setConversations(storedConversations);
+  }, []);
+
+  const saveConversationsToLocalStorage = (conversations) => {
+    localStorage.setItem("conversations", JSON.stringify(conversations));
   };
 
   return (
@@ -272,7 +303,7 @@ export default function Chat({ ticket, user }) {
             userName={userName}
           ></ConversationHeader.Content>
         </ConversationHeader>
-        <MessageList>
+        <MessageList ref={msgListRef} >
           {messages.map((message, index) => (
             <Message
               key={index}
