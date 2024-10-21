@@ -1,0 +1,53 @@
+.alert {
+    position: relative;
+    padding: 1.5rem 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.375rem;
+    font-family: 'Arial', sans-serif; 
+  
+    &.alert-success {
+      color: #155724;
+      background-color: #d4edda;
+      border-color: #c3e6cb;
+    }
+  
+    &.alert-error {
+      color: #721c24;
+      background-color: #f8d7da;
+      border-color: #f5c6cb;
+    }
+  
+    &.alert-info {
+      color: #0c5460;
+      background-color: #d1ecf1;
+      border-color: #bee5eb;
+    }
+  
+    &.alert-warning {
+      color: #856404;
+      background-color: #fff3cd;
+      border-color: #ffeeba;
+    }
+  
+    // Hiệu ứng bóng và chuyển động
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+    &:hover {
+      transform: scale(1.02);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+  
+    .close {
+      position: absolute;
+      top: 0.5rem;
+      right: 1rem;
+      color: inherit;
+      font-weight: bold;
+  
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }

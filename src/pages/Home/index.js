@@ -22,6 +22,7 @@ function Home() {
   const [filteredNormal, setFilteredNormal] = useState([]);
   const itemsPerPage = 4;
 
+
   const filterTickets = (tickets, priceRange) => {
     return tickets.filter(
       (ticket) =>

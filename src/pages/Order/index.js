@@ -104,14 +104,7 @@ const OrderPage = () => {
                     checked={order.order_method === 'COD'}
                     onChange={handleRadioChange}
                   />
-                  <Form.Check
-                    type="radio"
-                    name="order_method"
-                    value="paypal"
-                    label="Paypal"
-                    checked={order.order_method === 'paypal'}
-                    onChange={handleRadioChange}
-                  />
+                  
                   <Form.Check
                     type="radio"
                     name="order_method"

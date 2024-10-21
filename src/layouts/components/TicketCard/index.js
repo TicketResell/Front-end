@@ -12,7 +12,7 @@ function TicketCard({ticket}) {
   const navigate = useNavigate();
 
   const handleClickCard = () =>{
-    navigate("/ticketDetail",{ state: { data: ticket } })
+    navigate("/ticketDetail",{ state: { ticket: ticket } })
   }
   return (
     <Card className={cx("card")} onClick={handleClickCard}>
