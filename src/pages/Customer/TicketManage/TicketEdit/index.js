@@ -4,6 +4,7 @@ import classNames from "classnames/bind";
 import styles from "./TicketEdit.module.scss";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import uploadImgBB from "../../../../config/imgBB";
+import api from "../../../../config/axios";
 
 function TicketEdit({ ticket, onSave }) {
   console.log('ticket',ticket);
