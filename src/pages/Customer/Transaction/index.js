@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
+import Pagination from '../../../layouts/components/Pagination';
 
 function Transaction({listTransactions}) {
+  const [transactionlPage,setTransactionlPage] = useState(0);
+  const itemsPerPage = 10;
     return (
         <MDBTable >
       <MDBTableHead >
@@ -28,6 +31,11 @@ function Transaction({listTransactions}) {
           </tr>
         ))}
       </MDBTableBody>
+      <Pagination
+            currentPage={transactionlPage}
+            pageCount={Math.ceil(listTransactions.length / itemsPerPage)}
+            onPageChange={(selectedPage) => setTransactionlPage(selectedPage)}
+          />
     </MDBTable>
     );
 }

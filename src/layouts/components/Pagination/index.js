@@ -11,7 +11,7 @@ function Pagination({ currentPage, pageCount, onPageChange}) {
     };
 
     return (
-        <div className={cx('issuesPagination', styles.pagination)}>
+        <div className={cx('issuesPagination', styles.pagination)} >
             <Paginate
                  forcePage={currentPage}
                  pageCount={pageCount}

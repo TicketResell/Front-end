@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { confirmEmail, confirmPhone } from "../../services/api/RegisterAPI";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { ToastContainer, toast, Bounce } from "react-toastify";
+import ReCAPTCHA from "react-google-recaptcha";
 import api from "../../config/axios";
 
 function Register() {
@@ -28,6 +29,7 @@ function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
+  const [reCaptcha, setReCaptcha] = useState(null);
 
   const iconShowPassword = () => setShowPassword((prev) => !prev);
   const iconShowConfirmPassword = () => setShowConfirmPassword((prev) => !prev);
@@ -48,6 +50,11 @@ function Register() {
     setUsername(value);
     if (value.trim() === "") {
       setErrors((prev) => ({ ...prev, username: "Do not leave blank cells" }));
+    } else if (value.includes(" ")) {
+      setErrors((prev) => ({
+        ...prev,
+        username: "Username cannot contain spaces",
+      }));
     } else if (value.trim().length >= 40) {
       setErrors((prev) => ({
         ...prev,
@@ -61,8 +68,14 @@ function Register() {
   const checkEmail = (e) => {
     const value = e.target.value;
     setEmail(value);
-    if (!confirmEmail(value)) {
-      setErrors((prev) => ({ ...prev, email: "Email is not in correct format" }));
+
+    if (value.trim() === "") {
+      setErrors((prev) => ({ ...prev, email: "Do not leave the email box blank" }));
+    }else if (!confirmEmail(value)) {
+      setErrors((prev) => ({
+        ...prev,
+        email: "Email is not in correct format",
+      }));
     } else {
       setErrors((prev) => ({ ...prev, email: "" }));
     }
@@ -115,7 +128,14 @@ function Register() {
     checkPass({ target: { value: password } });
     checkPassAgain({ target: { value: confirmPassword } });
 
-    if (!fullname && !username && !email && !phone && !password && !confirmPassword) {
+    if (
+      !fullname &&
+      !username &&
+      !email &&
+      !phone &&
+      !password &&
+      !confirmPassword
+    ) {
       toast.error("Please fill out all information in the form", {
         position: "top-center",
         autoClose: 5000,
@@ -160,6 +180,20 @@ function Register() {
       });
       return;
     }
+    if (!reCaptcha) {
+      toast.error("You must confirm you are human", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
 
     setLoading(true);
     setTimeout(() => {
@@ -170,9 +204,9 @@ function Register() {
     console.log(data);
     try {
       const response = await api.post("accounts/register", data);
-      console.log("Status",response.status)
-      if(response && response.status === 200){
-        toast.success("Registered successfully", {
+      console.log("Status", response.status);
+      if (response && response.status === 200) {
+        toast.success("Registered successfully , please check your email to confirm your account", {
           position: "top-center",
           autoClose: 5000,
           hideProgressBar: false,
@@ -205,13 +239,26 @@ function Register() {
     <Container fluid className={cx("vh-100", "register-screen")}>
       <ToastContainer />
       <Row className={cx("h-100")}>
-        <Col md={6} className={cx("d-none", "d-md-block", "gradient-background")}></Col>
-        <Col md={6} className={cx("d-flex", "align-items-center", "justify-content-center")}>
+        <Col
+          md={6}
+          className={cx("d-none", "d-md-block", "gradient-background")}
+        ></Col>
+        <Col
+          md={6}
+          className={cx(
+            "d-flex",
+            "align-items-center",
+            "justify-content-center"
+          )}
+        >
           <div className={cx("form-container")}>
             <h2 className={cx("form-title", "mb-4")}>Register an account</h2>
             <Form onSubmit={handleSubmit}>
               {/* Fullname input */}
-              <Form.Group controlId="formBasicFullname" className={cx("mt-3", "form-group")}>
+              <Form.Group
+                controlId="formBasicFullname"
+                className={cx("mt-3", "form-group")}
+              >
                 <Form.Control
                   required
                   type="text"
@@ -232,7 +279,10 @@ function Register() {
               </Form.Group>
 
               {/* Username input */}
-              <Form.Group controlId="formBasicUsername" className={cx("mt-3", "form-group")}>
+              <Form.Group
+                controlId="formBasicUsername"
+                className={cx("mt-3", "form-group")}
+              >
                 <Form.Control
                   required
                   type="text"
@@ -253,7 +303,10 @@ function Register() {
               </Form.Group>
 
               {/* Email input */}
-              <Form.Group controlId="formBasicEmail" className={cx("mt-3", "form-group")}>
+              <Form.Group
+                controlId="formBasicEmail"
+                className={cx("mt-3", "form-group")}
+              >
                 <Form.Control
                   required
                   type="email"
@@ -274,7 +327,10 @@ function Register() {
               </Form.Group>
 
               {/* Phone input */}
-              <Form.Group controlId="formBasicPhone" className={cx("mt-3", "form-group")}>
+              <Form.Group
+                controlId="formBasicPhone"
+                className={cx("mt-3", "form-group")}
+              >
                 <Form.Control
                   required
                   type="text"
@@ -355,6 +411,8 @@ function Register() {
                 )}
               </Form.Group>
 
+              <ReCAPTCHA sitekey="6Le50GYqAAAAANRMEZWQwweXM5BLZkQ8VL49h3QX" onChange={(e)=>setReCaptcha(e)}/>
+
               <Form.Check
                 type="switch"
                 id="custom-switch"
@@ -371,7 +429,7 @@ function Register() {
                 }}
               >
                 <h6 style={{ margin: "0", marginRight: "5px" }}>
-                Already have an account?
+                  Already have an account?
                 </h6>
                 <Link to="/login">Log in</Link>
               </span>

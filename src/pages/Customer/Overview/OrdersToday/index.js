@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
 import classNames from 'classnames/bind';
 import styles from "./OrdersToday.module.scss"
+import Pagination from '../../../../layouts/components/Pagination';
 
 function OrdersToday({ listOrder }) {
     const cx = classNames.bind(styles);
+    const [orderPage,setOrderPage] = useState(0);
+    const itemsPerPage = 5;
   return (
     <MDBTable >
       <MDBTableHead >
@@ -35,6 +38,11 @@ function OrdersToday({ listOrder }) {
           </tr>
         ))}
       </MDBTableBody>
+      <Pagination
+            currentPage={orderPage}
+            pageCount={Math.ceil(listOrder.length / itemsPerPage)}
+            onPageChange={(selectedPage) => setOrderPage(selectedPage)}
+          />
     </MDBTable>
   );
 }
