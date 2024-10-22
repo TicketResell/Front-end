@@ -1,9 +1,9 @@
 import Search from "../../layouts/components/SearchBar";
 import TicketCard from "../../layouts/components/TicketCard";
-import api from "../../config";
+// import api from "../../config";
 import { Container, Row, Col, Carousel } from "react-bootstrap";
 import api from "../../config/axios";
-import { Container, Row, Col } from "react-bootstrap";
+// import { Container, Row, Col } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { differenceInDays, parse } from "date-fns";
 import Categories from "../../layouts/components/Categories";
@@ -12,6 +12,7 @@ import Filter from "../../layouts/components/Filter"; // Vẫn giữ import Filt
 import styles from "./Home.module.scss";
 import { IoWarning } from "react-icons/io5";
 import classNames from "classnames/bind";
+
 
 function Home() {
   const cx = classNames.bind(styles);
@@ -116,81 +117,83 @@ function Home() {
 
   return (
     <>
-     <Container style={{ paddingTop: '30px' }}>
-  {/* Row for Search and Categories */}
-  <Row>
-    <Col xs={12} md={4} className="mb-4">
-      <Search onSearch={handleSearchResults} categories={categories} />
-      <Filter onFilterChange={handleFilterChange} />
-    </Col>
-    <Col xs={12} md={8} className="mb-4 d-flex flex-column" style={{paddingTop:'25px'}}>
-      <Categories
-        categories={categories}
-        clickCategory={handleCategoryClick}
-        clickAll={fetchTickets}
-      />
-    </Col>
-  </Row>
+      <Container style={{ paddingTop: '30px' }}>
+       
+        <section style={{ paddingTop: '0vh', paddingLeft: '4vw', paddingRight: '5vw' }}>
+          <Row>
+            <Col xs={12} md={8} className="mb-4">
+            <Categories 
+                categories={categories}
+                clickCategory={handleCategoryClick}
+                clickAll={fetchTickets}
+              />  
+            </Col>
+            <Col xs={12} md={4} className="mb-4 d-flex flex-column">
+            <Search onSearch={handleSearchResults} categories={categories} />
+            <Filter onFilterChange={handleFilterChange} />
+            </Col>
+          </Row>
+        </section>
 
-  {/* Carousel for Nearly Expired Tickets */}
-  <h1 className={cx("span-flame")}>
-    Nearly Expired Tickets{" "}
-    <span>
-      <img
-        src="https://i.ibb.co/Vq72zMp/icons8-fire.gif"
-        alt="icons8-fire"
-        border="0"
-      />
-    </span>{" "}
-    <img
-      src="https://i.ibb.co/Vq72zMp/icons8-fire.gif"
-      alt="icons8-fire"
-      border="0"
-    />
-    <img
-      src="https://i.ibb.co/Vq72zMp/icons8-fire.gif"
-      alt="icons8-fire"
-      border="0"
-    />
-  </h1>
+        {/* Carousel for Nearly Expired Tickets */}
+        <h1 className={cx("span-flame")}>
+          Nearly Expired Tickets{" "}
+          <span>
+            <img
+              src="https://i.ibb.co/Vq72zMp/icons8-fire.gif"
+              alt="icons8-fire"
+              border="0"
+            />
+          </span>{" "}
+          <img
+            src="https://i.ibb.co/Vq72zMp/icons8-fire.gif"
+            alt="icons8-fire"
+            border="0"
+          />
+          <img
+            src="https://i.ibb.co/Vq72zMp/icons8-fire.gif"
+            alt="icons8-fire"
+            border="0"
+          />
+        </h1>
 
-  {filteredNearlyExpired.length === 0 ? (
-    <div className={cx("notification-container")}>
-      <span className={cx("notification-icon")}>
-        <IoWarning />
-      </span>
-      <h2>NO NEARLY EXPIRED TICKET FOUND MATCHING YOUR SEARCH</h2>
-    </div>
-  ) : (
-    <Carousel>
-      {filteredNearlyExpired.map((ticket) => (
-        <Carousel.Item key={ticket.id}>
-          <TicketCard ticket={ticket} />
-        </Carousel.Item>
-      ))}
-    </Carousel>
-  )}
+        {filteredNearlyExpired.length === 0 ? (
+          <div className={cx("notification-container")}>
+            <span className={cx("notification-icon")}>
+              <IoWarning />
+            </span>
+            <h2>NO NEARLY EXPIRED TICKET FOUND MATCHING YOUR SEARCH</h2>
+          </div>
+        ) : (
+          <Carousel>
+            {filteredNearlyExpired.map((ticket) => (
+              <Carousel.Item key={ticket.id}>
+                <TicketCard ticket={ticket} />
+              </Carousel.Item>
+            ))}
+          </Carousel>
+        )}
 
-  {/* Carousel for Hot Deal Tickets */}
-  <h1>Hot Deal Tickets</h1>
+        {/* Carousel for Hot Deal Tickets */}
+        <h1>Hot Deal Tickets</h1>
 
-  {filteredNormal.length === 0 ? (
-    <div className={cx("notification-container")}>
-      <span className={cx("notification-icon")}>
-        <IoWarning />
-      </span>
-      <h2>NO NORMAL TICKET FOUND MATCHING YOUR SEARCH</h2>
-    </div>
-  ) : (
-    <Carousel>
-      {filteredNormal.map((ticket) => (
-        <Carousel.Item key={ticket.id}>
-          <TicketCard ticket={ticket} />
-        </Carousel.Item>
-      ))}
-    </Carousel>
-  )}
-</Container>
+        {filteredNormal.length === 0 ? (
+          <div className={cx("notification-container")}>
+            <span className={cx("notification-icon")}>
+              <IoWarning />
+            </span>
+            <h2>NO NORMAL TICKET FOUND MATCHING YOUR SEARCH</h2>
+          </div>
+        ) : (
+          <Carousel>
+            {filteredNormal.map((ticket) => (
+              <Carousel.Item key={ticket.id}>
+                <TicketCard ticket={ticket} />
+              </Carousel.Item>
+            ))}
+          </Carousel>
+        )}
+      </Container>
 
     </>
   );

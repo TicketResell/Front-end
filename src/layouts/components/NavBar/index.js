@@ -6,10 +6,9 @@ import { GoBell } from "react-icons/go";
 import { TbLogout } from "react-icons/tb";
 import { useEffect, useState } from "react";
 import Notification from "./Nofitication";
-import api from "../../../config";
+// import api from "../../../config";
 import Search from "../SearchBar";
 import api from "../../../config/axios";
-
 
 function NavigationBar() {
   const cx = classNames.bind(styles);
@@ -40,7 +39,6 @@ function NavigationBar() {
     setCategories(response.data);
   }
 
-
   useEffect(() => {
     fetchUser();
     fetchCategoryNav();
@@ -58,7 +56,7 @@ function NavigationBar() {
     "Thông báo 3: Sự kiện bạn quan tâm sẽ diễn ra trong 3 ngày tới.",
   ];
   return (
-    <Navbar expand="lg" fixed="top" data-bs-theme="dark" style={{ backgroundColor: "#2dc275" }} className="navbar">
+    <Navbar expand="lg"  style={{ backgroundColor: "#c2d18a", borderRadius: "40px", margin:'20px' }} className="navbar">
       <Container fluid className={cx("contain")}>
         <Navbar.Brand href="/" className={cx("navbar-brand")} style={{ marginLeft:"7rem"}}>
           {/* <img alt="" src={logo} width="200" height="150" style={{paddingBottom: "40px", objectFit: "cover"}}/> */}
@@ -68,15 +66,15 @@ function NavigationBar() {
         <Navbar.Collapse id="basic-navbar-nav" style={{ marginLeft: "40px" }}>
           <Nav className="me-auto">
             {categories.map(category => (
-              <Nav.Link key={category.id} style={{ fontSize: "20px", color: "#fff", marginRight: "40px", fontFamily: "bold" }}>
+              <Nav.Link key={category.id} style={{ fontSize: "20px", color: "#000", marginRight: "40px" }}>
                 {category.name}
               </Nav.Link>
             ))}
-            <Nav.Link href="aboutUs" style={{ fontSize: "20px", color: "#fff", marginRight: "40px", fontFamily: "bold" }}>
+            <Nav.Link href="aboutUs" style={{ fontSize: "20px", color: "#000", marginRight: "40px" }}>
               About Us
             </Nav.Link>
-            <Nav.Link href="aboutUs" style={{ fontSize: "20px", color: "#fff", marginRight: "40px", fontFamily: "bold" }}>
-              About Us
+            <Nav.Link href="aboutUs" style={{ fontSize: "20px", color: "#000", marginRight: "40px" }}>
+              Categories
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
@@ -99,8 +97,8 @@ function NavigationBar() {
           </div>) : (
           <>
             <div className="d-flex buttonn" style={{ marginRight: "10rem" }}>
-              <Button variant="outline-light" href="register" className="me-3">Register</Button>
-              <Button variant="outline-light" href="login">Login</Button>
+              <Button  href="register" className="me-3">Register</Button>
+              <Button href="login">Login</Button>
             </div>
           </>
         )}

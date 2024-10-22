@@ -1,7 +1,7 @@
 // Set primary colors and common variables
-$primary-color: #fff;
+$primary-color: black;
 $secondary-color: #f8b400;
-$background-color: rgba(0, 0, 0, 0.7);
+
 
 
 .buttonn{
@@ -9,9 +9,10 @@ $background-color: rgba(0, 0, 0, 0.7);
 }
 
 .navbar {
-  background-color: $background-color !important;
+  background-color: black !important;
   font-family: 'Roboto', sans-serif;
   padding: 10px 0;
+
 
   .navbar-brand {
     display: flex;
@@ -46,11 +47,11 @@ $background-color: rgba(0, 0, 0, 0.7);
     }
   }
 
-  .contain {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+  // .contain {
+  //   display: flex;
+  //   justify-content: space-between;
+  //   align-items: center;
+  // }
 
   .me-auto {
     margin-right: auto;
