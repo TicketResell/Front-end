@@ -17,7 +17,6 @@ import { ToastContainer, toast, Bounce } from "react-toastify";
 import api from "../../../config/axios";
 import uploadImgBB from "../../../config/imgBB";
 
-
 export default function Chat({ ticket, user }) {
   const [messages, setMessages] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -109,42 +108,11 @@ export default function Chat({ ticket, user }) {
     msgListRef.current?.scrollToBottom( "auto" )
   };
 
-
-  const handleAttachFile = () =>{
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/*';
-  input.onchange = (e) => {
-    const img = e.target.files[0];
-    if (img) {
-      const imageUrl = uploadImgBB(img);
-      const imageMessage = {
-        messageContent: imageUrl, // Hiển thị hình ảnh trong tin nhắn
-        senderId: user.id,
-        timestamp: new Date().toISOString(),
-        type: 'image', // Đánh dấu kiểu tin nhắn là file
-      };
-      //Thên hình ảnh vào messagelist
-      console.log("Image :",img);
-      setMessages((prevMessages) => [...prevMessages, imageMessage]);
-
-      // Gửi file qua WebSocket nếu cần thiết (chỉ nếu bạn muốn)
-      const senderId = user.id;
-      const receiverId = isBuyer ? ticket.userID : messages[0]?.senderId; // Xác định receiverId
-
-      const messageToSend = JSON.stringify({
-        senderId,
-        receiverId,
-        messageContent: imageUrl,
-        chatType: 'image',
-      });
-
   const reconnectWebSocket = () => {
     if (!socket.current || !socket.current.connected) {
       connectWebSocket(); // Gọi lại hàm connectWebSocket
     }
   };
-
 
   const handleAttachFile = async () => {
     const input = document.createElement("input");
@@ -328,7 +296,6 @@ export default function Chat({ ticket, user }) {
         </ConversationList>
       </Sidebar>
       <ChatContainer>
-
         <ConversationHeader>
           {/* Avatar cho người nhận */}
           <Avatar src={userAvatar} status="dnd" />
@@ -385,6 +352,5 @@ export default function Chat({ ticket, user }) {
         />
       </ChatContainer>
     </MainContainer>
-
   );
 }
