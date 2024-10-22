@@ -62,24 +62,25 @@ const Profile = () => {
 
     const handleUpdateProfile = async () => {
         if (isEditing) {
-            const isEmptyField = Object.values(formData).some(value => value.trim() === "");
-
+            // Check for empty fields and handle null values
+            const isEmptyField = Object.values(formData).some(value => (value || "").trim() === "");
+    
             if (isEmptyField) {
                 setModalMessage("Vui lòng điền tất cả các trường."); // Cập nhật thông điệp modal
                 setModalShow(true); // Hiển thị modal
                 return;
             }
-
+    
             try {
                 const response = await api.put(`accounts/profile/${user.sub}`, {
                     ...formData,
                     userImage: imageSrc,
                 });
-
+    
                 if (response.status === 200) {
                     setModalMessage("Cập nhật hồ sơ thành công!"); // Thông báo thành công
                     setModalShow(true); // Hiển thị modal
-
+    
                     // Điều hướng đến trang chính sau khi nhấn "Đóng" trong modal
                     const isProfileCompleteResponse = await api.post(`/accounts/is-full-data/${user.id}`);
                     
@@ -93,7 +94,7 @@ const Profile = () => {
                             navigate("/"); // Điều hướng về trang chính sau 2 giây
                         }, 2000);
                     }
-
+    
                     setIsEditing(false);
                 } else {
                     console.error("Failed to update profile. Status:", response.status);
@@ -110,6 +111,7 @@ const Profile = () => {
             setImageUploaded(false);
         }
     };
+    
 
     const handleInputChange = useCallback((e) => {
         const { name, value } = e.target;
