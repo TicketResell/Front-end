@@ -58,9 +58,11 @@ function Search({ onSearch }) {
 
   return (
     <div className="container p-4">
+
       <ToastContainer />
       <Container className={` ${styles.wrapper} p-4 `} style={{ maxWidth: "600px" }}>
         <h2 className={` ${styles.header} text-center`}>SEARCH TICKET</h2>
+
 
         {/* Thanh tìm kiếm */}
         <InputGroup className="mb-3">
@@ -94,9 +96,11 @@ function Search({ onSearch }) {
             </Dropdown.Menu>
           </Dropdown>
 
+
           {/* Nút Search */}
           <Button variant="primary" onClick={handleSearch}>
             <FaSearch />
+
           </Button>
         </InputGroup>
       </Container>

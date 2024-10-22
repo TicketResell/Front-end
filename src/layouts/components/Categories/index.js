@@ -3,6 +3,7 @@ import classNames from "classnames/bind";
 import styles from "./Categories.module.scss"; // Import SCSS mới
 import crowd from "../../../assets/images/crowd-background.jpg";
 import { Container, Row, Col, Card } from "react-bootstrap";
+import allCategoriesImg from "../../../assets/images/pixelcut-export (1).jpeg"
 
 function Categories({ categories, clickCategory, clickAll }) {
   const cx = classNames.bind(styles);
@@ -30,7 +31,7 @@ function Categories({ categories, clickCategory, clickAll }) {
         <Row>
           <div className={cx("card")} onClick={clickAll}>
             <img
-              src="https://i.ibb.co/sVqtRrc/raffle-tickets-600x600.jpg"
+              src={allCategoriesImg}
               alt="All Categories"
             />
             <div className={cx("info")}>
