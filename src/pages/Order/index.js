@@ -84,13 +84,27 @@ const OrderPage = () => {
     setOrder({ ...order, orderMethod: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Nếu nút hiện tại là "Save", thì chuyển sang trạng thái readonly và thay đổi nhãn nút
     if (buttonLabel === "Save") {
       setIsReadonly(true);
       setButtonLabel("Update");
+      const response = await api.put(`accounts/profile/${user.sub}`, profile);
+      if(response.status === 200){
+        toast.success("Order information received, Redirecting to payment page", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+      }
       toast.success("Saved successfully", {
         position: "top-center",
         autoClose: 5000,
@@ -115,9 +129,9 @@ const OrderPage = () => {
 
     if (name === "phone") {
       if (!confirmPhone(value)) {
-        setErrors((prev) => ({ ...prev, phone: "Phone number is incorrect" }));
+        setErrors((prev) => ({ ...prev, [name]: "Phone number is incorrect" }));
       } else {
-        setErrors((prev) => ({ ...prev, phone: "" }));
+        setErrors((prev) => ({ ...prev, [name]: "" }));
       }
     }
 
@@ -131,18 +145,35 @@ const OrderPage = () => {
   };
 
   const handleCreateOrder = async () =>{
+      // Kiểm tra thông tin trong phần Delivery Information
+if (!order.fullname || !order.phone || !order.address || errors.fullname || errors.phone || errors.address) {
+  toast.error("You have not filled in enough delivery information", {
+    position: "top-center",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+    transition: Bounce,
+  });
+  return; 
+}
     const orderCraete = {
       buyerId : user.id,
-      sellerId : ticket.useID,
+      sellerId : ticket.userID,
       ticketId : ticket.id,
       quantity : quantity,
       totalAmount : order.totalAmount,
       paymentStatus : "pending",
-      orderStatus: "completed",
+      orderStatus: "pending",
       orderMethod: order.orderMethod,
     }
+    console.log("Create order",orderCraete);
     try {
       const response = await api.post("orders/create", orderCraete);
+      console.log("Response",response.status);
       if (response && response.status === 200) {
         toast.success("Order information received, Redirecting to payment page", {
           position: "top-center",
@@ -204,7 +235,7 @@ const OrderPage = () => {
                   <Form.Label style={{ color: "red" }}>Phone (Required) <span>{isReadonly ? <FaLock/> : <FaLockOpen/> }</span></Form.Label>
                   <Form.Control
                     required
-                    type="text"
+                    type="phone"
                     placeholder="Please type phone"
                     name="phone"
                     value={order.phone}

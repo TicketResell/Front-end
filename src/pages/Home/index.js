@@ -13,7 +13,6 @@ import styles from "./Home.module.scss";
 import { IoWarning } from "react-icons/io5";
 import classNames from "classnames/bind";
 
-
 function Home() {
   const cx = classNames.bind(styles);
   const [nearlyExpiredTickets, setNearlyExpiredTickets] = useState([]);
@@ -25,12 +24,9 @@ function Home() {
   const [filteredNormal, setFilteredNormal] = useState([]);
   const itemsPerPage = 4;
 
-
   const filterTickets = (tickets, priceRange) => {
     return tickets.filter(
-      (ticket) =>
-        ticket.price >= priceRange[0] &&
-        ticket.price <= priceRange[1]
+      (ticket) => ticket.price >= priceRange[0] && ticket.price <= priceRange[1]
     );
   };
 
@@ -118,20 +114,21 @@ function Home() {
 
   return (
     <>
-      <Container style={{ paddingTop: '30px' }}>
-       
-        <section style={{ paddingTop: '0vh', paddingLeft: '4vw', paddingRight: '5vw' }}>
+      <Container style={{ paddingTop: "30px" }}>
+        <section
+          style={{ paddingTop: "0vh", paddingLeft: "4vw", paddingRight: "5vw" }}
+        >
           <Row>
             <Col xs={12} md={8} className="mb-4">
-            <Categories 
+              <Categories
                 categories={categories}
                 clickCategory={handleCategoryClick}
                 clickAll={fetchTickets}
-              />  
+              />
             </Col>
             <Col xs={12} md={4} className="mb-4 d-flex flex-column">
-            <Search onSearch={handleSearchResults} categories={categories} />
-            <Filter onFilterChange={handleFilterChange} />
+              <Search onSearch={handleSearchResults} categories={categories} />
+              <Filter onFilterChange={handleFilterChange} />
             </Col>
           </Row>
         </section>
@@ -167,13 +164,25 @@ function Home() {
           </div>
         ) : (
           <Carousel>
-            {filteredNearlyExpired.map((ticket) => (
-              <Carousel.Item key={ticket.id}>
-                <TicketCard ticket={ticket} />
-              </Carousel.Item>
-            ))}
-          </Carousel>
+          <Carousel.Item>
+          <Container> 
+            <Row>
+              {filteredNearlyExpired.map((ticket) => (
+                <Col key={ticket.id} xs={12} md={3}>
+                  <TicketCard ticket={ticket} />
+                </Col>
+              ))}
+            </Row>
+            </Container> 
+          </Carousel.Item>
+        </Carousel>
         )}
+
+        <Pagination
+          currentPage={nearlyExpiredPage}
+          pageCount={Math.ceil(nearlyExpiredTickets.length / itemsPerPage)}
+          onPageChange={(selectedPage) => setNearlyExpiredPage(selectedPage)}
+        />
 
         {/* Carousel for Hot Deal Tickets */}
         <h1>Hot Deal Tickets</h1>
@@ -186,20 +195,28 @@ function Home() {
             <h2>NO NORMAL TICKET FOUND MATCHING YOUR SEARCH</h2>
           </div>
         ) : (
-          <Carousel>
-            {filteredNormal.map((ticket) => (
-              <Carousel.Item key={ticket.id}>
-                <TicketCard ticket={ticket} />
-              </Carousel.Item>
-            ))}
+          <Carousel >
+            <Carousel.Item>
+            <Container> 
+              <Row>
+                {filteredNormal.map((ticket) => (
+                  <Col key={ticket.id} xs={12} md={3}>
+                    <TicketCard ticket={ticket} />
+                  </Col>
+                ))}
+              </Row>
+              </Container> 
+            </Carousel.Item>
           </Carousel>
         )}
+        <Pagination
+          currentPage={normalPage}
+          pageCount={Math.ceil(normalTickets.length / itemsPerPage)}
+          onPageChange={(selectedPage) => setNormalPage(selectedPage)}
+        />
       </Container>
-
     </>
   );
-
-
 }
 
 export default Home;

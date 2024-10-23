@@ -189,17 +189,6 @@ export default function Chat({ ticket, user }) {
     }
   };
 
-  useEffect(() => {
-    // Đảm bảo rằng WebSocket chỉ được kết nối một lần khi component được mount
-    connectWebSocket();
-  
-    return () => {
-      if (socket.current) {
-        socket.current.deactivate();
-      }
-    };
-  }, []);
-  
   const connectWebSocket = () => {
     socket.current = new Client({
       brokerURL: "ws://localhost:8084/chat-websocket",
@@ -246,8 +235,17 @@ export default function Chat({ ticket, user }) {
   
     socket.current.activate();
   };
+
+  useEffect(() => {
+    // Đảm bảo rằng WebSocket chỉ được kết nối một lần khi component được mount
+    connectWebSocket();
   
-  
+    return () => {
+      if (socket.current) {
+        socket.current.deactivate();
+      }
+    };
+  }, []);
 
   // Hàm xử lý khi click vào một Conversation
   const handleChatClick = (index) => {
@@ -298,7 +296,7 @@ export default function Chat({ ticket, user }) {
       <ChatContainer>
         <ConversationHeader>
           {/* Avatar cho người nhận */}
-          <Avatar src={userAvatar} status="dnd" />
+          {userAvatar && <Avatar src={userAvatar} status="dnd" />}
           <ConversationHeader.Content
             userName={userName}
           ></ConversationHeader.Content>
