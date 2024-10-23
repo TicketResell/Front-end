@@ -2,42 +2,49 @@ import React, { useState } from 'react';
 import { MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
 import Pagination from '../../../layouts/components/Pagination';
 
-function Transaction({listTransactions}) {
-  const [transactionlPage,setTransactionlPage] = useState(0);
+function Orders({listOrders}) {
+  const [ordersPage,setOrdersPage] = useState(0);
   const itemsPerPage = 10;
     return (
         <MDBTable >
       <MDBTableHead >
         <tr>
-          <th scope="col" style={{backgroundColor : "#8e65ff",color : "white"}} >TransactionID</th>
-          <th scope="col" style={{backgroundColor : "#8e65ff",color : "white"}} >UserID</th>
-          <th scope="col" style={{backgroundColor : "#8e65ff",color : "white"}} >OrderID</th>
-          <th scope="col" style={{backgroundColor : "#8e65ff",color : "white"}} >Amount</th>
-          <th scope="col" style={{backgroundColor : "#8e65ff",color : "white"}} >TransactionType</th>
-          <th scope="col" style={{backgroundColor : "#8e65ff",color : "white"}} >TransactionDate</th>
+          <th scope="col" style={{backgroundColor : "#8e65ff",color : "white"}} >id</th>
+          <th scope="col" style={{backgroundColor : "#8e65ff",color : "white"}} >buyerId</th>
+          <th scope="col" style={{backgroundColor : "#8e65ff",color : "white"}} >sellerId</th>
+          <th scope="col" style={{backgroundColor : "#8e65ff",color : "white"}} >quantity</th>
+          <th scope="col" style={{backgroundColor : "#8e65ff",color : "white"}} >totalAmount</th>
+          <th scope="col" style={{backgroundColor : "#8e65ff",color : "white"}} >serviceFee</th>
+          <th scope="col" style={{backgroundColor : "#8e65ff",color : "white"}} >paymentStatus</th>
+          <th scope="col" style={{backgroundColor : "#8e65ff",color : "white"}} >orderStatus</th>
+          <th scope="col" style={{backgroundColor : "#8e65ff",color : "white"}} >orderMethod</th>
         </tr>
       </MDBTableHead>
       <MDBTableBody>
-        {listTransactions.map((transaction) => (
-          <tr key={transaction.id}>
-            <td>{transaction.transactionID}</td>
+        {listOrders.map((order) => (
+          <tr key={order.id}>
+            <td>{order.id}</td>
+            <td>{order.buyerId}</td>
             <td>
-              {transaction.userID}
+              {order.sellerId}
             </td>
-            <td>{transaction.orderID}</td>
-            <td>{transaction.amount}</td>
-            <td>{transaction.transactionType}</td>
-            <td>{transaction.transactionDate}</td>
+            <td>{order.ticketId}</td>
+            <td>{order.quantity}</td>
+            <td>{order.totalAmount}</td>
+            <td>{order.serviceFee}</td>
+            <td>{order.paymentStatus}</td>
+            <td>{order.orderStatus}</td>
+            <td>{order.orderMethod}</td>
           </tr>
         ))}
       </MDBTableBody>
       <Pagination
-            currentPage={transactionlPage}
-            pageCount={Math.ceil(listTransactions.length / itemsPerPage)}
-            onPageChange={(selectedPage) => setTransactionlPage(selectedPage)}
+            currentPage={ordersPage}
+            pageCount={Math.ceil(listOrders.length / itemsPerPage)}
+            onPageChange={(selectedPage) => setOrdersPage(selectedPage)}
           />
     </MDBTable>
     );
 }
 
-export default Transaction;
+export default Orders;

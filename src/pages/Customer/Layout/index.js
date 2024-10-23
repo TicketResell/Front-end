@@ -3,15 +3,15 @@ import classNames from "classnames/bind";
 import styles from "./CustomerLayout.module.scss";
 import Sidebar from "../Sidebar";
 import Overview from "../Overview";
-import Transaction from "../Transaction";
 import Chat from "../Chat";
-import noImg from "../../../assets/images/crowd-background.jpg";
 import NewTick from "../NewTicket";
 import TicketManage from "../TicketManage";
 import Profile from "../../Profile";
 import Feedback from "../Feedback";
 import { useLocation } from "react-router-dom";
 import { useState , useEffect} from "react";
+import api from "../../../config/axios";
+import OrdersList from "../../../layouts/components/OrdersList";
 
 
 const cx = classNames.bind(styles);
@@ -22,22 +22,32 @@ export default function CustomerLayout() {
   const ticket = location.state?.ticket;
   console.log("Location Ticket",ticket);
   const [user,setUser] = useState(null);
+  const [ordersSeller,setOrdersSeller] = useState([]);
+  const [ordersBuyer,setOrdersBuyer] = useState([]);
 
-  const listTransactions = [{
-    transactionID : "1",
-    userID : "2",
-    orderID : "3",
-    amount : "5",
-    transactionType : "deposit",
-    transactionDate : "12/39/2023"
-  },{
-    transactionID : "2",
-    userID : "5",
-    orderID : "6",
-    amount : "4",
-    transactionType : "refund",
-    transactionDate : "16/09/2024"
-  }]
+  const fetchOrdersListByBuyer = async () =>{
+    try {
+      console.log("User Current Buyer",user.id)
+      const response = await api.get(`/orders/buyer/${user.id}`);
+      const sellerOrderList = response.data;
+        console.log("List oreder by Seller",sellerOrderList)
+        setOrdersSeller(sellerOrderList);
+      } catch (error) {
+        console.error("Không có danh sách order", error);
+      }
+  }
+
+  const fetchOrdersListBySeller = async () =>{
+    try {
+      console.log("User Current Seller",user.id)
+      const response = await api.get(`/orders/seller/${user.id}`);
+      const buyerOrderList = response.data;
+      console.log("List oreder by Buyer",buyerOrderList)
+      setOrdersBuyer(buyerOrderList);
+      } catch (error) {
+        console.error("Không có danh sách order", error);
+      }
+  }
   
   const fetchUser = () =>{
     try {
@@ -56,9 +66,9 @@ export default function CustomerLayout() {
   const renderLayout = () => {
     switch (currentLayout) {
       case "overview":
-        return <Overview />;
-      case "transaction":
-        return <Transaction listTransactions={listTransactions}/>;
+        return <Overview listOrdersBuyer={ordersBuyer} />;
+      case "orderSeller":
+        return <OrdersList listOrders={ordersSeller}/>;
       case "chat":
         return <Chat ticket={ticket} user={user}/>;
       case "newTicket":
@@ -70,14 +80,22 @@ export default function CustomerLayout() {
       case "feedback":
         return <Feedback user={user}/>
       default:
-        return <Overview />;
+        return <Overview listOrdersBuyer={ordersBuyer}  />;
     }
   };
-
   useEffect(() => {
-    fetchUser();
-    setCurrentLayout(location.state?.currentLayout);
-  }, []);
+      fetchUser();  
+      if(ticket){
+      setCurrentLayout(location.state.currentLayout);
+    }
+  }, [ticket]);
+  
+  useEffect(() => {
+    if(user){
+      fetchOrdersListByBuyer();
+      fetchOrdersListBySeller();
+    }
+  }, [user]);
 
   return (
     <Container fluid className={cx("container")}>

@@ -24,7 +24,7 @@ export default function Chat({ ticket, user }) {
   const [userName, setUserName] = useState("");
   const [userAvatar, setUserAvatar] = useState("");
   const [connected, setConnected] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(null);
+  const [activeConservation, setActiveConservation] = useState(null);
   const [unreadCounts, setUnreadCounts] = useState([3, 5, 7, 4, 4, 5]);
   const [conversations, setConversations] = useState([]);
   const socket = useRef(null);
@@ -87,6 +87,7 @@ export default function Chat({ ticket, user }) {
     }
     //Lấy hình ảnh của người gửi hiện tại
     const response = await api.post(`/accounts/get-avatar/${senderId}`);
+    console.log("Lấy hình ảnh của người gửi",response.data);
     const imageSender = response.data;
     console.log("Image Sender", imageSender);
 
@@ -100,18 +101,32 @@ export default function Chat({ ticket, user }) {
     });
 
     console.log("Sending message:", messageToSend);
+    console.log("WebSocket is connected:", socket.current?.connected);
 
-    socket.current.publish({
-      destination: "/app/sendMessage",
-      body: messageToSend,
-    });
+    try {
+      socket.current.publish({
+        destination: "/sendMessage",
+        body: messageToSend,
+      });
+      console.log("Message published successfully!");
+    } catch (error) {
+      console.error("Error publishing message:", error);
+
+    }
+
     msgListRef.current?.scrollToBottom( "auto" )
   };
 
   const reconnectWebSocket = () => {
-    if (!socket.current || !socket.current.connected) {
-      connectWebSocket(); // Gọi lại hàm connectWebSocket
+    try {
+      if (!socket.current || !socket.current.connected) {
+        connectWebSocket(); // Gọi lại hàm connectWebSocket
+      }
+      console.log("Reconnect Wesocket successfully!");
+    } catch (error) {
+      
     }
+
   };
 
   const handleAttachFile = async () => {
@@ -143,13 +158,15 @@ export default function Chat({ ticket, user }) {
 
         reconnectWebSocket(); // Gọi hàm để kết nối lại khi bị mất do chờ hình ảnh lên imgBB quá lâu
         console.log("Sending message image:", messageToSend);
-        if (socket.current && socket.current.connected) {
+
+        try{
           socket.current.publish({
-            destination: "/app/sendMessage",
+            destination: "/sendMessage",
             body: messageToSend,
           });
-        } else {
-          console.error("STOMP connection is not established");
+          console.log("Image published successfully!");
+        } catch(error) {
+          console.error("Error publishing message:", error);
         }
       }
     };
@@ -158,10 +175,29 @@ export default function Chat({ ticket, user }) {
   };
 
   const fetchChatHistory = (id) => {
-    socket.current.publish({
-      destination: "/app/chat/history",
-      body: JSON.stringify(id)
-    });
+    try {
+      socket.current.publish({
+        destination: "/chat/history",
+        body: JSON.stringify(id)
+      });
+      console.log("ChatHistory published successfully!");
+    } catch (error) {
+      console.error("Error publishing ChatHistory:", error);
+    }
+    
+  };
+
+  const fetchChatCoversation = (id) => {
+    try {
+      socket.current.publish({
+        destination: "/chat/conversations",
+        body: JSON.stringify(id)
+      });
+      console.log("Chat Conservation published successfully!");
+    } catch (error) {
+      console.error("Error publishing Chat Conversation:", error);
+    }
+
   };
 
   //Lấy tên người dùng bằng id
@@ -202,21 +238,33 @@ export default function Chat({ ticket, user }) {
         // Kiểm tra kết nối trước khi subscribe
         if (socket.current.connected) {
           // Trả về tin nhắn đã gửi của users
-          socket.current.subscribe("/topic/messages", (message) => {
-            console.log("Message Body JSON", message);
-            const msg = JSON.parse(message.body);
-            console.log("Message được trả về", msg);
-            setMessages((prevMessages) => [...prevMessages, msg]);
-          });
+          try {
+            socket.current.subscribe("/topic/messages", (message) => {
+              console.log("Message Body JSON", message);
+              const msg = JSON.parse(message.body);
+              console.log("Message được trả về", msg);
+              setMessages((prevMessages) => [...prevMessages, msg]);
+            });
+            console.log("Message subscribed successfully!");
+          } catch (error) {
+            
+          }
           // Kéo lịch sử chat của một user bằng userId
           socket.current.subscribe("/topic/history", (history) => {
             const chatHistory = JSON.parse(history.body);
             console.log("Chat History", chatHistory);
             setMessages(chatHistory);
           });
+
+          socket.current.subscribe("/topic/conversations",(convesation)=>{
+            const chatConversation = JSON.parse(convesation.body);
+            console.log("Conversation Chat",chatConversation);
+            setConversations(chatConversation);
+          }) 
   
           // Gọi fetchChatHistory ở đây để đảm bảo WebSocket đã kết nối thành công
           fetchChatHistory(user.id);
+          fetchChatCoversation(user.id)
         } else {
           console.error("STOMP connection is not established");
         }
@@ -245,24 +293,11 @@ export default function Chat({ ticket, user }) {
         socket.current.deactivate();
       }
     };
-  }, []);
+  }, [messages]);
 
   // Hàm xử lý khi click vào một Conversation
   const handleChatClick = (index) => {
-    setActiveIndex(index); // Cập nhật conversation đang active
-    setUnreadCounts(
-      (prevUnreadCounts) =>
-        prevUnreadCounts.map((count, i) => (i === index ? 0 : count)) // Đặt unreadCnt về 0 cho conversation được click
-    );
-  };
-
-  useEffect(() => {
-    const storedConversations = JSON.parse(localStorage.getItem("conversations")) || [];
-    setConversations(storedConversations);
-  }, []);
-
-  const saveConversationsToLocalStorage = (conversations) => {
-    localStorage.setItem("conversations", JSON.stringify(conversations));
+    setActiveConservation(index); // Cập nhật conversation đang active
   };
 
   return (
@@ -276,14 +311,13 @@ export default function Chat({ ticket, user }) {
           onClearClick={() => setSearchTerm("")}
         />
         <ConversationList>
-          {filteredUsers.map((user, index) => (
+          {filteredUsers.map((conversation, index) => (
             <Conversation
               key={index}
               name={user.name}
-              lastSenderName={user.name}
-              info={user.lastMessage}
-              active={activeIndex === index}
-              unreadCnt={unreadCounts[index]}
+              info={conversation.lastMessage}
+              active={activeConservation === index}
+              unreadDot={true}
               lastActivityTime="43 min"
               onClick={() => handleChatClick(index)}
             >

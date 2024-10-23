@@ -3,10 +3,10 @@ import classNames from "classnames/bind";
 import styles from "./Overview.module.scss";
 import SmallerCard from "./SmallCard"
 import RevenueChart from "./RevenueChart";
-import OrdersToday from "./OrdersToday";
+import OrdersList from "../../../layouts/components/OrdersList"; 
 const cx = classNames.bind(styles);
 
-export default function Overview() {
+export default function Overview({listOrdersBuyer}) {
   //Call API listOrder
   /*const fetchListOrder = async () => {
     try {
@@ -68,7 +68,7 @@ export default function Overview() {
         </Col>
       </Row>
       <Row className={cx("rowHalfDown")}>
-          <OrdersToday listOrder={listOrderToday}/>
+          <OrdersList listOrder={listOrdersBuyer}/>
       </Row>
     </>
   );
