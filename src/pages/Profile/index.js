@@ -65,31 +65,12 @@ const Profile = () => {
         const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
         return phoneRegex.test(phone);
     };
-    
-    const validateAddress = (address) => {
-        // Kiểm tra địa chỉ phải có ít nhất 1 tỉnh thành phố phổ biến ở Việt Nam
-        const vietnamProvinces = [
-            "Hà Nội", "TP HCM", "Đà Nẵng", "Hải Phòng", "Cần Thơ", 
-            "Quảng Ninh", "Bình Dương", "Đồng Nai", "Huế", "Nha Trang"
-            // Bạn có thể thêm nhiều tỉnh thành khác nếu cần
-        ];
-        
-        // Kiểm tra xem địa chỉ có chứa tên tỉnh thành nào trong danh sách không
-        return vietnamProvinces.some(province => address.includes(province));
-    };
 
     const handleUpdateProfile = async () => {
         if (isEditing) {
             // Kiểm tra xem số điện thoại có hợp lệ không
             if (!validatePhone(formData.phone)) {
                 setModalMessage("Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam.");
-                setModalShow(true); // Hiển thị modal
-                return;
-            }
-    
-            // Kiểm tra xem địa chỉ có hợp lệ không
-            if (!validateAddress(formData.address)) {
-                setModalMessage("Địa chỉ không hợp lệ. Vui lòng nhập địa chỉ ở Việt Nam.");
                 setModalShow(true); // Hiển thị modal
                 return;
             }

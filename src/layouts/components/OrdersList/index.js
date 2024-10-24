@@ -4,9 +4,9 @@ import classNames from 'classnames/bind';
 import styles from "./OrdersToday.module.scss"
 import Pagination from '../Pagination';
 
-function OrdersList({ listOrder = [] }) {
+function OrdersList({ listOrders = [] }) {
     const cx = classNames.bind(styles);
-    console.log("List in Order",listOrder);
+    console.log("List in Orders",listOrders);
     const [orderPage,setOrderPage] = useState(0);
     const itemsPerPage = 5;
   return (
@@ -16,6 +16,7 @@ function OrdersList({ listOrder = [] }) {
         <th scope="col" style={{backgroundColor : "#8e65ff",color : "white"}} classNames = {cx(".custom-tiltle")}>id</th>
           <th scope="col" style={{backgroundColor : "#8e65ff",color : "white"}} classNames = {cx(".custom-tiltle")}>buyerId</th>
           <th scope="col" style={{backgroundColor : "#8e65ff",color : "white"}} classNames = {cx(".custom-tiltle")}>sellerId</th>
+          <th scope="col" style={{backgroundColor : "#8e65ff",color : "white"}} classNames = {cx(".custom-tiltle")}>ticketId</th>
           <th scope="col" style={{backgroundColor : "#8e65ff",color : "white"}} classNames = {cx(".custom-tiltle")}>quantity</th>
           <th scope="col" style={{backgroundColor : "#8e65ff",color : "white"}} classNames = {cx(".custom-tiltle")}>totalAmount</th>
           <th scope="col" style={{backgroundColor : "#8e65ff",color : "white"}} classNames = {cx(".custom-tiltle")}>serviceFee</th>
@@ -25,9 +26,9 @@ function OrdersList({ listOrder = [] }) {
         </tr>
       </MDBTableHead>
       <MDBTableBody>
-        {listOrder.map((order) => (
+        {listOrders && listOrders.length > 0 ? (listOrders.map((order,index) => (
           <tr key={order.id}>
-            <td>{order.id}</td>
+            <td>{index+1}</td>
             <td>{order.buyerId}</td>
             <td>
               {order.sellerId}
@@ -40,11 +41,11 @@ function OrdersList({ listOrder = [] }) {
             <td>{order.orderStatus}</td>
             <td>{order.orderMethod}</td>
           </tr>
-        ))}
+        ))) : (<p>No orders found</p>)}
       </MDBTableBody>
       <Pagination
             currentPage={orderPage}
-            pageCount={Math.ceil(listOrder.length / itemsPerPage)}
+            pageCount={Math.ceil(listOrders.length / itemsPerPage)}
             onPageChange={(selectedPage) => setOrderPage(selectedPage)}
           />
     </MDBTable>

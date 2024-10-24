@@ -12,7 +12,7 @@ const OrderPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const ticket = location.state?.ticket;
-  const quantity = location.state?.quantityOrder;
+  const quantity = location.state?.quantity;
 
   const [order, setOrder] = useState({
     fullname: "",
@@ -37,6 +37,7 @@ const OrderPage = () => {
   // Thêm trạng thái để theo dõi xem các field có ở trạng thái readonly hay không
   const [isReadonly, setIsReadonly] = useState(false);
   const [buttonLabel, setButtonLabel] = useState("Save");
+  const [disabled,setDisabled] = useState(true);
 
   const UserLocalStorage = () => {
     const userData = localStorage.getItem("user");
@@ -48,6 +49,7 @@ const OrderPage = () => {
   const fetchProfileUser = async () => {
     if (user) {
       const response = await api.get(`/accounts/profile/${user.sub}`);
+      console.log("Profile Information",response.data);
       setProfile(response.data);
     }
   };
@@ -69,7 +71,7 @@ const OrderPage = () => {
         fullname: user.fullname || "", // Kiểm tra trường hợp fullname không có
         phone: profile.phone || "", // Kiểm tra trường hợp phone không có
         email: user.email || "",
-        address: "", // Giữ lại giá trị address
+        address: profile.address || "", // Giữ lại giá trị address
         eventTitle: ticket.eventTitle,
         quantity: quantity,
         price: ticket.price,
@@ -93,7 +95,7 @@ const OrderPage = () => {
       setButtonLabel("Update");
       const response = await api.put(`accounts/profile/${user.sub}`, profile);
       if(response.status === 200){
-        toast.success("Order information received, Redirecting to payment page", {
+        toast.success("Saved successfully", {
           position: "top-center",
           autoClose: 5000,
           hideProgressBar: false,
@@ -105,20 +107,11 @@ const OrderPage = () => {
           transition: Bounce,
         });
       }
-      toast.success("Saved successfully", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
+      setDisabled(false);
     } else {
       // Nếu nút hiện tại là "Update", chuyển các field về trạng thái không readonly
       setIsReadonly(false);
+      setDisabled(true);
       setButtonLabel("Save");
     }
   };
@@ -146,6 +139,7 @@ const OrderPage = () => {
 
   const handleCreateOrder = async () =>{
       // Kiểm tra thông tin trong phần Delivery Information
+      console.log("Order cua3 bo61",order);
 if (!order.fullname || !order.phone || !order.address || errors.fullname || errors.phone || errors.address) {
   toast.error("You have not filled in enough delivery information", {
     position: "top-center",
@@ -173,7 +167,8 @@ if (!order.fullname || !order.phone || !order.address || errors.fullname || erro
     console.log("Create order",orderCraete);
     try {
       const response = await api.post("orders/create", orderCraete);
-      console.log("Response",response.status);
+      console.log("Response thanh toan binh thuong",response.status);
+      const OrderCreated = response.data;
       if (response && response.status === 200) {
         toast.success("Order information received, Redirecting to payment page", {
           position: "top-center",
@@ -187,7 +182,30 @@ if (!order.fullname || !order.phone || !order.address || errors.fullname || erro
           transition: Bounce,
         });
       }
-      navigate("/payment");
+      if(orderCraete.orderMethod === "vnpay"){
+        try {
+          const response = await api.post("/vnpay/create-payment", {orderId : OrderCreated.id, amount: OrderCreated.totalAmount});
+          console.log("Response VNPAY",response.data);
+          const urlBank = response.data
+          if(response.status === 200){
+            window.location.href = urlBank;
+          } 
+        } catch (error) {
+          toast.error(error.response.data, {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          });
+        }
+      }else{
+        navigate("/payment");
+      }
     } catch (error) {
       toast.error(error.response.data, {
         position: "top-center",
@@ -312,7 +330,8 @@ if (!order.fullname || !order.phone || !order.address || errors.fullname || erro
                   />
                 </div>
               </Form.Group>
-              <Button variant="success" className="mt-3" block onClick={handleCreateOrder}>
+              {disabled && <h6 style={{color : "red"}}>You must save delivery information before making payment</h6>}
+              <Button variant="success" className="mt-3" block onClick={handleCreateOrder} disabled ={disabled}>
                 Proceed to Payment
               </Button>
             </Card.Body>

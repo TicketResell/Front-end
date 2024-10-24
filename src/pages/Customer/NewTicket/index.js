@@ -241,18 +241,33 @@ export default function NewTick({ user }) {
       console.log("Form data",formData);
       const response = await api.post("/tickets/create", formData);
       console.log(response.data);
-      if(response.status === 200)
-      toast.success('Đã tạo vé thành công ', {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
+      if(response.status === 200){
+        toast.success('Đã tạo vé thành công ', {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+        setFormData({
+          price: "",
+          userID: user.id,
+          eventTitle: "",
+          eventDate: "",
+          categoryId: "",
+          location: "",
+          ticketType: "",
+          ticketDetails: "",
+          createddate: new Date(),
+          imageUrls: [],
+          status: "onsale",
+          quantity: "",
+        }); 
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Có lỗi xảy ra. Vui lòng thử lại.", {

@@ -29,9 +29,9 @@ export default function CustomerLayout() {
     try {
       console.log("User Current Buyer",user.id)
       const response = await api.get(`/orders/buyer/${user.id}`);
-      const sellerOrderList = response.data;
-        console.log("List oreder by Seller",sellerOrderList)
-        setOrdersSeller(sellerOrderList);
+      const buyerOrderList = response.data;
+        console.log("List oreder by Buyer",buyerOrderList)
+        setOrdersBuyer(buyerOrderList);
       } catch (error) {
         console.error("Không có danh sách order", error);
       }
@@ -41,9 +41,9 @@ export default function CustomerLayout() {
     try {
       console.log("User Current Seller",user.id)
       const response = await api.get(`/orders/seller/${user.id}`);
-      const buyerOrderList = response.data;
-      console.log("List oreder by Buyer",buyerOrderList)
-      setOrdersBuyer(buyerOrderList);
+      const sellerOrderList = response.data;
+      console.log("List oreder by Seller",sellerOrderList)
+      setOrdersSeller(sellerOrderList);
       } catch (error) {
         console.error("Không có danh sách order", error);
       }
@@ -64,11 +64,16 @@ export default function CustomerLayout() {
   };
 
   const renderLayout = () => {
+    console.log("currentLayout khi bấm vào sidebae",currentLayout);
     switch (currentLayout) {
       case "overview":
         return <Overview listOrdersBuyer={ordersBuyer} />;
       case "orderSeller":
-        return <OrdersList listOrders={ordersSeller}/>;
+        return ordersSeller.length > 0 ? (
+          <OrdersList listOrders={ordersSeller} />
+        ) : (
+          <p>Loading orders...</p>
+        );
       case "chat":
         return <Chat ticket={ticket} user={user}/>;
       case "newTicket":
@@ -92,10 +97,14 @@ export default function CustomerLayout() {
   
   useEffect(() => {
     if(user){
-      fetchOrdersListByBuyer();
-      fetchOrdersListBySeller();
+      if (currentLayout === "orderSeller") {
+        fetchOrdersListBySeller();
+      } else if (currentLayout === "overview") {
+        fetchOrdersListByBuyer();
+      }
     }
-  }, [user]);
+  }, [user,currentLayout]);
+
 
   return (
     <Container fluid className={cx("container")}>

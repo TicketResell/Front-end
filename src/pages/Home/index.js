@@ -22,7 +22,15 @@ function Home() {
   const [normalPage, setNormalPage] = useState(0);
   const [filteredNearlyExpired, setFilteredNearlyExpired] = useState([]);
   const [filteredNormal, setFilteredNormal] = useState([]);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(0);
   const itemsPerPage = 4;
+
+   // Nhận giá trị MIN và MAX từ Filter
+   const handleMinMaxChange = (min, max) => {
+    setMinPrice(min);
+    setMaxPrice(max);
+  };
 
   const filterTickets = (tickets, priceRange) => {
     return tickets.filter(
@@ -109,8 +117,8 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    handleFilterChange([0, 100]); // Giá trị mặc định của bộ lọc ban đầu
-  }, [nearlyExpiredPage, normalPage, nearlyExpiredTickets, normalTickets]);
+    handleFilterChange([minPrice, maxPrice]); // Giá trị mặc định của bộ lọc ban đầu
+  }, [nearlyExpiredPage, normalPage, nearlyExpiredTickets, normalTickets,minPrice,maxPrice]);
 
   return (
     <>
@@ -128,7 +136,7 @@ function Home() {
             </Col>
             <Col xs={12} md={4} className="mb-4 d-flex flex-column">
               <Search onSearch={handleSearchResults} categories={categories} />
-              <Filter onFilterChange={handleFilterChange} />
+              <Filter onFilterChange={handleFilterChange} onMinMaxChange={handleMinMaxChange}/>
             </Col>
           </Row>
         </section>

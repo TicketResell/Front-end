@@ -9,7 +9,7 @@ import AboutUs from '../AboutUs';
 import Payment from '../Payment';
 import Admin from '../Admin';
 import CustomerLayout from '../Customer/Layout';
-import Order from '../Order';
+import OrderPage from '../Order';
 import StaffLayout from '../Staff/Layout';
 import TicketManage from '../Staff/TicketManage'
 import TicketDetail from '../TicketDetail';
@@ -19,7 +19,7 @@ const publicRoutes = [
     { path: '/', component: Home},
     { path: '/register', component: Register, layout: null },
     { path: '/login', component: Login, layout: null },
-    { path: '/order', component: Order, layout: null },
+    { path: '/order', component: OrderPage, layout: null },
     {path: '/aboutUs',component: AboutUs, layout: null},
     {path: '/ticketDetail/:userId/:ticketId/:eventTitle',component: TicketDetail},
 ];

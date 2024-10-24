@@ -28,6 +28,7 @@ function TicketDetail() {
   const [reportText, setReportText] = useState("");
   const [showExpiredModal, setShowExpiredModal] = useState(false);
   const [showIncompleteProfileModal, setShowIncompleteProfileModal] = useState(false);
+  const [imagesSeries, setImageSeries] = useState(series);
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState({});
   const [reportSuccessMessage, setReportSuccessMessage] = useState("");
