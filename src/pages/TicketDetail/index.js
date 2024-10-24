@@ -18,24 +18,27 @@ function TicketDetail() {
   const ticket = location.state?.ticket;
 
   const cx = classNames.bind(styles);
-  const initialImage = ticket.imageUrls[0];
-  const series = ticket.imageUrls.slice(1);
+  const initialImage = ticket?.imageUrls[0];
+  const series = ticket?.imageUrls.slice(1) || [];
 
   const [mainImage, setMainImage] = useState(initialImage);
-  const [imagesSeries, setImageSeries] = useState(series);
   const [quantity, setQuantity] = useState(1);
   const [showModal, setShowModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportText, setReportText] = useState("");
   const [showExpiredModal, setShowExpiredModal] = useState(false);
   const [showIncompleteProfileModal, setShowIncompleteProfileModal] = useState(false);
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState({});
+  const [reportSuccessMessage, setReportSuccessMessage] = useState("");
 
   const fetchUserFromLocalStorage = () => {
     const userData = localStorage.getItem('user');
+    const userToken = localStorage.getItem('token');
     if (userData) {
-      const parsedUser = JSON.parse(userData);
-      setUser(parsedUser);
+      setUser(JSON.parse(userData));
     }
+    return userToken;
   };
 
   useEffect(() => {
@@ -47,10 +50,11 @@ function TicketDetail() {
       try {
         const response = await api.post(`/accounts/is-full-data/${user.id}`);
         if (!response.data) {
-          setShowIncompleteProfileModal(true); // Show modal for incomplete profile
+          setShowIncompleteProfileModal(true);
         } else {
-          // Proceed to order page if profile is complete
-          navigate("/order", { state: { ticket: ticket, quantityOrder: quantity } });
+
+          navigate("/order", { state: { ticket, quantity } });
+
         }
       } catch (error) {
         console.error("Error checking user information:", error);
@@ -68,6 +72,12 @@ function TicketDetail() {
   };
 
   useEffect(() => {
+    if (ticket) {
+      console.log("Product ID:", ticket.id);
+    }
+  }, [ticket]);
+
+  useEffect(() => {
     if (user && user.sub) {
       fetchProfileUser();
     }
@@ -82,11 +92,11 @@ function TicketDetail() {
   }
 
   const handleMinus = () => {
-    setQuantity((quantity) => (quantity > 1 ? quantity - 1 : 1));
+    setQuantity(quantity > 1 ? quantity - 1 : 1);
   };
 
   const handlePlus = () => {
-    setQuantity((quantity) => quantity + 1);
+    setQuantity(quantity + 1);
   };
 
   const handleBuy = () => {
@@ -95,15 +105,53 @@ function TicketDetail() {
     } else if (quantity > ticket.quantity) {
       setShowModal(true);
     } else {
-      checkUserInformation(); // Check if the user's profile is complete
+      checkUserInformation();
     }
+  };
+
+  const handleReportProduct = () => {
+    setShowReportModal(true);
+  };
+
+  const handleReportSubmit = async () => {
+    const reportReason = reportText;
+    const userToken = fetchUserFromLocalStorage();
+    console.log("User Token:", userToken);
+    try {
+      const response = await api.post(`/ratings/create-report`, {
+        reportedUserId: ticket.userID,
+        reporterUserId: user.id,
+        productId: ticket.id,
+        reason: reportReason,
+        status: 'pending',
+        reportDate: new Date().toISOString()
+      });
+      if (response.status === 200) {
+        console.log("Report submitted successfully:", response.data);
+        toast.success("Report submitted successfully!");
+        setReportSuccessMessage("Your report has been submitted successfully!");
+        setReportText(""); // Clear report text after submission
+        setTimeout(() => {
+          setShowReportModal(false);
+        }, 2000); // Close the modal after 2 seconds
+      }
+    } catch (error) {
+      console.error("Error submitting report:", error.response?.data || error.message);
+      toast.error("Error submitting report. Please try again.");
+    }
+  };
+
+  const handleCloseReportModal = () => {
+    setShowReportModal(false);
+    setReportSuccessMessage(""); // Clear message when closing the modal
+    setReportText(""); // Clear report text when closing the modal
   };
 
   const handleCloseModal = () => setShowModal(false);
   const handleCloseExpiredModal = () => setShowExpiredModal(false);
   const handleCloseIncompleteProfileModal = () => {
     setShowIncompleteProfileModal(false);
-    navigate("/profile"); // Navigate to profile when OK is clicked
+    navigate("/profile");
   };
 
   return (
@@ -124,7 +172,7 @@ function TicketDetail() {
               />
             </div>
             <div className={cx("d-flex", "justify-content-center", "mb-3")}>
-              {imagesSeries.map((img, index) => (
+              {series.map((img, index) => (
                 <a
                   key={index}
                   onClick={() => handleImageClick(img)}
@@ -150,7 +198,7 @@ function TicketDetail() {
               </h4>
               <div className={cx("d-flex", "flex-row", "my-3")}>
                 <span className={cx("ms-2")}>
-                  <img src={ticket.status === "Soldout" ? soldout : onsale} className={cx("w-25 h-auto")} />
+                  <img src={ticket.status === "Soldout" ? soldout : onsale} className={cx("w-25 h-auto")} alt="Status" />
                 </span>
               </div>
 
@@ -187,61 +235,99 @@ function TicketDetail() {
                   </InputGroup>
                 </Col>
                 <Col md={8} xs={6} className={cx("d-flex", "align-items-end")}>
-                  <Button onClick={handleBuy} className={cx("btn-danger", "w-100")}>
-                    Buy Now <TiTicket />
+                  <Button onClick={handleBuy} className={cx("w-100")} style={{ borderRadius: "30px" }} variant="primary">
+                    Buy Now
                   </Button>
                 </Col>
               </Row>
-              <Button onClick={() => navigate("/customer", { state: { ticket: ticket, currentLayout: "chat" } })} className={cx("btn-outline-danger")}>
+
+              <Row>
+              <Button onClick={() => navigate("/customer", { state: { ticket, currentLayout: "chat" } })} className={cx("btn-outline-danger")}>
                 Chat with seller <LuMessagesSquare />
               </Button>
+              </Row>
+
+              <Row>
+                <Col className={cx("d-flex", "justify-content-center", "my-3")}>
+                  <Button onClick={handleReportProduct} variant="danger" style={{ borderRadius: "30px" }}>
+                    Report Product
+                  </Button>
+                </Col>
+              </Row>
             </div>
           </Col>
         </Row>
+
+        {/* Report Modal */}
+        <Modal show={showReportModal} onHide={handleCloseReportModal} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Report Product</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group controlId="reportReason">
+                <Form.Label>Please provide a reason for reporting this product:</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  value={reportText}
+                  onChange={(e) => setReportText(e.target.value)}
+                  placeholder="Type your report reason here..."
+                />
+              </Form.Group>
+              {reportSuccessMessage && <p className={cx("text-success")}>{reportSuccessMessage}</p>}
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseReportModal}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={handleReportSubmit}>
+              Submit Report
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        {/* Other Modals for Sold Out, Expired, and Incomplete Profile */}
+        <Modal show={showModal} onHide={handleCloseModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Not Enough Quantity</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Sorry, there are not enough tickets available.</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseModal}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        <Modal show={showExpiredModal} onHide={handleCloseExpiredModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Ticket Expired</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>This ticket is expired. You cannot purchase it.</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseExpiredModal}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        <Modal show={showIncompleteProfileModal} onHide={handleCloseIncompleteProfileModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Profile Incomplete</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Please complete your profile before proceeding to purchase.</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseIncompleteProfileModal}>
+              Close
+            </Button>
+            <Button variant="primary" onClick={handleCloseIncompleteProfileModal}>
+              Go to Profile
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </Container>
-
-      {/* Existing Modals */}
-      <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Out of Stock</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          Sorry, we don't have enough tickets available for your request.
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      <Modal show={showExpiredModal} onHide={handleCloseExpiredModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Ticket Expired</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          This ticket is expired. Please select another ticket.
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseExpiredModal}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      <Modal show={showIncompleteProfileModal} onHide={handleCloseIncompleteProfileModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Profile Incomplete</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          Your profile is incomplete. Please update your profile information.
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseIncompleteProfileModal}>
-            OK
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </section>
   );
 }

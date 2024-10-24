@@ -7,7 +7,7 @@ import { confirmEmail, confirmUsername } from '../../services/api/RegisterAPI';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { GoogleLogin } from '@react-oauth/google';
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import api from "../../config/axios";
 import ticketLogo from '../../assets/images/ticket-logo.png';
 
@@ -88,12 +88,14 @@ function Login() {
                 });
 
                 const { jwt } = response.data;
-                console.log("JWT",jwt);
                 const decodedUser = jwtDecode(jwt);
-                console.log("User",decodedUser);
                 localStorage.setItem("token", jwt); 
+                console.log("Token here",jwt);
                 localStorage.setItem("user", JSON.stringify(decodedUser)); 
-                navigate("/");
+                
+                setTimeout(() => {
+                    navigate("/"); // Redirect to the home page
+                }, 2000); // 2-second delay
             }
         } catch (error) {
             toast.error('Đăng nhập không thành công! Vui lòng kiểm tra lại thông tin đăng nhập.', {
@@ -117,14 +119,13 @@ function Login() {
             <ToastContainer />
             <Row className={cx('h-100')}>
                 <Col md={6} className={cx('d-none', 'd-flex','d-md-block', 'gradient-background')}>
-                <img src={ticketLogo} alt="Logo" className={cx('logo')} />
-                <h3 className={cx('welcome-text')}>Chào mừng đến với TicketResell!</h3>
+                    <img src={ticketLogo} alt="Logo" className={cx('logo')} />
+                    <h3 className={cx('welcome-text')}>Chào mừng đến với TicketResell!</h3>
                 </Col>
 
                 <Col md={6} className={cx('d-flex', 'align-items-center', 'justify-content-center')}>
                     <div className={cx('form-container')}>
-
-                    <h2 className={cx('mb-4', 'form-title')} style={{ paddingBottom: '20px' }}>Đăng nhập</h2>
+                        <h2 className={cx('mb-4', 'form-title')} style={{ paddingBottom: '20px' }}>Đăng nhập</h2>
 
                         <Form style={{ marginTop: '-20px' }} onSubmit={handleSubmit}>
                             <Form.Group controlId="formBasicIdentifier" className={cx('mt-3', 'form-group')}>
@@ -203,15 +204,27 @@ function Login() {
                             <GoogleLogin
                                 onSuccess={credentialResponse => {
                                     const tokenId = credentialResponse.credential;
-                                    fetch('/api/auth/google', {
+                                    console.log('Google Token:', tokenId);
+
+                                    fetch('http://localhost:8084/api/accounts/login-google', {
                                         method: 'POST',
                                         headers: {
                                             'Content-Type': 'application/json',
                                         },
-                                        body: JSON.stringify({ token: tokenId }),
+                                        body: JSON.stringify({ id_token: tokenId }),
                                     })
-                                    .then(response => response.json())
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            throw new Error('Login failed');
+                                        }
+                                        return response.json();
+                                    })
                                     .then(data => {
+                                        const { jwt } = data; // Assuming your backend returns a JWT
+                                        const decodedUser = jwtDecode(jwt); // Decode JWT if needed
+                                        localStorage.setItem("token", jwt); 
+                                        localStorage.setItem("user", JSON.stringify(decodedUser)); 
+                                        
                                         toast.success('Đăng nhập bằng Google thành công!', {
                                             position: "top-center",
                                             autoClose: 5000,
@@ -223,7 +236,11 @@ function Login() {
                                             theme: "light",
                                             transition: Bounce,
                                         });
-                                        console.log('User logged in successfully:', data);
+
+                                        setTimeout(() => {
+                                            navigate("/"); // Redirect to the home page after toast
+                                        }, 1500); 
+
                                     })
                                     .catch(error => {
                                         toast.error('Lỗi đăng nhập bằng Google!', {

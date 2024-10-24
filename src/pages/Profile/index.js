@@ -60,49 +60,70 @@ const Profile = () => {
         fetchProfile();
     }, [fetchProfile]);
 
+    const validatePhone = (phone) => {
+        // Mẫu regex kiểm tra số điện thoại Việt Nam hợp lệ (10 chữ số và đầu số hợp lệ)
+        const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
+        return phoneRegex.test(phone);
+    };
+    
+    const validateAddress = (address) => {
+        // Kiểm tra địa chỉ phải có ít nhất 1 tỉnh thành phố phổ biến ở Việt Nam
+        const vietnamProvinces = [
+            "Hà Nội", "TP HCM", "Đà Nẵng", "Hải Phòng", "Cần Thơ", 
+            "Quảng Ninh", "Bình Dương", "Đồng Nai", "Huế", "Nha Trang"
+            // Bạn có thể thêm nhiều tỉnh thành khác nếu cần
+        ];
+        
+        // Kiểm tra xem địa chỉ có chứa tên tỉnh thành nào trong danh sách không
+        return vietnamProvinces.some(province => address.includes(province));
+    };
+
     const handleUpdateProfile = async () => {
         if (isEditing) {
-            const isEmptyField = Object.values(formData).some(value => value.trim() === "");
-
-            if (isEmptyField) {
-                setModalMessage("Vui lòng điền tất cả các trường."); // Cập nhật thông điệp modal
+            // Kiểm tra xem số điện thoại có hợp lệ không
+            if (!validatePhone(formData.phone)) {
+                setModalMessage("Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam.");
                 setModalShow(true); // Hiển thị modal
                 return;
             }
-
+    
+            // Kiểm tra xem địa chỉ có hợp lệ không
+            if (!validateAddress(formData.address)) {
+                setModalMessage("Địa chỉ không hợp lệ. Vui lòng nhập địa chỉ ở Việt Nam.");
+                setModalShow(true); // Hiển thị modal
+                return;
+            }
+    
+            // Kiểm tra các trường còn lại nếu cần
+            const isEmptyField = Object.values(formData).some(value => (value || "").trim() === "");
+        
+            if (isEmptyField) {
+                setModalMessage("Vui lòng điền tất cả các trường.");
+                setModalShow(true);
+                return;
+            }
+        
             try {
                 const response = await api.put(`accounts/profile/${user.sub}`, {
                     ...formData,
                     userImage: imageSrc,
                 });
-
+    
                 if (response.status === 200) {
-                    setModalMessage("Cập nhật hồ sơ thành công!"); // Thông báo thành công
-                    setModalShow(true); // Hiển thị modal
-
-                    // Điều hướng đến trang chính sau khi nhấn "Đóng" trong modal
-                    const isProfileCompleteResponse = await api.post(`/accounts/is-full-data/${user.id}`);
-                    
-                    if (!isProfileCompleteResponse.data) {
-                        setModalMessage("Hồ sơ của bạn vẫn chưa đầy đủ. Vui lòng điền tất cả các trường cần thiết.");
-                        setModalShow(true);
-                    } else {
-                        setModalMessage("Hồ sơ của bạn đã được cập nhật thành công!");
-                        setModalShow(true);
-                        setTimeout(() => {
-                            navigate("/"); // Điều hướng về trang chính sau 2 giây
-                        }, 2000);
-                    }
-
+                    setModalMessage("Cập nhật hồ sơ thành công!");
+                    setModalShow(true);
+                    setTimeout(() => {
+                        navigate("/"); // Điều hướng về trang chính sau 2 giây
+                    }, 2000);
+    
                     setIsEditing(false);
                 } else {
-                    console.error("Failed to update profile. Status:", response.status);
-                    setModalMessage("Cập nhật hồ sơ không thành công."); // Thông báo lỗi
+                    setModalMessage("Cập nhật hồ sơ không thành công.");
                     setModalShow(true);
                 }
             } catch (error) {
                 console.error("Error updating profile:", error.response ? error.response.data : error.message);
-                setModalMessage("Có lỗi xảy ra khi cập nhật hồ sơ."); // Thông báo lỗi
+                setModalMessage("Có lỗi xảy ra khi cập nhật hồ sơ.");
                 setModalShow(true);
             }
         } else {
@@ -110,6 +131,7 @@ const Profile = () => {
             setImageUploaded(false);
         }
     };
+    
 
     const handleInputChange = useCallback((e) => {
         const { name, value } = e.target;
@@ -260,4 +282,4 @@ const Profile = () => {
     );
 };
 
-export default Profile;
+export default Profile; 
