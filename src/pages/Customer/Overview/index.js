@@ -57,7 +57,7 @@ export default function Overview({listOrdersBuyer}) {
         </Col>
       </Row>
       <Row className={cx("rowHalfDown")}>
-          <OrdersList listOrders={listOrdersBuyer}/>
+          <OrdersList listOrders={listOrdersBuyer} isOrderBuyer={true}/>
       </Row>
     </>
   );
