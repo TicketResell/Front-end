@@ -195,8 +195,7 @@ function Home() {
             <h2>NO NORMAL TICKET FOUND MATCHING YOUR SEARCH</h2>
           </div>
         ) : (
-          <Carousel >
-            <Carousel.Item>
+          
             <Container> 
               <Row>
                 {filteredNormal.map((ticket) => (
@@ -206,8 +205,7 @@ function Home() {
                 ))}
               </Row>
               </Container> 
-            </Carousel.Item>
-          </Carousel>
+           
         )}
         <Pagination
           currentPage={normalPage}
