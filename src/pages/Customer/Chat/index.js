@@ -105,7 +105,7 @@ export default function Chat({ ticket, user }) {
 
     try {
       socket.current.publish({
-        destination: "/sendMessage",
+        destination: "/app/sendMessage",
         body: messageToSend,
       });
       console.log("Message published successfully!");
@@ -161,7 +161,7 @@ export default function Chat({ ticket, user }) {
 
         try{
           socket.current.publish({
-            destination: "/sendMessage",
+            destination: "/app/sendMessage",
             body: messageToSend,
           });
           console.log("Image published successfully!");
@@ -177,7 +177,7 @@ export default function Chat({ ticket, user }) {
   const fetchChatHistory = (id) => {
     try {
       socket.current.publish({
-        destination: "/chat/history",
+        destination: "/app/chat/history",
         body: JSON.stringify(id)
       });
       console.log("ChatHistory published successfully!");
@@ -190,7 +190,7 @@ export default function Chat({ ticket, user }) {
   const fetchChatCoversation = (id) => {
     try {
       socket.current.publish({
-        destination: "/chat/conversations",
+        destination: "/app/chat/conversations",
         body: JSON.stringify(id)
       });
       console.log("Chat Conservation published successfully!");
@@ -293,7 +293,7 @@ export default function Chat({ ticket, user }) {
         socket.current.deactivate();
       }
     };
-  }, [messages]);
+  }, []);
 
   // Hàm xử lý khi click vào một Conversation
   const handleChatClick = (index) => {
