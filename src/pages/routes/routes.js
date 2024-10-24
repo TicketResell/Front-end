@@ -14,13 +14,14 @@ import StaffLayout from '../Staff/Layout';
 import TicketManage from '../Staff/TicketManage'
 import TicketDetail from '../TicketDetail';
 
+
 const publicRoutes = [
     { path: '/', component: Home},
     { path: '/register', component: Register, layout: null },
     { path: '/login', component: Login, layout: null },
     { path: '/order', component: Order, layout: null },
     {path: '/aboutUs',component: AboutUs, layout: null},
-    {path: '/ticketDetail',component: TicketDetail},
+    {path: '/ticketDetail/:userId/:ticketId/:eventTitle',component: TicketDetail},
 ];
 
 const privateRoutes = [

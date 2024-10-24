@@ -90,8 +90,12 @@ function Login() {
                 const { jwt } = response.data;
                 const decodedUser = jwtDecode(jwt);
                 localStorage.setItem("token", jwt); 
+                console.log("Token here",jwt);
                 localStorage.setItem("user", JSON.stringify(decodedUser)); 
-                navigate("/"); // Redirect to the home page
+                
+                setTimeout(() => {
+                    navigate("/"); // Redirect to the home page
+                }, 2000); // 2-second delay
             }
         } catch (error) {
             toast.error('Đăng nhập không thành công! Vui lòng kiểm tra lại thông tin đăng nhập.', {
@@ -232,8 +236,11 @@ function Login() {
                                             theme: "light",
                                             transition: Bounce,
                                         });
-                                        
-                                        navigate("/"); // Redirect to the home page
+
+                                        setTimeout(() => {
+                                            navigate("/"); // Redirect to the home page after toast
+                                        }, 1500); 
+
                                     })
                                     .catch(error => {
                                         toast.error('Lỗi đăng nhập bằng Google!', {

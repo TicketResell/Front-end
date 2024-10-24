@@ -41,9 +41,9 @@ export default function CustomerLayout() {
   
   const fetchUser = () =>{
     try {
-      const userCustomer =  JSON.parse(localStorage.getItem("user"));
-        console.log("User Customer",userCustomer)
-        setUser(userCustomer);
+      const storedUser =  JSON.parse(localStorage.getItem("user"));
+        console.log("User Customer",storedUser);
+        setUser(storedUser);
       } catch (error) {
         console.error("Không có người dùng", error);
       }
