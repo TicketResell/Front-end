@@ -45,6 +45,15 @@ export default function Sidebar({ staff, onLayoutClick }) {
           <div className={cx("menuItem")} onClick={() => onLayoutClick('profile')}>
             <CgProfile /> Profile
           </div>
+          <div className={cx("menuItem")} onClick={() => onLayoutClick('getreport')}>
+            <CgProfile /> Manager Report
+          </div>
+          <div className={cx("menuItem")} onClick={() => onLayoutClick('getuser')}>
+            <CgProfile /> Manage User
+          </div>
+          <div className={cx("menuItem")} onClick={() => onLayoutClick('getorder')}>
+            <CgProfile /> Manage Order
+          </div>
         </Col>
       </Row>
       <Row className={cx("menuItem")}>

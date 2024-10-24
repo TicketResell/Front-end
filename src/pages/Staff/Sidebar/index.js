@@ -5,6 +5,7 @@ import {
   FaComments,
   FaSignOutAlt,
   FaTicketAlt,
+  FaLifeRing,
 } from "react-icons/fa"; // Add FaLifeRing for support
 import { CgProfile } from "react-icons/cg";
 import { MdContactSupport } from "react-icons/md";
@@ -75,6 +76,15 @@ export default function Sidebar({ staff, onLayoutClick }) {
           </div>
           <div className={cx("menuItem")} onClick={() => onLayoutClick('feedback')}>
             <MdContactSupport /> Feedback 
+          </div>
+          <div className={cx("menuItem")} onClick={() => onLayoutClick("getuser")}>
+            <FaLifeRing /> Manage User
+          </div>
+          <div className={cx("menuItem")} onClick={() => onLayoutClick("getreport")}>
+            <FaLifeRing /> Manage Report
+          </div>
+          <div className={cx("menuItem")} onClick={() => onLayoutClick("getorder")}>
+            <FaLifeRing /> Manage Orders
           </div>
         </Col>
       </Row>
