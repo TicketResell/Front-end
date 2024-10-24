@@ -52,7 +52,9 @@ function TicketDetail() {
         if (!response.data) {
           setShowIncompleteProfileModal(true);
         } else {
+
           navigate("/order", { state: { ticket, quantity } });
+
         }
       } catch (error) {
         console.error("Error checking user information:", error);
@@ -81,9 +83,13 @@ function TicketDetail() {
     }
   }, [user]);
 
-  const handleImageClick = (clickedImg) => {
-    setMainImage(clickedImg);
-  };
+  const handleImageClick= (clickedImg) => {
+    const newImageSeries = imagesSeries.map((image)=>
+      image === clickedImg ? mainImage : image
+    )
+    setMainImage(clickedImg)
+    setImageSeries(newImageSeries)
+  }
 
   const handleMinus = () => {
     setQuantity(quantity > 1 ? quantity - 1 : 1);

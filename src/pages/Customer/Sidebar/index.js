@@ -60,9 +60,9 @@ export default function Sidebar({ customer, onLayoutClick }) {
           </div>
           <div
             className={cx("menuItem")}
-            onClick={() => onLayoutClick("transaction")}
+            onClick={() => onLayoutClick("orderSeller")}
           >
-            <FaDollarSign /> Transaction
+            <FaDollarSign /> Order
           </div>
           <div className={cx("menuItem")} onClick={() => onLayoutClick("chat")}>
             <FaComments /> Chat

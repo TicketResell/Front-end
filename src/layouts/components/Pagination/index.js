@@ -1,4 +1,4 @@
-import Paginate from "react-paginate";
+import ReactPaginate from 'react-paginate';
 import classNames from "classnames/bind";
 import styles from "./Pagination.module.scss";
 
@@ -11,8 +11,8 @@ function Pagination({ currentPage, pageCount, onPageChange}) {
     };
 
     return (
-        <div className={cx('issuesPagination', styles.pagination)}>
-            <Paginate
+        <div className={cx('issuesPagination', styles.pagination)} >
+            <ReactPaginate
                  forcePage={currentPage}
                  pageCount={pageCount}
                  marginPagesDisplayed={2}
