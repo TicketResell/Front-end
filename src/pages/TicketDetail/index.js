@@ -36,6 +36,7 @@ const TicketDetail = () => {
   const [profile, setProfile] = useState({});
   const [reportSuccessMessage, setReportSuccessMessage] = useState("");
 
+  // Check user login state from localStorage
   const fetchUserFromLocalStorage = () => {
     const userData = localStorage.getItem('user');
     const userToken = localStorage.getItem('token');
@@ -47,7 +48,10 @@ const TicketDetail = () => {
 
   useEffect(() => {
     const userToken = fetchUserFromLocalStorage();
-    if (userToken) {
+    // Redirect to login if user is not logged in
+    if (!userToken) {
+      navigate("/login", { state: { from: location } });
+    } else {
       fetchProfileUser();
     }
   }, []);
@@ -55,16 +59,10 @@ const TicketDetail = () => {
   const fetchProfileUser = async () => {
     if (user) {
       try {
-
         const response = await api.post(`/accounts/is-full-data/${user.id}`);
         if (!response.data) {
           setShowIncompleteProfileModal(true);
-        } else {
-
-          navigate("/order", { state: { ticket, quantity } });
-
         }
-
       } catch (error) {
         console.error("Error fetching user profile:", error);
       }
@@ -88,12 +86,12 @@ const TicketDetail = () => {
   };
 
   const handleImageClick= (clickedImg) => {
-    const newImageSeries = imagesSeries.map((image)=>
+    const newImageSeries = imagesSeries.map((image) =>
       image === clickedImg ? mainImage : image
-    )
-    setMainImage(clickedImg)
-    setImageSeries(newImageSeries)
-  }
+    );
+    setMainImage(clickedImg);
+    setImageSeries(newImageSeries);
+  };
 
   const handleQuantityChange = (change) => {
     setQuantity((prevQuantity) => Math.max(1, prevQuantity + change));
@@ -109,9 +107,11 @@ const TicketDetail = () => {
     }
   };
 
+  console.log("Ticket ở đây",ticket)
+
   const handleReportProduct = () => {
     if (!user) {
-      toast.info("Please log in to report a product."); // Notification for login
+      toast.info("Please log in to report a product.");
     } else {
       setShowReportModal(true);
     }
