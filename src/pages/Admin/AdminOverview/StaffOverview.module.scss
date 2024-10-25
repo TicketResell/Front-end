@@ -1,0 +1,25 @@
+.overview-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); // Chia thành 2 cột
+  grid-template-rows: auto; // Tự động điều chỉnh chiều cao
+  gap: 20px; // Khoảng cách giữa các ô
+  padding: 20px; // Padding xung quanh container
+}
+
+.box {
+  background-color: #FFF;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-weight: bold;
+}
+
+.child-box {
+  @extend .box;
+  font-size: 16px;
+}
+
+// Nếu bạn muốn các ô chiếm toàn bộ chiều rộng
+.full-width {
+  grid-column: span 2; // Chiếm 2 cột
+}
