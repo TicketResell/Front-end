@@ -31,6 +31,7 @@ const TicketDetail = () => {
   const [reportText, setReportText] = useState("");
   const [showExpiredModal, setShowExpiredModal] = useState(false);
   const [showIncompleteProfileModal, setShowIncompleteProfileModal] = useState(false);
+  const [imagesSeries, setImageSeries] = useState(series);
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState({});
   const [reportSuccessMessage, setReportSuccessMessage] = useState("");
@@ -54,8 +55,16 @@ const TicketDetail = () => {
   const fetchProfileUser = async () => {
     if (user) {
       try {
-        const response = await api.get(`/accounts/profile/${user.sub}`);
-        setProfile(response.data);
+
+        const response = await api.post(`/accounts/is-full-data/${user.id}`);
+        if (!response.data) {
+          setShowIncompleteProfileModal(true);
+        } else {
+
+          navigate("/order", { state: { ticket, quantity } });
+
+        }
+
       } catch (error) {
         console.error("Error fetching user profile:", error);
       }
@@ -78,9 +87,13 @@ const TicketDetail = () => {
     }
   };
 
-  const handleImageClick = (clickedImg) => {
-    setMainImage(clickedImg);
-  };
+  const handleImageClick= (clickedImg) => {
+    const newImageSeries = imagesSeries.map((image)=>
+      image === clickedImg ? mainImage : image
+    )
+    setMainImage(clickedImg)
+    setImageSeries(newImageSeries)
+  }
 
   const handleQuantityChange = (change) => {
     setQuantity((prevQuantity) => Math.max(1, prevQuantity + change));

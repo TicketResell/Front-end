@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react"; 
 import { Navbar, Nav, Container, Button } from "react-bootstrap"; 
 import classNames from "classnames/bind"; 
@@ -7,7 +8,7 @@ import { GoBell } from "react-icons/go";
 import { TbLogout } from "react-icons/tb"; 
 import Notification from "./Nofitication"; 
 import api from "../../../config/axios"; 
-import { useNavigate } from "react-router-dom"; // Cập nhật từ useHistory thành useNavigate
+import { useNavigate } from "react-router-dom"; 
 
 function NavigationBar() {
   const cx = classNames.bind(styles); 
@@ -16,28 +17,42 @@ function NavigationBar() {
   const [showNofitication, setShowNofitication] = useState(false); 
   const [categories, setCategories] = useState([]); 
   const [logoutMessage, setLogoutMessage] = useState("");
-  const navigate = useNavigate(); // Sử dụng useNavigate
+  const navigate = useNavigate(); 
 
+  const [categories, setCategories] = useState([])
+  /*const [listNofitication,setListNofitication] = useState([])*/
+  /*const fetchListNotification = async ()=>{
+    const response = await api.get("nofiticationList");
+    setListNofitication(response.data)
+  }*/
   const fetchUser = () => {
     const userLogin = JSON.parse(localStorage.getItem("user"));
     if (userLogin) {
       try {
+
+        //fetchListNotification();
+
         setUser(userLogin);
         setSignedIn(true);
       } catch (error) {
         console.error("Không có người dùng", error);
       }
     }
+
   };
 
   const fetchCategoryNav = async () => {
     const response = await api.get("/categories");
+
+  }
+
     setCategories(response.data);
   };
 
   useEffect(() => {
     fetchUser();
     fetchCategoryNav();
+
   }, []);
 
   const handleLogout = () => {
@@ -66,6 +81,7 @@ function NavigationBar() {
     navigate("/register"); // Sử dụng navigate để điều hướng đến trang đăng ký
   };
 
+
   const listNofitication = [
     "Thông báo 1: Bạn đã nhận được một vé mới.",
     "Thông báo 2: Vé của bạn đã được xác nhận.",
@@ -73,26 +89,33 @@ function NavigationBar() {
   ];
 
   return (
-    <Navbar expand="lg" fixed="top" data-bs-theme="dark" style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }} className="navbar">
+    <Navbar expand="lg"  style={{ backgroundColor: "#c2d18a", borderRadius: "40px", margin:'20px' }} className="navbar">
       <Container fluid className={cx("contain")}>
-        <Navbar.Brand href="/" className={cx("navbar-brand")}>
-          <img alt="Logo" src={logo} width="200" height="150" style={{ paddingBottom: "40px", objectFit: "cover" }} />
+        <Navbar.Brand href="/" className={cx("navbar-brand")} style={{ marginLeft:"7rem"}}>
+          {/* <img alt="" src={logo} width="200" height="150" style={{paddingBottom: "40px", objectFit: "cover"}}/> */}
+
           TICKETRESELL
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav" style={{ marginLeft: "40px" }}>
           <Nav className="me-auto">
-            {categories.map((category) => (
-              <Nav.Link key={category.id} style={{ fontSize: "20px", color: "#fff", marginRight: "40px", fontFamily: "bold" }}>
+
+            {categories.map(category => (
+              <Nav.Link key={category.id} style={{ fontSize: "20px", color: "#000", marginRight: "40px" }}>
                 {category.name}
               </Nav.Link>
             ))}
-            <Nav.Link href="aboutUs" style={{ fontSize: "20px", color: "#fff", marginRight: "40px", fontFamily: "bold" }}>
+            <Nav.Link href="aboutUs" style={{ fontSize: "20px", color: "#000", marginRight: "40px" }}>
+
               About Us
+            </Nav.Link>
+            <Nav.Link href="aboutUs" style={{ fontSize: "20px", color: "#000", marginRight: "40px" }}>
+              Categories
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
         {signedIn ? (
+
           <div style={{ display: "flex", alignItems: "center" }}>
             <Button variant="outline-light" style={{ marginRight: "10px" }} title="Notification" onClick={() => setShowNofitication(!showNofitication)}>
               <GoBell />
@@ -115,6 +138,7 @@ function NavigationBar() {
             <Button variant="outline-light" onClick={handleLogin}>
               Login
             </Button>
+
           </>
         )}
       </Container>

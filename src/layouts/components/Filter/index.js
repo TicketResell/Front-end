@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Container, Row, Col, Form } from "react-bootstrap";
 import { Range } from "react-range";
 
-function Filter({ onFilterChange }) {
+function Filter({ onFilterChange , onMinMaxChange}) {
   const STEP = 0.1;
   const MIN = 0;
-  const MAX = 300;
+  const MAX = 300000;
   const [priceRange, setPriceRange] = useState([MIN, MAX]);
 
   const handlePriceRange = (newPriceRange) => {
@@ -13,9 +13,14 @@ function Filter({ onFilterChange }) {
     onFilterChange(newPriceRange);
   };
 
+  // Truyền giá trị MIN và MAX qua callback khi component được mount lấy cho trang Home
+  useEffect(() => {
+    onMinMaxChange(MIN, MAX);
+  }, [MIN, MAX, onMinMaxChange]);
+
   return (
     <Container className="p-4">
-      <h2 className="text-center mb-4">Product Filter</h2>
+      {/* <h2 className="text-center mb-4">Product Filter</h2> */}
 
       {/* Input range cho giá tiền */}
       <Row className="mb-3">
@@ -70,7 +75,7 @@ function Filter({ onFilterChange }) {
       <Row>
         <Col>
           <h5>
-            Selected Price Range: ${priceRange[0]} - ${priceRange[1]}
+            Selected Price Range: {priceRange[0]} VND - {priceRange[1]} VND
           </h5>
         </Col>
       </Row>

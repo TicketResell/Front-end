@@ -11,6 +11,11 @@ import Feedback from "../Feedback";
 import { useState } from "react";
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
+import StaffList from "../GetUser";
+import ReportList from "../GetReport";
+import OrderList from "../GetOrder";
+
+
 
 const cx = classNames.bind(styles);
 
@@ -69,6 +74,12 @@ export default function StaffLayout() {
         return <TicketManage user={user}/>
       case "feedback":
         return <Feedback user={user}/>
+        case "getuser":
+          return <StaffList user={user}/>
+      case "getreport":
+          return <ReportList user={user}/>
+          case "getorder":
+          return <OrderList user={user}/>
       default:
         return <Overview />;
     }
