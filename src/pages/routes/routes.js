@@ -7,7 +7,7 @@ import UpdateProfile from '../UpdateProfile';
 import ForgotPassword from '../ForgotPassword';
 import AboutUs from '../AboutUs';
 import Payment from '../Payment';
-import Admin from '../Admin';
+import Admin from '../Admin/AdminOverview';
 import CustomerLayout from '../Customer/Layout';
 import OrderPage from '../Order';
 import StaffLayout from '../Staff/Layout';
