@@ -158,8 +158,9 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
                   <td>
                     <Button
                       className={cx("btn-response")}
-                      variant="outline-success"
+                      variant={order.orderMethod === "COD" ? "outline-dark" :"outline-success"}
                       onClick={() => handleShipped(order.id)}
+                     disabled = {order.orderMethod === "COD" ? true :false}
                     >
                      Confirm Shipped
                     </Button>
