@@ -12,7 +12,7 @@ function Filter({ onFilterChange }) {
     setPriceRange(newPriceRange);
     onFilterChange(newPriceRange);
   };
-
+console.log(demogit);
   return (
     <Container className="p-4">
       <h2 className="text-center mb-4">Product Filter</h2>
