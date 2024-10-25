@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react"; 
 import { Navbar, Nav, Container, Button } from "react-bootstrap"; 
 import classNames from "classnames/bind"; 
@@ -6,7 +5,7 @@ import styles from "./NavigationBar.module.scss";
 import logo from "../../../assets/images/ticket-logo.png"; 
 import { GoBell } from "react-icons/go"; 
 import { TbLogout } from "react-icons/tb"; 
-import Notification from "./Nofitication"; 
+import Notification from "./Nofitication";
 import api from "../../../config/axios"; 
 import { useNavigate } from "react-router-dom"; 
 
@@ -19,103 +18,89 @@ function NavigationBar() {
   const [logoutMessage, setLogoutMessage] = useState("");
   const navigate = useNavigate(); 
 
-  const [categories, setCategories] = useState([])
-  /*const [listNofitication,setListNofitication] = useState([])*/
-  /*const fetchListNotification = async ()=>{
-    const response = await api.get("nofiticationList");
-    setListNofitication(response.data)
-  }*/
   const fetchUser = () => {
     const userLogin = JSON.parse(localStorage.getItem("user"));
     if (userLogin) {
       try {
-
-        //fetchListNotification();
-
         setUser(userLogin);
         setSignedIn(true);
       } catch (error) {
-        console.error("Không có người dùng", error);
+        console.error("No user found", error);
       }
     }
-
   };
 
   const fetchCategoryNav = async () => {
-    const response = await api.get("/categories");
-
-  }
-
-    setCategories(response.data);
+    try {
+      const response = await api.get("/categories");
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
   };
 
   useEffect(() => {
     fetchUser();
     fetchCategoryNav();
-
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     setSignedIn(false);
-    setLogoutMessage("Bạn đã đăng xuất thành công!"); // Set logout message
-    setShowNofitication(true); // Show notification
-    navigate("/"); // Redirect to home after logging out
+    setLogoutMessage("You have logged out successfully!"); 
+    setShowNofitication(true); 
+    navigate("/"); 
 
-    // Automatically hide notification after 3 seconds
     setTimeout(() => {
       setShowNofitication(false);
     }, 3000);
   };
 
-  // Cập nhật hàm handleLogin để sử dụng useNavigate
   const handleLogin = (event) => {
     event.preventDefault(); 
-    navigate("/login"); // Sử dụng navigate thay vì history.push
+    navigate("/login");
   };
 
-  // Thêm hàm handleRegister
   const handleRegister = (event) => {
     event.preventDefault();
-    navigate("/register"); // Sử dụng navigate để điều hướng đến trang đăng ký
+    navigate("/register");
   };
 
+  const handleAboutus = (event) => {
+    event.preventDefault();
+    navigate("/aboutUs");
+  }
 
   const listNofitication = [
-    "Thông báo 1: Bạn đã nhận được một vé mới.",
-    "Thông báo 2: Vé của bạn đã được xác nhận.",
-    "Thông báo 3: Sự kiện bạn quan tâm sẽ diễn ra trong 3 ngày tới.",
+    "Notification 1: You have received a new ticket.",
+    "Notification 2: Your ticket has been confirmed.",
+    "Notification 3: The event you are interested in is happening in 3 days.",
   ];
 
   return (
-    <Navbar expand="lg"  style={{ backgroundColor: "#c2d18a", borderRadius: "40px", margin:'20px' }} className="navbar">
+    <Navbar expand="lg" style={{ backgroundColor: "#c2d18a", borderRadius: "40px", margin: '20px' }} className="navbar">
       <Container fluid className={cx("contain")}>
-        <Navbar.Brand href="/" className={cx("navbar-brand")} style={{ marginLeft:"7rem"}}>
-          {/* <img alt="" src={logo} width="200" height="150" style={{paddingBottom: "40px", objectFit: "cover"}}/> */}
-
+        <Navbar.Brand href="/" className={cx("navbar-brand")} style={{ marginLeft: "7rem" }}>
           TICKETRESELL
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav" style={{ marginLeft: "40px" }}>
           <Nav className="me-auto">
-
             {categories.map(category => (
               <Nav.Link key={category.id} style={{ fontSize: "20px", color: "#000", marginRight: "40px" }}>
                 {category.name}
               </Nav.Link>
             ))}
-            <Nav.Link href="aboutUs" style={{ fontSize: "20px", color: "#000", marginRight: "40px" }}>
-
+            <Nav.Link href="aboutUs" style={{ fontSize: "20px", color: "#000", marginRight: "40px" }} onclick={handleAboutus}>
               About Us
             </Nav.Link>
-            <Nav.Link href="aboutUs" style={{ fontSize: "20px", color: "#000", marginRight: "40px" }}>
+            <Nav.Link href="categories" style={{ fontSize: "20px", color: "#000", marginRight: "40px" }}>
               Categories
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
         {signedIn ? (
-
           <div style={{ display: "flex", alignItems: "center" }}>
             <Button variant="outline-light" style={{ marginRight: "10px" }} title="Notification" onClick={() => setShowNofitication(!showNofitication)}>
               <GoBell />
@@ -138,7 +123,6 @@ function NavigationBar() {
             <Button variant="outline-light" onClick={handleLogin}>
               Login
             </Button>
-
           </>
         )}
       </Container>

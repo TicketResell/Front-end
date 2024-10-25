@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { publicRoutes,privateRoutes } from "./pages/routes";
 import DefaultLayout from "./layouts/DefaultLayout";
+import ErrorPage from './pages/ErrorPage';
 
 
 function App() {
@@ -35,7 +36,12 @@ function App() {
                 />
               );
             })}
-          </Routes>
+
+          {/* Catch-all route for 404 Error Page */}
+          <Route path="*" element={<ErrorPage />} />
+
+
+          </Routes>         
         </div>
       </Router>
     </GoogleOAuthProvider>
