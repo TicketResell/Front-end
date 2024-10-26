@@ -1,127 +1,125 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom"; 
 import { MDBTable, MDBTableHead, MDBTableBody } from "mdb-react-ui-kit";
 import classNames from "classnames/bind";
 import styles from "./OrdersToday.module.scss";
 import Pagination from "../Pagination";
-import { Button } from "react-bootstrap";
+import { Button, Modal, Form } from "react-bootstrap";
 import api from "../../../config/axios";
-import { ToastContainer, toast, Bounce } from 'react-toastify';
+import { ToastContainer, toast, Bounce } from "react-toastify";
 
 function OrdersList({ listOrders = [], isOrderBuyer }) {
   const cx = classNames.bind(styles);
-  console.log("List in Orders", listOrders);
   const [orderPage, setOrderPage] = useState(0);
   const itemsPerPage = 10;
-  const offset = orderPage * itemsPerPage; // Vị trí bắt đầu của dữ liệu trên trang hiện tại
-  const currentOrders = listOrders.slice(offset, offset + itemsPerPage); // Lấy ra dữ liệu của trang hiện tại
+  const offset = orderPage * itemsPerPage;
+  const currentOrders = listOrders.slice(offset, offset + itemsPerPage);
+  const [orderStatuses, setOrderStatuses] = useState({});
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportText, setReportText] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
+  const [ticket, setTicket] = useState(null); // State for ticket
 
-  const handleShipped = async (id)=>{
-    const response = await api.put(`/orders/update-order-status/${id}`,{order_status : "shipping"});
-    console.log("Response Shipping",response.data);
-    if(response.status === 200){
-      toast.success('Response is sent', {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
+  useEffect(() => {
+    const initialStatuses = {};
+    listOrders.forEach(order => {
+      initialStatuses[order.id] = order.orderStatus;
     });
+    setOrderStatuses(initialStatuses);
+  }, [listOrders]);
+
+  const fetchUserFromLocalStorage = () => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      const user = JSON.parse(userData);
+      setCurrentUser(user);
+      // Assuming ticket is part of the user data
+      setTicket(user.ticket); // Adjust this according to your user data structure
     }
-  }
+  };
+
+  useEffect(() => {
+    fetchUserFromLocalStorage();
+  }, []);
+
+  const handleShipped = async (id) => {
+    try {
+      const response = await api.put(`/orders/update-order-status/${id}`, { order_status: "shipping" });
+      if (response.status === 200) {
+        toast.success("Order marked as shipped.", { transition: Bounce });
+      }
+    } catch (error) {
+      toast.error("Error updating order status to shipped.");
+    }
+  };
+
+  const handleReceived = async (id) => {
+    try {
+      const response = await api.put(`/orders/update-order-status/${id}`, { order_status: "completed" });
+      if (response.status === 200) {
+        toast.success("Order marked as completed.", { transition: Bounce });
+        setOrderStatuses(prev => ({ ...prev, [id]: "completed" }));
+      }
+    } catch (error) {
+      toast.error("Error updating order status to completed.");
+    }
+  };
+
+  const handleReportClick = () => {
+    setShowReportModal(true);
+  };
+
+  const handleReportSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem("token");
+      const response = await api.post(
+        `http://localhost:8084/api/ratings/create-report`,
+        {
+          reportedUserId: ticket?.userID, // Using ticket from state
+          reporterUserId: currentUser?.id,
+          productId: ticket?.id,
+          reason: reportText,
+          status: "pending",
+          reportDate: new Date().toISOString(),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("Report submitted successfully.");
+        setReportText("");
+        setShowReportModal(false);
+      }
+    } catch (error) {
+      toast.error("Error submitting report.");
+    }
+  };
 
   return (
     <div className="container">
-      <ToastContainer/>
+      <ToastContainer />
       <div className="row">
-        <h1>{isOrderBuyer ? "Your purchase order" : "Your sales order"}</h1>
+        <h1>{isOrderBuyer ? "Your Purchase Orders" : "Your Sales Orders"}</h1>
       </div>
       <MDBTable>
         <MDBTableHead>
           <tr>
-            <th
-              scope="col"
-              style={{ backgroundColor: "#8e65ff", color: "white" }}
-              className={cx(".custom-tiltle")}
-            >
-              ID
-            </th>
-            {isOrderBuyer ? (
-              <th
-                scope="col"
-                style={{ backgroundColor: "#8e65ff", color: "white" }}
-                className={cx(".custom-tiltle")}
-              >
-                Seller Name
-              </th>
-            ) : (
-              <th
-                scope="col"
-                style={{ backgroundColor: "#8e65ff", color: "white" }}
-                className={cx(".custom-tiltle")}
-              >
-                Buyer Name
-              </th>
-            )}
-            <th
-              scope="col"
-              style={{ backgroundColor: "#8e65ff", color: "white" }}
-              className={cx(".custom-tiltle")}
-            >
-              Ticket Name
-            </th>
-            <th
-              scope="col"
-              style={{ backgroundColor: "#8e65ff", color: "white" }}
-              className={cx(".custom-tiltle")}
-            >
-              Quantity
-            </th>
-            <th
-              scope="col"
-              style={{ backgroundColor: "#8e65ff", color: "white" }}
-              className={cx(".custom-tiltle")}
-            >
-              Total Amount
-            </th>
-            <th
-              scope="col"
-              style={{ backgroundColor: "#8e65ff", color: "white" }}
-              className={cx(".custom-tiltle")}
-            >
-              Service Fee
-            </th>
-            <th
-              scope="col"
-              style={{ backgroundColor: "#8e65ff", color: "white" }}
-              className={cx(".custom-tiltle")}
-            >
-              Payment Status
-            </th>
-            <th
-              scope="col"
-              style={{ backgroundColor: "#8e65ff", color: "white" }}
-              className={cx(".custom-tiltle")}
-            >
-              Order Status
-            </th>
-            <th
-              scope="col"
-              style={{ backgroundColor: "#8e65ff", color: "white" }}
-              className={cx(".custom-tiltle")}
-            >
-              Order Method
-            </th>
-            <th
-              scope="col"
-              style={{ backgroundColor: "#8e65ff", color: "white" }}
-              className={cx(".custom-tiltle")}
-            >
-              Action
-            </th>
+            <th scope="col" className={cx("custom-title")}>ID</th>
+            <th scope="col" className={cx("custom-title")}>{isOrderBuyer ? "Seller Name" : "Buyer Name"}</th>
+            <th scope="col" className={cx("custom-title")}>Ticket Name</th>
+            <th scope="col" className={cx("custom-title")}>Quantity</th>
+            <th scope="col" className={cx("custom-title")}>Total Amount</th>
+            <th scope="col" className={cx("custom-title")}>Service Fee</th>
+            <th scope="col" className={cx("custom-title")}>Payment Status</th>
+            <th scope="col" className={cx("custom-title")}>Order Status</th>
+            <th scope="col" className={cx("custom-title")}>Order Method</th>
+            <th scope="col" className={cx("custom-title")}>Action</th>
           </tr>
         </MDBTableHead>
         <MDBTableBody>
@@ -129,9 +127,7 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
             currentOrders.map((order, index) => (
               <tr key={order.id}>
                 <td>{offset + index + 1}</td>
-                {/* Hiển thị tên seller hoặc buyer thay vì ID */}
-                {isOrderBuyer ? <td>{order.sellerName}</td> : <td>{order.buyerName}</td>}
-                {/* Hiển thị tên ticket thay vì ID */}
+                <td>{isOrderBuyer ? order.sellerName : order.buyerName}</td>
                 <td>{order.ticketName}</td>
                 <td>{order.quantity}</td>
                 <td>{order.totalAmount}</td>
@@ -139,33 +135,35 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
                 <td>{order.paymentStatus}</td>
                 <td>{order.orderStatus}</td>
                 <td>{order.orderMethod}</td>
-                {isOrderBuyer ? (
-                  <td>
+                <td>
+                  {isOrderBuyer ? (
+                    <>
+                      <Button
+                        className={cx("btn-complaints")}
+                        variant="outline-danger"
+                        onClick={handleReportClick}
+                      >
+                        Report
+                      </Button>
+                      <Button
+                        className={cx("btn-response")}
+                        variant="outline-success"
+                        onClick={() => handleReceived(order.id)}
+                      >
+                        {orderStatuses[order.id] === "completed" ? "Completed" : "Confirm Received"}
+                      </Button>
+                    </>
+                  ) : (
                     <Button
                       className={cx("btn-response")}
-                      variant="outline-success"
-                    >
-                      Goods received
-                    </Button>
-                    <Button
-                      className={cx("btn-complaints")}
-                      variant="outline-danger"
-                    >
-                      Complaints
-                    </Button>
-                  </td>
-                ) : (
-                  <td>
-                    <Button
-                      className={cx("btn-response")}
-                      variant={order.orderMethod === "COD" ? "outline-dark" :"outline-success"}
+
                       onClick={() => handleShipped(order.id)}
                      disabled = {order.orderMethod === "COD" ? true :false}
                     >
-                     Confirm Shipped
+                      Confirm Shipped
                     </Button>
-                  </td>
-                )}
+                  )}
+                </td>
               </tr>
             ))
           ) : (
@@ -173,13 +171,37 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
               <td colSpan="10">No orders found</td>
             </tr>
           )}
-          <Pagination
-            currentPage={orderPage}
-            pageCount={Math.ceil(listOrders.length / itemsPerPage)}
-            onPageChange={(selectedPage) => setOrderPage(selectedPage)}
-          />
         </MDBTableBody>
       </MDBTable>
+      <Pagination
+        currentPage={orderPage}
+        pageCount={Math.ceil(listOrders.length / itemsPerPage)}
+        onPageChange={(selectedPage) => setOrderPage(selectedPage)}
+      />
+
+      {/* Report Modal */}
+      <Modal show={showReportModal} onHide={() => setShowReportModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Report Order</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleReportSubmit}>
+            <Form.Group controlId="reportText">
+              <Form.Label>Reason for Reporting</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={reportText}
+                onChange={(e) => setReportText(e.target.value)}
+                placeholder="Explain the issue with this order..."
+              />
+            </Form.Group>
+            <Button type="submit" variant="danger" className="mt-3">
+              Submit Report
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }

@@ -47,10 +47,10 @@ function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         checkIdentifier({ target: { value: identifier } });
         checkPass({ target: { value: password } });
-
+    
         if (errors.identifier || errors.password) {
             toast.error('Vui lòng sửa các lỗi trên form', {
                 position: "top-center",
@@ -65,15 +65,15 @@ function Login() {
             });
             return;
         }
-
+    
         setLoading(true);
-
+    
         try {
             const response = await api.post('/accounts/login', {
                 identifier, 
                 password
             });
-
+    
             if (response && response.status === 200) {
                 toast.success('Đăng nhập thành công!', {
                     position: "top-center",
@@ -86,11 +86,10 @@ function Login() {
                     theme: "light",
                     transition: Bounce,
                 });
-
+    
                 const { jwt } = response.data;
                 const decodedUser = jwtDecode(jwt);
                 localStorage.setItem("token", jwt); 
-                console.log("Token here",jwt);
                 localStorage.setItem("user", JSON.stringify(decodedUser)); 
                 
                 setTimeout(() => {
@@ -98,7 +97,9 @@ function Login() {
                 }, 2000); // 2-second delay
             }
         } catch (error) {
-            toast.error('Đăng nhập không thành công! Vui lòng kiểm tra lại thông tin đăng nhập.', {
+            // Kiểm tra nếu error.response tồn tại và có dữ liệu thông báo
+            const errorMessage = error.response?.data|| 'Đăng nhập không thành công! Vui lòng kiểm tra lại thông tin đăng nhập.';
+            toast.error(errorMessage, {
                 position: "top-center",
                 autoClose: 5000,
                 hideProgressBar: false,
