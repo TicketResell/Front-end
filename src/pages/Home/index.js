@@ -122,9 +122,8 @@ function Home() {
 
   return (
     <>
-      <Container style={{ paddingTop: "30px" }}>
+      <Container style={{ paddingTop: "30px", margin:"0px" }}>
         <section
-          style={{ paddingTop: "0vh", paddingLeft: "4vw", paddingRight: "5vw" }}
         >
           <Row>
             <Col xs={12} md={8} className="mb-4">

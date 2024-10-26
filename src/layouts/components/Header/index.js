@@ -6,7 +6,6 @@ import crowd_background from "../../../assets/images/vuconcert.jpg";
 import movie_background from "../../../assets/images/movie-background.jpg";
 import sport_background from "../../../assets/images/sport-background.png";
 import NavigationBar from "../NavBar";
-
 function Header() {
   const cx = classNames.bind(styles);
   return (
