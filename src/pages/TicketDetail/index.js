@@ -22,7 +22,7 @@ const TicketDetail = () => {
 
   const cx = classNames.bind(styles);
   const initialImage = ticket?.imageUrls[0] || '';
-  const series = ticket?.imageUrls.slice(1) || [];
+  const series = ticket?.imageUrls.slice(0) || [];
 
   const [mainImage, setMainImage] = useState(initialImage);
   const [quantity, setQuantity] = useState(1);
