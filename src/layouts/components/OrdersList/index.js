@@ -18,8 +18,8 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportText, setReportText] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
-  const [ticket, setTicket] = useState(null); // State for ticket
-
+  const [orderChosen, setOrderChosen] = useState(null); // State for ticket
+  console.log("listOrders",listOrders);
   useEffect(() => {
     const initialStatuses = {};
     listOrders.forEach(order => {
@@ -30,11 +30,10 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
 
   const fetchUserFromLocalStorage = () => {
     const userData = localStorage.getItem('user');
+    console.log("userData",userData);
     if (userData) {
       const user = JSON.parse(userData);
       setCurrentUser(user);
-      // Assuming ticket is part of the user data
-      setTicket(user.ticket); // Adjust this according to your user data structure
     }
   };
 
@@ -65,29 +64,23 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
     }
   };
 
-  const handleReportClick = () => {
+  const handleReportClick = (order) => {
+    setOrderChosen(order); 
     setShowReportModal(true);
   };
 
   const handleReportSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token");
       const response = await api.post(
-        `http://localhost:8084/api/ratings/create-report`,
+        "/ratings/create-report",
         {
-          reportedUserId: ticket?.userID, // Using ticket from state
-          reporterUserId: currentUser?.id,
-          productId: ticket?.id,
+          reportedUserId: orderChosen?.sellerId, // Using ticket from state
+          reporterUserId: currentUser.id,
+          productId: orderChosen?.id,
           reason: reportText,
           status: "pending",
           reportDate: new Date().toISOString(),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
         }
       );
 
@@ -141,7 +134,7 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
                       <Button
                         className={cx("btn-complaints")}
                         variant="outline-danger"
-                        onClick={handleReportClick}
+                        onClick={() => handleReportClick(order)}
                       >
                         Report
                       </Button>
