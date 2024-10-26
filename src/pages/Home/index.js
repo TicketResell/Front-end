@@ -126,23 +126,21 @@ function Home() {
         <section
         >
           <Row>
-            <Col xs={12} md={8} className="mb-4">
               <Categories
                 categories={categories}
                 clickCategory={handleCategoryClick}
                 clickAll={fetchTickets}
               />
-            </Col>
-            <Col xs={12} md={4} className="mb-4 d-flex flex-column">
+          </Row>
+          <Row>
               <Search onSearch={handleSearchResults} categories={categories} />
               <Filter onFilterChange={handleFilterChange} onMinMaxChange={handleMinMaxChange}/>
-            </Col>
           </Row>
         </section>
 
         {/* Carousel for Nearly Expired Tickets */}
         <h1 className={cx("span-flame")}>
-          Nearly Expired Tickets{" "}
+          EXPIRING SOON TICKET{" "}
           <span>
             <img
               src="https://i.ibb.co/Vq72zMp/icons8-fire.gif"
@@ -167,7 +165,7 @@ function Home() {
             <span className={cx("notification-icon")}>
               <IoWarning />
             </span>
-            <h2>NO NEARLY EXPIRED TICKET FOUND MATCHING YOUR SEARCH</h2>
+            <h2>NO EXPIRING SOON TICKET FOUND MATCHING YOUR SEARCH</h2>
           </div>
         ) : (
           <Carousel>
@@ -192,7 +190,7 @@ function Home() {
         />
 
         {/* Carousel for Hot Deal Tickets */}
-        <h1>Hot Deal Tickets</h1>
+        <h1>HOT DEAL TICKETS</h1>
 
         {filteredNormal.length === 0 ? (
           <div className={cx("notification-container")}>

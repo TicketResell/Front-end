@@ -27,7 +27,7 @@ function TicketCard({ ticket }) {
       <Container className={cx("card-container")}>
         <Row>
           <Col xs={3}>
-            <Card.Img src={ticket.imageUrls[1]} alt="1" />
+            <Card.Img src={"https://i.ibb.co/sg31cC8/download.png"} alt="1" />
           </Col>
           <Col xs={9}>
             <ListGroup className="list-group-flush">

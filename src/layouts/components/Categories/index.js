@@ -9,7 +9,7 @@ function Categories({ categories, clickCategory, clickAll }) {
   const cx = classNames.bind(styles);
 
   return (
-    <Container className={cx("card-container")}>
+    <Container className={cx("card-container")} fluid>
       <Row>
         <div className={cx("wrapper")}>
           {categories.map((category) => (
@@ -17,7 +17,7 @@ function Categories({ categories, clickCategory, clickAll }) {
               <div className={cx("card")}>
                 <img src={crowd} alt={category.name} />
                 <div className={cx("info")}>
-                  <h1>{category.name}</h1>
+                  <h1 style={{color : "white"}}>{category.name}</h1>
                   <p></p>
                   <button onClick={() => clickCategory(category.id)}>
                     View More
@@ -35,7 +35,7 @@ function Categories({ categories, clickCategory, clickAll }) {
               alt="All Categories"
             />
             <div className={cx("info")}>
-              <h1>All Categories</h1>
+              <h1 style={{color : "white"}} >All Categories</h1>
               <p></p>
               <button className={cx("all-button")}>View More</button>
             </div>

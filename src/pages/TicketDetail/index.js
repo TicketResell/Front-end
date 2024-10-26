@@ -246,6 +246,8 @@ const TicketDetail = () => {
                   </Button>
                 </Col>
               </Row>
+              {/* Seller Infomation */}
+
 
               {/* Modals for different scenarios */}
               <Modal show={showModal} onHide={handleCloseModal}>

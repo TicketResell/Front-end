@@ -89,24 +89,8 @@ function Header() {
               ></div>
             </Col>
           </Row>
-          <Row>
-            <Col xs={12} md={6} className="mb-4">
-            <div
-                className={cx("img-slides")}
-                style={{
-                  backgroundImage: `url('https://i.pinimg.com/736x/4b/f6/f8/4bf6f865d36390715e102632051c36f3.jpg')`,
-                }}
-              ></div>
-             </Col>
-            <Col xs={12} md={6} className="mb-4 d-flex flex-column">
-              <div
-                className={cx("img-slides")}
-                style={{
-                  backgroundImage: `url('https://i.pinimg.com/enabled/564x/37/5f/06/375f0625ee6f420fe8cb8792d5cd1281.jpg')`,
-                }}
-              ></div>
-            </Col>
-          </Row>
+          
+
         </section>
       </div>
     </>

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom"; 
+import { useLocation } from "react-router-dom";
 import { MDBTable, MDBTableHead, MDBTableBody } from "mdb-react-ui-kit";
 import classNames from "classnames/bind";
 import styles from "./OrdersToday.module.scss";
 import Pagination from "../Pagination";
 import { Button, Modal, Form } from "react-bootstrap";
 import api from "../../../config/axios";
+import { ImStarFull, ImStarEmpty } from "react-icons/im";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 
 function OrdersList({ listOrders = [], isOrderBuyer }) {
@@ -13,24 +14,29 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
   const [orderPage, setOrderPage] = useState(0);
   const itemsPerPage = 10;
   const offset = orderPage * itemsPerPage;
+  const numberStar = 5;
   const currentOrders = listOrders.slice(offset, offset + itemsPerPage);
   const [orderStatuses, setOrderStatuses] = useState({});
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [starRate, setStarRate] = useState(1);
   const [reportText, setReportText] = useState("");
+  const [ratingText, setRatingText] = useState("");
+  const [hoverStarRate, setHoverStarRate] = useState(0);
   const [currentUser, setCurrentUser] = useState(null);
-  const [orderChosen, setOrderChosen] = useState(null); // State for ticket
-  console.log("listOrders",listOrders);
+  const [orderChosen, setOrderChosen] = useState(null);
+  
   useEffect(() => {
     const initialStatuses = {};
-    listOrders.forEach(order => {
+    listOrders.forEach((order) => {
       initialStatuses[order.id] = order.orderStatus;
     });
     setOrderStatuses(initialStatuses);
   }, [listOrders]);
 
   const fetchUserFromLocalStorage = () => {
-    const userData = localStorage.getItem('user');
-    console.log("userData",userData);
+    const userData = localStorage.getItem("user");
+    console.log("userData", userData);
     if (userData) {
       const user = JSON.parse(userData);
       setCurrentUser(user);
@@ -43,7 +49,9 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
 
   const handleShipped = async (id) => {
     try {
-      const response = await api.put(`/orders/update-order-status/${id}`, { order_status: "shipping" });
+      const response = await api.put(`/orders/update-order-status/${id}`, {
+        order_status: "shipping",
+      });
       if (response.status === 200) {
         toast.success("Order marked as shipped.", { transition: Bounce });
       }
@@ -54,10 +62,12 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
 
   const handleReceived = async (id) => {
     try {
-      const response = await api.put(`/orders/update-order-status/${id}`, { order_status: "completed" });
+      const response = await api.put(`/orders/update-order-status/${id}`, {
+        order_status: "completed",
+      });
       if (response.status === 200) {
         toast.success("Order marked as completed.", { transition: Bounce });
-        setOrderStatuses(prev => ({ ...prev, [id]: "completed" }));
+        setOrderStatuses((prev) => ({ ...prev, [id]: "completed" }));
       }
     } catch (error) {
       toast.error("Error updating order status to completed.");
@@ -65,24 +75,26 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
   };
 
   const handleReportClick = (order) => {
-    setOrderChosen(order); 
+    setOrderChosen(order);
     setShowReportModal(true);
+  };
+
+  const handleRatingClick = (order) => {
+    setOrderChosen(order);
+    setShowRatingModal(true);
   };
 
   const handleReportSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post(
-        "/ratings/create-report",
-        {
-          reportedUserId: orderChosen?.sellerId, // Using ticket from state
-          reporterUserId: currentUser.id,
-          productId: orderChosen?.id,
-          reason: reportText,
-          status: "pending",
-          reportDate: new Date().toISOString(),
-        }
-      );
+      const response = await api.post("/ratings/create-report", {
+        reportedUserId: orderChosen?.sellerId, // Using ticket from state
+        reporterUserId: currentUser.id,
+        productId: orderChosen?.id,
+        reason: reportText,
+        status: "pending",
+        reportDate: new Date().toISOString(),
+      });
 
       if (response.status === 200) {
         toast.success("Report submitted successfully.");
@@ -94,6 +106,51 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
     }
   };
 
+  const handleRatingSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await api.post("/ratings", {
+        buyerId: orderChosen.buyerId,
+        orderId: currentUser.id,
+        ratingScore: starRate,
+        feedback: ratingText,
+      });
+
+      if (response.status === 200) {
+        toast.success("Rating submitted successfully.");
+        setRatingText("");
+        setShowRatingModal(false);
+      }
+    } catch (error) {
+      toast.error("Error submitting rating.");
+    }
+  };
+
+
+  const renderStars = () => {
+    return (
+      <>
+      <div>
+      {Array.from({ length: numberStar }, (_, index) => (
+      <span
+        key={index}
+        onClick={() => setStarRate(index + 1)}
+        onMouseEnter={() => setHoverStarRate(index + 1)}
+        onMouseLeave={() => setHoverStarRate(0)}
+        style={{ cursor: "pointer", marginRight: "4px" }}
+      >
+        {index < (hoverStarRate || starRate) ? (
+          <ImStarFull color="#feda1b" size={50} />
+        ) : (
+          <ImStarEmpty  color="#feda1b" size={50}/>
+        )}
+      </span>
+    ))}
+    </div> 
+    </>
+  );
+  };
+
   return (
     <div className="container">
       <ToastContainer />
@@ -103,16 +160,36 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
       <MDBTable>
         <MDBTableHead>
           <tr>
-            <th scope="col" className={cx("custom-title")}>ID</th>
-            <th scope="col" className={cx("custom-title")}>{isOrderBuyer ? "Seller Name" : "Buyer Name"}</th>
-            <th scope="col" className={cx("custom-title")}>Ticket Name</th>
-            <th scope="col" className={cx("custom-title")}>Quantity</th>
-            <th scope="col" className={cx("custom-title")}>Total Amount</th>
-            <th scope="col" className={cx("custom-title")}>Service Fee</th>
-            <th scope="col" className={cx("custom-title")}>Payment Status</th>
-            <th scope="col" className={cx("custom-title")}>Order Status</th>
-            <th scope="col" className={cx("custom-title")}>Order Method</th>
-            <th scope="col" className={cx("custom-title")}>Action</th>
+            <th scope="col" className={cx("custom-title")}>
+              ID
+            </th>
+            <th scope="col" className={cx("custom-title")}>
+              {isOrderBuyer ? "Seller Name" : "Buyer Name"}
+            </th>
+            <th scope="col" className={cx("custom-title")}>
+              Ticket Name
+            </th>
+            <th scope="col" className={cx("custom-title")}>
+              Quantity
+            </th>
+            <th scope="col" className={cx("custom-title")}>
+              Total Amount
+            </th>
+            <th scope="col" className={cx("custom-title")}>
+              Service Fee
+            </th>
+            <th scope="col" className={cx("custom-title")}>
+              Payment Status
+            </th>
+            <th scope="col" className={cx("custom-title")}>
+              Order Status
+            </th>
+            <th scope="col" className={cx("custom-title")}>
+              Order Method
+            </th>
+            <th scope="col" className={cx("custom-title")}>
+              Action
+            </th>
           </tr>
         </MDBTableHead>
         <MDBTableBody>
@@ -143,15 +220,23 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
                         variant="outline-success"
                         onClick={() => handleReceived(order.id)}
                       >
-                        {orderStatuses[order.id] === "completed" ? "Completed" : "Confirm Received"}
+                        {orderStatuses[order.id] === "completed"
+                          ? "Completed"
+                          : "Confirm Received"}
+                      </Button>
+                      <Button
+                        className={cx("btn-response")}
+                        variant="outline-primary"
+                        onClick={() => handleRatingClick(order)}
+                      >
+                        Rating
                       </Button>
                     </>
                   ) : (
                     <Button
                       className={cx("btn-response")}
-
-                      onClick={() => handleShipped(order.id)}
-                     disabled = {order.orderMethod === "COD" ? true :false}
+                      onClick={() => handleShipped(order)}
+                      disabled={order.orderMethod === "COD" ? true : false}
                     >
                       Confirm Shipped
                     </Button>
@@ -179,8 +264,8 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleReportSubmit}>
-            <Form.Group controlId="reportText">
-              <Form.Label>Reason for Reporting</Form.Label>
+            <Form.Group controlId="ratingText">
+              <Form.Label>Reason for Report</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={3}
@@ -191,6 +276,34 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
             </Form.Group>
             <Button type="submit" variant="danger" className="mt-3">
               Submit Report
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
+
+      {/*Modal Rating*/}
+      <Modal show={showRatingModal} onHide={() => setShowRatingModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Rating Order</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleRatingSubmit}>
+            <Form.Group controlId="reportText">
+              <Form.Group controlId="ratingStars">
+                <Form.Label>Rate this seller</Form.Label>
+                <div style={{ display: "flex", justifyContent: "center" }}>{renderStars()}</div> {/* Hệ thống sao đánh giá */}
+              </Form.Group>
+              <Form.Label>Reason for Rating</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={ratingText}
+                onChange={(e) => setRatingText(e.target.value)}
+                placeholder="Rate this seller.."
+              />
+            </Form.Group>
+            <Button type="submit" variant="primary" className="mt-3">
+              Submit Rating
             </Button>
           </Form>
         </Modal.Body>
