@@ -2,16 +2,24 @@ import React from 'react';
 import { MDBFooter, MDBContainer, MDBRow, MDBCol, MDBIcon } from 'mdb-react-ui-kit';
 
 function Footer() {
-    return (  
-        <MDBFooter className='text-center text-lg-start text-white' style={{ backgroundColor: '#8E65FF' }}>
+  return (
+    <MDBFooter className='text-center text-lg-start text-white' style={{ backgroundColor: '#1c2230' }}>
       <section className='d-flex justify-content-center justify-content-lg-between p-4 border-bottom'>
         <div className='me-5 d-none d-lg-block'>
-          <span>Get connected with us on social networks:</span>
+          <span>Kết nối với chúng tôi trên các mạng xã hội:</span>
         </div>
-
         <div>
           <a href='https://www.facebook.com/ticketresell.2024/' className='me-4 text-reset'>
             <MDBIcon fab icon="facebook-f" />
+          </a>
+          <a href='#' className='me-4 text-reset'>
+            <MDBIcon fab icon="instagram" />
+          </a>
+          <a href='#' className='me-4 text-reset'>
+            <MDBIcon fab icon="tiktok" />
+          </a>
+          <a href='#' className='me-4 text-reset'>
+            <MDBIcon fab icon="linkedin" />
           </a>
         </div>
       </section>
@@ -21,44 +29,56 @@ function Footer() {
           <MDBRow className='mt-3'>
             <MDBCol md="3" lg="4" xl="3" className='mx-auto mb-4'>
               <h6 className='text-uppercase fw-bold mb-4'>
-                <MDBIcon icon="shop" className="me-3" />
-                Team Seven
+                <MDBIcon icon="ticket-alt" className="me-3" />
+                TicketResell
               </h6>
               <p>
-                Here you can use rows and columns to organize your footer content. Lorem ipsum dolor sit amet,
-                consectetur adipisicing elit.
+                Với sứ mệnh truyền tải những nội dung sự kiện và tạo điều kiện kết nối giữa người mua và người bán vé.
+              </p>
+            </MDBCol>
+
+            <MDBCol md="3" lg="2" xl="2" className='mx-auto mb-4'>
+              <h6 className='text-uppercase fw-bold mb-4'>Liên kết hữu ích</h6>
+              <p>
+                <a href='#' className='text-reset'>Điều khoản sử dụng</a>
+              </p>
+              <p>
+                <a href='#' className='text-reset'>Chính sách bảo mật</a>
+              </p>
+              <p>
+                <a href='#' className='text-reset'>Trợ giúp</a>
               </p>
             </MDBCol>
 
             <MDBCol md="4" lg="3" xl="3" className='mx-auto mb-md-0 mb-4'>
-              <h6 className='text-uppercase fw-bold mb-4'>Contact</h6>
+              <h6 className='text-uppercase fw-bold mb-4'>Liên hệ</h6>
               <p>
                 <MDBIcon icon="home" className="me-2" />
-                New York, NY 10012, US
+                TP. Hồ Chí Minh, Việt Nam
               </p>
               <p>
                 <MDBIcon icon="envelope" className="me-3" />
-                info@example.com
+                support@ticketresell.vn
               </p>
               <p>
-                <MDBIcon icon="phone" className="me-3" /> + 01 234 567 88
+                <MDBIcon icon="phone" className="me-3" /> +84 123 456 789
               </p>
               <p>
-                <MDBIcon icon="print" className="me-3" /> + 01 234 567 89
+                <MDBIcon icon="print" className="me-3" /> +84 987 654 321
               </p>
             </MDBCol>
           </MDBRow>
         </MDBContainer>
       </section>
 
-      <div className='text-center p-4' style={{ backgroundColor: 'rgba(0, 0, 0, 0.05)' }}>
-        © 2021 Copyright:
+      <div className='text-center p-4' style={{ backgroundColor: 'rgba(0, 0, 0, 0.2)' }}>
+        © 2024 Bản quyền:
         <a className='text-reset fw-bold' href='/'>
-          TicketResell
+          TicketResell.vn
         </a>
       </div>
     </MDBFooter>
-    );
+  );
 }
 
 export default Footer;

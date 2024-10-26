@@ -23,3 +23,14 @@
 .full-width {
   grid-column: span 2; // Chiếm 2 cột
 }
+
+.rowHalfAbove{
+  max-height: 100vh;
+    object-fit: cover;
+    width: 100%;
+    height: 50vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 30px;
+}

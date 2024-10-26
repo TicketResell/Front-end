@@ -1,6 +1,6 @@
 import { Row, Col, Table } from "react-bootstrap";
 import classNames from "classnames/bind";
-import styles from "./StaffOverview.module.scss";
+import styles from "./AdminOverview.module.scss";
 import SmallerCard from "./SmallCard";
 import RevenueChart from "./RevenueChart";
 import SalesStatistics from "./SalesStatistics";
@@ -94,7 +94,7 @@ const Admin = () => {
   return (
     <>
       <Row className={cx("rowHalfAbove")}>
-        <Col xs={6}>
+      <Col xs={12} md={6} className="mb-4">
           <Row>
             <SmallerCard
               types={{
