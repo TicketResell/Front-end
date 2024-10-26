@@ -156,7 +156,9 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
                   ) : (
                     <Button
                       className={cx("btn-response")}
+
                       onClick={() => handleShipped(order.id)}
+                     disabled = {order.orderMethod === "COD" ? true :false}
                     >
                       Confirm Shipped
                     </Button>
