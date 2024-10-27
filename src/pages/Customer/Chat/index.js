@@ -20,13 +20,13 @@ import uploadImgBB from "../../../config/imgBB";
 export default function Chat({ ticket, user }) {
   const [messages, setMessages] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isBuyer, setIsBuyer] = useState(false); // Sử dụng isBuyer để xác định vai trò
   const [userName, setUserName] = useState("");
   const [userAvatar, setUserAvatar] = useState("");
   const [connected, setConnected] = useState(false);
   const [activeConservation, setActiveConservation] = useState(null);
   const [unreadCounts, setUnreadCounts] = useState([3, 5, 7, 4, 4, 5]);
   const [conversations, setConversations] = useState([]);
+  const [receiverId, setReceiverId] = useState(null);
   const socket = useRef(null);
   const msgListRef = useRef(null);
 
@@ -58,15 +58,15 @@ export default function Chat({ ticket, user }) {
   };
 
   const handleSendMessage = async (mess) => {
+    const senderId = user.id;
+
     console.log("User message:", mess);
     if (!connected) {
       console.error("WebSocket is not connected");
       return;
     }
 
-    const senderId = user.id;
-    console.log("M co phai Buyer ko", isBuyer);
-    const receiverId = isBuyer ? ticket.seller.id : messages[0]?.user1_id; // Xác định receiverId
+    
     console.log("senderId", senderId);
     console.log("messageContent", mess);
     console.log("receiverId", receiverId);
@@ -143,7 +143,6 @@ export default function Chat({ ticket, user }) {
         console.log("Hình ảnh Imgbb:", imageUrl);
 
         const senderId = user.id;
-        const receiverId = isBuyer ? ticket.seller.id : messages[0]?.user1_id;
         const response = await api.post(`/accounts/get-avatar/${senderId}`);
         const imageSender = response.data;
 
@@ -211,19 +210,29 @@ export default function Chat({ ticket, user }) {
     }
   };
   //Xác định rằng bên nào mua bên nào bán
-  const determineRole = () => {
-    if (ticket && ticket.seller.id !== user.id) {
-      console.log("DTO VÉ", ticket);
-      console.log("Ticket UserID Determinerole", ticket.seller.id);
-      console.log("UserID Login Determinerole", user.id);
-      setIsBuyer(true);
-      getUserNameByID(ticket.seller.id); // Người mua get user của người bán
-      getUserImageByID(ticket.seller.id);
-    } else {
-      setIsBuyer(false);
-      getUserNameByID(messages[0]?.user1_id); // Người bán get user của người mua
-      getUserImageByID(messages[0]?.user1_id);
+  const determineRole = async () => {
+    let receiverId;
+    if (ticket && ticket.seller) {
+    receiverId = ticket.seller.id === user.id ? messages[0]?.user1_id : ticket.seller.id;
+    }else if (messages.length > 0){
+      receiverId = messages[0]?.user1_id === user.id ? messages[0]?.user2_id : messages[0]?.user1_id;
+    }else{
+      toast.error("Nobody to chat.", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
     }
+    setReceiverId(receiverId);
+    await getUserNameByID(receiverId); 
+    await getUserImageByID(receiverId); 
   };
 
   const connectWebSocket = () => {
@@ -288,7 +297,7 @@ export default function Chat({ ticket, user }) {
   useEffect(() => {
     // Đảm bảo rằng WebSocket chỉ được kết nối một lần khi component được mount
     connectWebSocket();
-  
+    determineRole();
     return () => {
       if (socket.current) {
         socket.current.deactivate();
