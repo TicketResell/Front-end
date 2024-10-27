@@ -16,6 +16,7 @@ function NavigationBar() {
   const [showNofitication, setShowNofitication] = useState(false); 
   const [categories, setCategories] = useState([]); 
   const [logoutMessage, setLogoutMessage] = useState("");
+  const [listNofitication, setListNofitication] = useState([]); 
   const navigate = useNavigate(); 
 
   const fetchUser = () => {
@@ -39,10 +40,24 @@ function NavigationBar() {
     }
   };
 
+  const fetchListNotification = async (user) => {
+    try {
+      const response = await api.get(`/notifications/${user.id}`);
+      console.log("List Notification",response.data);
+      setListNofitication(response.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
+
   useEffect(() => {
     fetchUser();
     fetchCategoryNav();
   }, []);
+
+  useEffect(() => {
+    fetchListNotification(user);
+  }, [user]);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -71,13 +86,6 @@ function NavigationBar() {
     event.preventDefault();
     navigate("/aboutUs");
   }
-
-  const listNofitication = [
-    "Notification 1: You have received a new ticket.",
-    "Notification 2: Your ticket has been confirmed.",
-    "Notification 3: The event you are interested in is happening in 3 days.",
-    "Notification 4: The event you are interested in is happening in 3 days.",
-  ];
 
   return (
     <Navbar expand="lg" style={{ backgroundColor: "#c2d18a", borderRadius: "40px", margin: '20px' }} className="navbar">
