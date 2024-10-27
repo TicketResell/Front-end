@@ -76,6 +76,7 @@ function NavigationBar() {
     "Notification 1: You have received a new ticket.",
     "Notification 2: Your ticket has been confirmed.",
     "Notification 3: The event you are interested in is happening in 3 days.",
+    "Notification 4: The event you are interested in is happening in 3 days.",
   ];
 
   return (

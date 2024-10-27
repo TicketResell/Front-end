@@ -75,7 +75,8 @@ function TicketManage({ user }) {
   const fetchTicketsByUserID = async () => {
     try {
       console.log(" userID trong Ticket Manager", user.id);
-      const response = await api.get(`/tickets/used/${user.id}`);
+      const response = await api.get(`/tickets/seller/${user.id}`);
+      console.log("Respone",response);
       console.log("Ticketsby userID List", response.data);
       setTickets(response.data);
     } catch (err) {
@@ -148,11 +149,9 @@ function TicketManage({ user }) {
                   <td>
                     <MDBBadge
                       color={
-                        ticket.status === "Delivered"
-                          ? "primary"
-                          : ticket.status === "Expired Soon"
+                        ticket.status === "used"
                           ? "warning"
-                          : ticket.status === "Expired"
+                          : ticket.status === "expired"
                           ? "danger"
                           : "success"
                       }

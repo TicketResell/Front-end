@@ -66,7 +66,7 @@ export default function Chat({ ticket, user }) {
 
     const senderId = user.id;
     console.log("M co phai Buyer ko", isBuyer);
-    const receiverId = isBuyer ? ticket.userID : messages[0]?.user1_id; // Xác định receiverId
+    const receiverId = isBuyer ? ticket.seller.id : messages[0]?.user1_id; // Xác định receiverId
     console.log("senderId", senderId);
     console.log("messageContent", mess);
     console.log("receiverId", receiverId);
@@ -143,7 +143,7 @@ export default function Chat({ ticket, user }) {
         console.log("Hình ảnh Imgbb:", imageUrl);
 
         const senderId = user.id;
-        const receiverId = isBuyer ? ticket.userID : messages[0]?.user1_id;
+        const receiverId = isBuyer ? ticket.seller.id : messages[0]?.user1_id;
         const response = await api.post(`/accounts/get-avatar/${senderId}`);
         const imageSender = response.data;
 
@@ -212,12 +212,13 @@ export default function Chat({ ticket, user }) {
   };
   //Xác định rằng bên nào mua bên nào bán
   const determineRole = () => {
-    if (ticket && ticket.userID !== user.id) {
-      console.log("Ticket UserID Determinerole", ticket.userID);
+    if (ticket && ticket.seller.id !== user.id) {
+      console.log("DTO VÉ", ticket);
+      console.log("Ticket UserID Determinerole", ticket.seller.id);
       console.log("UserID Login Determinerole", user.id);
       setIsBuyer(true);
-      getUserNameByID(ticket.userID); // Người mua get user của người bán
-      getUserImageByID(ticket.userID);
+      getUserNameByID(ticket.seller.id); // Người mua get user của người bán
+      getUserImageByID(ticket.seller.id);
     } else {
       setIsBuyer(false);
       getUserNameByID(messages[0]?.user1_id); // Người bán get user của người mua

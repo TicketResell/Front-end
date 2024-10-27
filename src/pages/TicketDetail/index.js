@@ -181,7 +181,7 @@ const TicketDetail = () => {
             </div>
             </Row>
             <Row style={{marginTop : "40px"}}>
-                <div onClick={handleClickSeller}>
+                <div onClick={handleClickSeller} style={{cursor : "pointer"}}>
                 <SellerInformation seller={sellerInfor}/>
                 </div>
             </Row>
