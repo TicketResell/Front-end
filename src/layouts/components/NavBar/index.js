@@ -5,7 +5,7 @@ import styles from "./NavigationBar.module.scss";
 import logo from "../../../assets/images/ticket-logo.png"; 
 import { GoBell } from "react-icons/go"; 
 import { TbLogout } from "react-icons/tb"; 
-import Notification from "./Nofitication";
+import Notification from "./Notification";
 import api from "../../../config/axios"; 
 import { useNavigate } from "react-router-dom"; 
 

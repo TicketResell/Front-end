@@ -1,13 +1,40 @@
-import React from 'react';
+import React, { useState,useEffect } from 'react';
 import { Card, Row, Col, Image } from 'react-bootstrap';
 import styles from './SellerInformation.module.scss';
 import classNames from 'classnames/bind';
 import { MdCircle } from "react-icons/md";
+import { ToastContainer, toast, Bounce } from 'react-toastify';
+import api from '../../../config/axios';
 
 const SellerInformation = ({ seller }) => {
     const cx = classNames.bind(styles);
+    const [sellerCount,setSellerCount] = useState(0);
+    const [ratingAvarage,setRatingAvarage] = useState(0);
+
+    const fetchSellerCount = async () =>{
+            const response = await api.get(`/orders/seller/count/${seller.id}`);
+            console.log("Seller Count",response.data);
+            const count = response.data;
+            setSellerCount(count);
+    }
+    const fetchRatingAvarage = async () =>{
+        try {
+            const response = await api.get(`/ratings/average/${seller.id}`);
+            console.log("Response data",response);
+            const rate = response.data;
+            setRatingAvarage(rate);
+        } catch (err) {
+            console.error("Rating chưa có")
+        }
+    }
+
+    useEffect(() => {
+        fetchSellerCount();
+        fetchRatingAvarage();
+      }, []);
     return (
         <Card className={cx("seller-info p-3 shadow-sm")}>
+            <ToastContainer/>
             <Row>
             <Col xs={6}>
             <Row >
@@ -22,7 +49,7 @@ const SellerInformation = ({ seller }) => {
                 <Col xs={6}>
                     <h5 className={cx("seller-info__name mb-1")}>{seller.fullname}</h5>
                     <div className={cx("seller-info__rating")}>
-                        <strong>Rating:</strong> {seller.rating} ⭐
+                        <strong>Rating:</strong> {ratingAvarage  || "0 rate"} ⭐
                     </div>
                 </Col>
             </Row>
@@ -42,7 +69,7 @@ const SellerInformation = ({ seller }) => {
             </Row>
             </Col>
             <Col xs={6}>
-                    THÔNG TIN ĐANG THÊM
+                Number of order : {sellerCount}
             </Col>
             </Row>
         </Card>
