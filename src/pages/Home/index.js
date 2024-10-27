@@ -205,7 +205,7 @@ function Home() {
               <Row>
                 {filteredNormal.map((ticket) => (
                   <Col key={ticket.id} xs={12} md={3}>
-                    <TicketCard ticket={ticket} />
+                    <TicketCard ticket={ticket} seller={ticket.seller}/>
                   </Col>
                 ))}
               </Row>
