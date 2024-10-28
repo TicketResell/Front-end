@@ -30,20 +30,8 @@ export default function Chat({ ticket, user }) {
   const socket = useRef(null);
   const msgListRef = useRef(null);
 
-  const users = [
-    { name: "User 1", lastMessage: "This is a message", date: "2022-01-01" },
-    {
-      name: "User 2",
-      lastMessage: "Hello, get started",
-      date: "2021-12-03",
-    },
-    { name: "User 3", lastMessage: "Rigth", date: "2021-12-03" },
-    { name: "User 4", lastMessage: "Gato", date: "2021-12-03" },
-    { name: "User 5", lastMessage: "Naruto", date: "2021-12-03" },
-  ];
-
-  const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = conversations.filter((conversation) =>
+    conversation.user2FullName && conversation.user2FullName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const getUserImageByID = async (id) => {
@@ -306,8 +294,22 @@ export default function Chat({ ticket, user }) {
   }, []);
 
   // Hàm xử lý khi click vào một Conversation
-  const handleChatClick = (index) => {
+  const handleChatClick = async (index,conversation) => {
+
     setActiveConservation(index); // Cập nhật conversation đang active
+    setReceiverId(conversation.user2);
+    await getUserNameByID(conversation.user2);
+    await getUserImageByID(conversation.user2);
+
+    //Lấy một khung chat mới bằng cách tải history chat của user cụ thể
+    fetchChatHistory(conversation.user2);
+
+    //Chỉnh unreadCount về 0 khi click vào nghĩa là đã đọc rồi
+    setConversations((prevConversations) =>
+      prevConversations.map((conv, i) =>
+        i === index ? { ...conv, unreadCount: 0 } : conv
+      )
+    );
   };
 
   return (
@@ -324,15 +326,14 @@ export default function Chat({ ticket, user }) {
           {filteredUsers.map((conversation, index) => (
             <Conversation
               key={index}
-              name={user.name}
+              name={conversation.user2FullName}
               info={conversation.lastMessage}
               active={activeConservation === index}
-              unreadDot={true}
-              lastActivityTime="43 min"
-              onClick={() => handleChatClick(index)}
+              unreadDot={conversation.unreadCount > 0}
+              lastActivityTime={conversation.timestamp}
+              onClick={() => handleChatClick(index,conversation)}
             >
               <Avatar src="https://i.ibb.co/wpnnQ3Q/a882ecea-527f-4cd7-b2c4-2587a2d10e23.jpg" />
-              <p>{user.lastMessage}</p>
             </Conversation>
           ))}
         </ConversationList>
