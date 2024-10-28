@@ -1,108 +1,113 @@
-.login-screen {
-    background: linear-gradient(90deg, rgba(248, 250, 250, 0.993) 0%, rgba(242, 245, 245, 0.647) 58%, rgba(250, 252, 252, 0.8) 100%);
-  }
-  
-  .gradient-background {
-    background: linear-gradient(90deg, rgba(68, 31, 234, 0.993) 0%, rgba(68, 110, 237, 0.647) 58%, rgba(64, 61, 234, 0.8) 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
+$primary-color: #9A616D;
+$text-color: #393f81;
+$background-color: #f8f9fa;
+$icon-color: #6c757d;
+$btn-color: #333;
 
-.logo {
-    margin-top: 40px;  // Adds spacing below the welcome text
-    width: 380px;  // Adjust size of the logo (increase as needed)
-    height: auto;  // Maintains the aspect ratio
-    margin-left: 160px;
-    margin-right: 100px;
-}
-
-
-
-.welcome-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.welcome-text {
-    color: rgb(250, 250, 251);
-    font-size: 22px;
-    font-weight: bold;
-    text-align: center;
-    margin-top: -40px;
-}
-  
-  .input {
-    margin-bottom: 20px;
-    caret-color: rgba(117, 145, 249, 0.8);
-  }
-  
-  .form-container {
-    width: 100%;
-    max-width: 600px;
-    height: auto;
-    background-color: white;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
-    font-weight: bolder;
-    margin: auto;
-  }
-  
-  .form-group {
-    position: relative;
-  }
-  
-  .form-control {
-    width: 100%;
-    padding: 10px 40px 10px 10px;
-    border-radius: 5px;
-    border: 1px solid #ced4da;
-  }
-  
-  .password-toggle-icon {
-    position: absolute;
-    right: 8%;
-    transform: translateY(-200%);
-    cursor: pointer;
-    z-index: 2;
-    font-size: 20px;
-  }
-
-  /* Phần tử phân cách */
-.divider {
+.vh-100 {
+  height: 100vh;
+  background-color: $primary-color;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 20px 0; /* Khoảng cách trên và dưới */
 }
 
-.divider-line {
-  flex: 1;
-  height: 1px; /* Độ dày của đường kẻ */
-  background-color: #000103; /* Màu của đường kẻ */
+.card {
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.divider-text {
-  padding: 0 10px; /* Padding trái và phải cho văn bản */
-  background: white; /* Màu nền của phần tử văn bản */
-  z-index: 1; /* Đảm bảo chữ nằm trên cùng */
-  position: relative; /* Định vị phần tử */
+.card-body {
+  padding: 2rem 3rem;
+  background-color: $background-color;
+  color: $text-color;
+
+  .form-outline {
+    margin-bottom: 1rem;
+
+    .form-control {
+      font-size: 1rem;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid #ced4da;
+
+      &-lg {
+        font-size: 1.125rem;
+      }
+
+      &:focus {
+        border-color: $primary-color;
+        box-shadow: 0 0 0 0.2rem rgba($primary-color, 0.25);
+      }
+
+      &.is-invalid {
+        border-color: #dc3545;
+      }
+    }
+
+    .invalid-feedback {
+      color: #dc3545;
+      font-size: 0.875rem;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 0.25rem;
+    }
+  }
+
+  .passwordIcon {
+    color: $icon-color;
+    font-size: 1.25rem;
+    position: absolute;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 2;
+  }
+
+  .form-check-label {
+    color: $text-color;
+    font-size: 0.9rem;
+  }
+
+  .form-check-input {
+    accent-color: $primary-color;
+  }
+
+  .btn {
+    background-color: $btn-color;
+    color: #fff;
+    font-size: 1.125rem;
+    padding: 0.75rem 1.5rem;
+    width: 100%;
+    border: none;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: darken($btn-color, 10%);
+    }
+
+    &:disabled {
+      background-color: lighten($btn-color, 20%);
+    }
+  }
+
+  a {
+    color: $text-color;
+
+    &:hover {
+      color: darken($text-color, 10%);
+      text-decoration: underline;
+    }
+  }
+
+  .small {
+    font-size: 0.875rem;
+  }
 }
 
-/* Nút Google đăng nhập */
 .google-login {
-  width: 100%; /* Đảm bảo nút Google có cùng chiều rộng với form */
-  margin-top: 20px; /* Khoảng cách trên của nút Google */
-  padding: 10px; /* Padding cho nút */
-  border: none; /* Xóa bỏ đường viền */
-  border-radius: 5px; /* Bo góc cho nút */
-  background-color: white; /* Nền trắng cho nút */
-  display: flex; /* Flex để căn giữa nội dung */
-  align-items: center; /* Căn giữa theo chiều dọc */
-  justify-content: center; /* Căn giữa theo chiều ngang */
-  cursor: pointer; /* Con trỏ chuột khi hover */
+  margin-top: 1rem;
 }

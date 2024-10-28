@@ -12,6 +12,8 @@ import Filter from "../../layouts/components/Filter"; // Vẫn giữ import Filt
 import styles from "./Home.module.scss";
 import { IoWarning } from "react-icons/io5";
 import classNames from "classnames/bind";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from 'jwt-decode';
 
 function Home() {
   const cx = classNames.bind(styles);
@@ -25,12 +27,27 @@ function Home() {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
   const itemsPerPage = 4;
+  const navigate = useNavigate();
+    const token = localStorage.getItem("token");
+
 
    // Nhận giá trị MIN và MAX từ Filter
    const handleMinMaxChange = (min, max) => {
     setMinPrice(min);
     setMaxPrice(max);
   };
+
+  useEffect(() => {
+    if (token) {
+        const user = jwtDecode(token);
+        // Nếu người dùng là admin hoặc staff, chuyển hướng đến trang dashboard của họ
+        if (user.role === 'admin') {
+            navigate('/admin');
+        } else if (user.role === 'staff') {
+            navigate('/staff');
+        }
+    }
+}, [token, navigate]);
 
   const filterTickets = (tickets, priceRange) => {
     return tickets.filter(
