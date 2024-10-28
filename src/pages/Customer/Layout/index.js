@@ -70,7 +70,7 @@ export default function CustomerLayout() {
   };
 
   const renderLayout = () => {
-    console.log("currentLayout khi bấm vào sidebae",currentLayout);
+    console.log("currentLayout khi bấm vào sidebar",currentLayout);
     switch (currentLayout) {
       case "overview":
         return <Overview listOrdersBuyer={ordersBuyer} />;
