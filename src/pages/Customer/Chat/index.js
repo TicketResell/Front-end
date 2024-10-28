@@ -248,8 +248,7 @@ export default function Chat({ ticket, user }) {
             console.log("Conversation Chat",chatConversation);
             setConversations(chatConversation);
           }) 
-  
-          // Gọi fetchChatHistory ở đây để đảm bảo WebSocket đã kết nối thành công
+
           fetchChatCoversation(user.id)
         } else {
           console.error("STOMP connection is not established");
