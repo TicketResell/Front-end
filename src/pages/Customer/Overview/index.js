@@ -6,20 +6,18 @@ import RevenueChart from "./RevenueChart";
 import OrdersList from "../../../layouts/components/OrdersList"; 
 const cx = classNames.bind(styles);
 
-export default function Overview({listOrdersBuyer}) {
-  const types1 ={
+export default function Overview({listOrdersBuyer,revenue,sales}) {
+  const revenueTotal ={
     name : "Revenue",
-    number : 400,
-    percent : 10,
+    number : revenue,
     status : "up"
   }
-  const types2 ={
+  const salesTotal ={
     name : "Sales",
-    number : 100,
-    percent : 10,
+    number : sales,
     status : "down"
   }
-  const revenue = {
+  const revenue1 = {
     money : "500,273.00",
     thisYear : [55, 65, 75, 60, 85, 100, 75, 68, 90, 75, 65, 55] ,
     lastYear : [45, 55, 60, 50, 70, 85, 65, 58, 75, 60, 50, 40],
@@ -28,11 +26,11 @@ export default function Overview({listOrdersBuyer}) {
     <>
       <Row className={cx("rowHalfAbove")}>
         <Col xs={6}>
-          <Row ><SmallerCard types={types1}/></Row>
-          <Row ><SmallerCard types={types2}/></Row>
+          <Row ><SmallerCard types={revenueTotal}/></Row>
+          <Row ><SmallerCard types={salesTotal}/></Row>
         </Col>
         <Col xs={6} >
-          <RevenueChart revenue={revenue}/>
+          <RevenueChart revenue={revenue1}/>
         </Col>
       </Row>
       <Row className={cx("rowHalfDown")}>

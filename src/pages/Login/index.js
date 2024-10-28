@@ -74,7 +74,7 @@ function Login() {
                     theme: "light",
                     transition: Bounce,
                 });
-
+              
                 setTimeout(() => {
                     navigate(decodedUser.role === 'admin' ? "/admin" : decodedUser.role === 'staff' ? "/staff" : "/");
                 }, 2000);

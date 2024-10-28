@@ -12,6 +12,7 @@ import {
   ConversationHeader,
   Search,
 } from "@chatscope/chat-ui-kit-react";
+import { Button, Modal } from 'react-bootstrap';
 import { Client } from "@stomp/stompjs";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import api from "../../../config/axios";
@@ -24,9 +25,10 @@ export default function Chat({ ticket, user }) {
   const [userAvatar, setUserAvatar] = useState("");
   const [connected, setConnected] = useState(false);
   const [activeConservation, setActiveConservation] = useState(null);
-  const [unreadCounts, setUnreadCounts] = useState([3, 5, 7, 4, 4, 5]);
   const [conversations, setConversations] = useState([]);
   const [receiverId, setReceiverId] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [showChatBox,setShowChatBox] = useState(false);
   const socket = useRef(null);
   const msgListRef = useRef(null);
 
@@ -204,19 +206,6 @@ export default function Chat({ ticket, user }) {
     receiverId = ticket.seller.id === user.id ? messages[0]?.user1_id : ticket.seller.id;
     }else if (messages.length > 0){
       receiverId = messages[0]?.user1_id === user.id ? messages[0]?.user2_id : messages[0]?.user1_id;
-    }else{
-      toast.error("Nobody to chat.", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
-      return;
     }
     setReceiverId(receiverId);
     await getUserNameByID(receiverId); 
@@ -259,8 +248,7 @@ export default function Chat({ ticket, user }) {
             console.log("Conversation Chat",chatConversation);
             setConversations(chatConversation);
           }) 
-  
-          // Gọi fetchChatHistory ở đây để đảm bảo WebSocket đã kết nối thành công
+
           fetchChatCoversation(user.id)
         } else {
           console.error("STOMP connection is not established");
@@ -294,7 +282,7 @@ export default function Chat({ ticket, user }) {
 
   // Hàm xử lý khi click vào một Conversation
   const handleChatClick = async (index,conversation) => {
-
+    setShowChatBox(true);
     setActiveConservation(index); // Cập nhật conversation đang active
     setReceiverId(conversation.user2);
     await getUserNameByID(conversation.user2);
@@ -309,7 +297,18 @@ export default function Chat({ ticket, user }) {
         i === index ? { ...conv, unreadCount: 0 } : conv
       )
     );
+
   };
+
+  useEffect(() => {
+    // Hiển thị modal để thông báo không có conversation với người nào
+    console.log("Số lượng Conversation người dùng có",conversations.length);
+    if (conversations.length === 0 ) {
+      setShowModal(true);
+    }else{
+      setShowModal(false);
+    }
+  }, [conversations]);
 
   return (
     <MainContainer>
@@ -386,13 +385,26 @@ export default function Chat({ ticket, user }) {
             </Message>
           ))}
         </MessageList>
-
-        <MessageInput
+          {showChatBox && <MessageInput
           placeholder="Type message here"
           onSend={handleSendMessage}
           onAttachClick={handleAttachFile}
-        />
+        /> }
+
       </ChatContainer>
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>No Contacts Available</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>You currently have no contacts to chat with.</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </MainContainer>
   );
 }
