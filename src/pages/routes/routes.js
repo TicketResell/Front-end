@@ -11,7 +11,6 @@ import Admin from '../Admin/AdminOverview';
 import CustomerLayout from '../Customer/Layout';
 import OrderPage from '../Order';
 import StaffLayout from '../Staff/Layout';
-import TicketManage from '../Staff/TicketManage'
 import TicketDetail from '../TicketDetail';
 import ErrorPage from '../ErrorPage';
 
@@ -30,12 +29,10 @@ const privateRoutes = [
     { path: '/profile', component: Profile},
     { path: '/updateProfile', component: UpdateProfile},
     { path: '/forgot-password', component: ForgotPassword, layout: null},
-    { path: '/payment', component: Payment, layout: HeaderOnly},
-    {path: '/admin',component: Admin, layout: null},
-    { path: '/customer', component: CustomerLayout,layout : null},
-    { path: '/admin',component: Admin, layout: null},
-    { path: '/staff',component: StaffLayout, layout: null},
-    { path: '/ticketManage',component: TicketManage, layout: null},
+    { path: '/payment', component: Payment, layout: HeaderOnly, role: 'user'},
+    { path: '/customer', component: CustomerLayout,layout : null, role: 'user'},
+    { path: '/admin',component: Admin, layout: null, role: 'admin'},
+    { path: '/staff',component: StaffLayout, layout: null, role: 'staff'},
 ];
 
 export { publicRoutes, privateRoutes };

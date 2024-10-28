@@ -18,7 +18,7 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportText, setReportText] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
-  const [orderChosen, setOrderChosen] = useState(null); // State for ticket
+  const [orderChosen, setOrderChosen] = useState(null); 
   console.log("listOrders",listOrders);
   useEffect(() => {
     const initialStatuses = {};

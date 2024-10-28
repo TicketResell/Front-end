@@ -1,13 +1,13 @@
 import React from "react";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import "./ErrorPage.module.scss"; 
+import styles from "./ErrorPage.module.scss"; 
 
 function ErrorPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="not-found">
+    <div className={styles.notFound}>
       <h1>404</h1>
       <h2>Page Not Found</h2>
       <p>Sorry, the page you are looking for does not exist.</p>
