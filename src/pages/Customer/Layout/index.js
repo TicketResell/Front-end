@@ -26,6 +26,8 @@ export default function CustomerLayout() {
   const [ordersSeller,setOrdersSeller] = useState([]);
   const [ordersBuyer,setOrdersBuyer] = useState([]);
   const [errorMessage,setErrorMessage] = useState("");
+  const [revenue,setRevenue] = useState(0);
+  const [sales,setSales] = useState(0);
   const fetchOrdersListByBuyer = async () =>{
     try {
       console.log("User Current Buyer",user.id)
@@ -64,7 +66,26 @@ export default function CustomerLayout() {
         console.error("Không có người dùng", error);
       }
   }
-
+  const fetchRevenue = async (user) =>{
+    try {
+      const response = await api.get(`/balance/${user.id}`);
+      console.log("Revenue here",response.data);
+      const revenue = response.data;
+      setRevenue(revenue);
+      } catch (error) {
+        console.error("Không có doanh thu", error);
+      }
+  }
+  const fetchSales= async (user) =>{
+    try {
+      const response = await api.get(`/orders/count-completed/${user.id}`);
+      console.log("Sales here",response.data);
+      const sales = response.data;
+      setSales(sales);
+      } catch (error) {
+        console.error("Không có doanh số", error);
+      }
+  }
   const handleLayoutClick = (view) => {
     setCurrentLayout(view);
   };
@@ -73,7 +94,7 @@ export default function CustomerLayout() {
     console.log("currentLayout khi bấm vào sidebae",currentLayout);
     switch (currentLayout) {
       case "overview":
-        return <Overview listOrdersBuyer={ordersBuyer} />;
+        return <Overview listOrdersBuyer={ordersBuyer} revenue={revenue} sales={sales}/>;
       case "orderSeller":
         return ordersSeller.length > 0 ? (
           <OrdersList listOrders={ordersSeller} />
@@ -102,13 +123,13 @@ export default function CustomerLayout() {
   }, [ticket]);
   
   useEffect(() => {
-    if(user){
       if (currentLayout === "orderSeller") {
         fetchOrdersListBySeller();
       } else if (currentLayout === "overview") {
         fetchOrdersListByBuyer();
       }
-    }
+    fetchRevenue(user);
+    fetchSales(user);
   }, [user,currentLayout]);
 
 
