@@ -12,9 +12,12 @@ import classNames from "classnames/bind";
 import styles from "./Sidebar.module.scss";
 import Spinner from "react-bootstrap/Spinner";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+
 const cx = classNames.bind(styles);
 
 export default function Sidebar({ customer, onLayoutClick }) {
+  const [activeItem, setActiveItem] = useState("overview"); 
 
   const navigate = useNavigate(); // Initialize navigation
 
@@ -50,43 +53,62 @@ export default function Sidebar({ customer, onLayoutClick }) {
           Add New Ticket
         </Button>
       </Row>
-      <Row className={cx("menu")}>
-        <Col>
+      <Row>
           <div
-            className={cx("menuItem")}
-            onClick={() => onLayoutClick("overview")}
+            className={cx("menuItem", { active: activeItem === "overview" })}
+            onClick={() => {onLayoutClick("overview");
+              setActiveItem("overview");
+            }}
           >
+          <b></b>
+          <b></b>
             <FaRegChartBar /> Overview
           </div>
+
           <div
-            className={cx("menuItem")}
-            onClick={() => onLayoutClick("orderSeller")}
+            className={cx("menuItem",{ active: activeItem === "orderSeller" })}
+            onClick={() => {onLayoutClick("orderSeller");
+              setActiveItem("orderSeller");
+            }}
           >
+          <b></b>
+          <b></b>
             <FaDollarSign /> Order
           </div>
-          <div className={cx("menuItem")} onClick={() => onLayoutClick("chat")}>
+
+          <div className={cx("menuItem",{ active: activeItem === "chat" })} onClick={() => {onLayoutClick("chat");setActiveItem("chat");}}>
+          <b></b>
+          <b></b>
             <FaComments /> Chat
           </div>
+
           <div
-            className={cx("menuItem")}
-            onClick={() => onLayoutClick("setTicket")}
+            className={cx("menuItem",{ active: activeItem === "setTicket" })}
+            onClick={() => {onLayoutClick("setTicket");setActiveItem("setTicket");}}
           >
+            <b></b>
+            <b></b>
             <FaTicketAlt /> My Ticket
           </div>
           <div
-            className={cx("menuItem")}
-            onClick={() => onLayoutClick("profile")}
+            className={cx("menuItem",{ active: activeItem === "profile" })}
+            onClick={() => {onLayoutClick("profile");setActiveItem("profile");}}
           >
+            <b></b>
+            <b></b>
             <CgProfile /> Profile
           </div>
-          <div className={cx("menuItem")} onClick={() => onLayoutClick('feedback')}>
+          <div className={cx("menuItem",{ active: activeItem === "feedback" })} onClick={() => {onLayoutClick('feedback');setActiveItem("feedback");}}>
+            <b></b>
+            <b></b>
             <MdContactSupport /> Feedback 
           </div>
-        </Col>
       </Row>
       <Row className={cx("menuItem")}>
         <Col>
           <div className={cx("logoutItem")} onClick={handleLogout}>
+            <b></b>
+            <b></b>
             Logout <FaSignOutAlt />
           </div>
         </Col>

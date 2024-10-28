@@ -6,13 +6,13 @@ import { IoLocationSharp } from "react-icons/io5";
 import { MdOutlineDateRange } from "react-icons/md";
 import { IoPricetagsSharp } from "react-icons/io5";
 
-function TicketCard({ ticket }) {
+function TicketCard({ ticket,seller = {} }) {
   const cx = classNames.bind(styles);
   const navigate = useNavigate();
 
   const handleClickCard = () => {
     const encodedEventTitle = encodeURIComponent(ticket.eventTitle);
-    navigate(`/ticketDetail/${ticket.userID}/${ticket.id}/${encodedEventTitle}`, { state: { ticket } });
+    navigate(`/ticketDetail/${ticket.userID}/${ticket.id}/${encodedEventTitle}`, { state: { ticket,seller } });
   }
   
 
@@ -27,7 +27,7 @@ function TicketCard({ ticket }) {
       <Container className={cx("card-container")}>
         <Row>
           <Col xs={3}>
-            <Card.Img src={ticket.imageUrls[1]} alt="1" />
+            <Card.Img src={seller.userImage ||"https://i.ibb.co/sg31cC8/download.png"} alt="1" />
           </Col>
           <Col xs={9}>
             <ListGroup className="list-group-flush">

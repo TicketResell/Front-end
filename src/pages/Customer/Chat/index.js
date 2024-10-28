@@ -20,30 +20,18 @@ import uploadImgBB from "../../../config/imgBB";
 export default function Chat({ ticket, user }) {
   const [messages, setMessages] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isBuyer, setIsBuyer] = useState(false); // Sử dụng isBuyer để xác định vai trò
   const [userName, setUserName] = useState("");
   const [userAvatar, setUserAvatar] = useState("");
   const [connected, setConnected] = useState(false);
   const [activeConservation, setActiveConservation] = useState(null);
   const [unreadCounts, setUnreadCounts] = useState([3, 5, 7, 4, 4, 5]);
   const [conversations, setConversations] = useState([]);
+  const [receiverId, setReceiverId] = useState(null);
   const socket = useRef(null);
   const msgListRef = useRef(null);
 
-  const users = [
-    { name: "User 1", lastMessage: "This is a message", date: "2022-01-01" },
-    {
-      name: "User 2",
-      lastMessage: "Hello, get started",
-      date: "2021-12-03",
-    },
-    { name: "User 3", lastMessage: "Rigth", date: "2021-12-03" },
-    { name: "User 4", lastMessage: "Gato", date: "2021-12-03" },
-    { name: "User 5", lastMessage: "Naruto", date: "2021-12-03" },
-  ];
-
-  const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = conversations.filter((conversation) =>
+    conversation.user2FullName && conversation.user2FullName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const getUserImageByID = async (id) => {
@@ -58,15 +46,15 @@ export default function Chat({ ticket, user }) {
   };
 
   const handleSendMessage = async (mess) => {
+    const senderId = user.id;
+
     console.log("User message:", mess);
     if (!connected) {
       console.error("WebSocket is not connected");
       return;
     }
 
-    const senderId = user.id;
-    console.log("M co phai Buyer ko", isBuyer);
-    const receiverId = isBuyer ? ticket.userID : messages[0]?.user1_id; // Xác định receiverId
+    
     console.log("senderId", senderId);
     console.log("messageContent", mess);
     console.log("receiverId", receiverId);
@@ -143,7 +131,6 @@ export default function Chat({ ticket, user }) {
         console.log("Hình ảnh Imgbb:", imageUrl);
 
         const senderId = user.id;
-        const receiverId = isBuyer ? ticket.userID : messages[0]?.user1_id;
         const response = await api.post(`/accounts/get-avatar/${senderId}`);
         const imageSender = response.data;
 
@@ -211,18 +198,29 @@ export default function Chat({ ticket, user }) {
     }
   };
   //Xác định rằng bên nào mua bên nào bán
-  const determineRole = () => {
-    if (ticket && ticket.userID !== user.id) {
-      console.log("Ticket UserID Determinerole", ticket.userID);
-      console.log("UserID Login Determinerole", user.id);
-      setIsBuyer(true);
-      getUserNameByID(ticket.userID); // Người mua get user của người bán
-      getUserImageByID(ticket.userID);
-    } else {
-      setIsBuyer(false);
-      getUserNameByID(messages[0]?.user1_id); // Người bán get user của người mua
-      getUserImageByID(messages[0]?.user1_id);
+  const determineRole = async () => {
+    let receiverId;
+    if (ticket && ticket.seller) {
+    receiverId = ticket.seller.id === user.id ? messages[0]?.user1_id : ticket.seller.id;
+    }else if (messages.length > 0){
+      receiverId = messages[0]?.user1_id === user.id ? messages[0]?.user2_id : messages[0]?.user1_id;
+    }else{
+      toast.error("Nobody to chat.", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
     }
+    setReceiverId(receiverId);
+    await getUserNameByID(receiverId); 
+    await getUserImageByID(receiverId); 
   };
 
   const connectWebSocket = () => {
@@ -263,7 +261,6 @@ export default function Chat({ ticket, user }) {
           }) 
   
           // Gọi fetchChatHistory ở đây để đảm bảo WebSocket đã kết nối thành công
-          fetchChatHistory(user.id);
           fetchChatCoversation(user.id)
         } else {
           console.error("STOMP connection is not established");
@@ -287,7 +284,7 @@ export default function Chat({ ticket, user }) {
   useEffect(() => {
     // Đảm bảo rằng WebSocket chỉ được kết nối một lần khi component được mount
     connectWebSocket();
-  
+    determineRole();
     return () => {
       if (socket.current) {
         socket.current.deactivate();
@@ -296,8 +293,22 @@ export default function Chat({ ticket, user }) {
   }, []);
 
   // Hàm xử lý khi click vào một Conversation
-  const handleChatClick = (index) => {
+  const handleChatClick = async (index,conversation) => {
+
     setActiveConservation(index); // Cập nhật conversation đang active
+    setReceiverId(conversation.user2);
+    await getUserNameByID(conversation.user2);
+    await getUserImageByID(conversation.user2);
+
+    //Lấy một khung chat mới bằng cách tải history chat của user cụ thể
+    fetchChatHistory(conversation.user2);
+
+    //Chỉnh unreadCount về 0 khi click vào nghĩa là đã đọc rồi
+    setConversations((prevConversations) =>
+      prevConversations.map((conv, i) =>
+        i === index ? { ...conv, unreadCount: 0 } : conv
+      )
+    );
   };
 
   return (
@@ -314,15 +325,14 @@ export default function Chat({ ticket, user }) {
           {filteredUsers.map((conversation, index) => (
             <Conversation
               key={index}
-              name={user.name}
+              name={conversation.user2FullName}
               info={conversation.lastMessage}
               active={activeConservation === index}
-              unreadDot={true}
-              lastActivityTime="43 min"
-              onClick={() => handleChatClick(index)}
+              unreadDot={conversation.unreadCount > 0}
+              lastActivityTime={conversation.timestamp}
+              onClick={() => handleChatClick(index,conversation)}
             >
-              <Avatar src="https://i.ibb.co/wpnnQ3Q/a882ecea-527f-4cd7-b2c4-2587a2d10e23.jpg" />
-              <p>{user.lastMessage}</p>
+              <Avatar src="https://i.ibb.co/sg31cC8/download.png" />
             </Conversation>
           ))}
         </ConversationList>

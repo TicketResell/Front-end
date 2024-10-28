@@ -13,6 +13,7 @@ import OrderPage from '../Order';
 import StaffLayout from '../Staff/Layout';
 import TicketDetail from '../TicketDetail';
 import ErrorPage from '../ErrorPage';
+import SellerPage from '../Seller Page';
 
 
 const publicRoutes = [
@@ -23,6 +24,7 @@ const publicRoutes = [
     {path: '/aboutUs',component: AboutUs, layout: null},
     {path: '/ticketDetail/:userId/:ticketId/:eventTitle',component: TicketDetail},
     {path: '/errorPage',component: ErrorPage, layout: null},
+    {path: '/sellerPage',component: SellerPage},
 ];
 
 const privateRoutes = [

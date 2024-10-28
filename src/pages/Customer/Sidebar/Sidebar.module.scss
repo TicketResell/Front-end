@@ -1,5 +1,5 @@
 .sidebar {
-  background-color: #9063e0;
+  background-color: #493971;
   height: 100vh;
   padding: 20px;
   color: #fff;
@@ -37,27 +37,73 @@
 
 .addProductButton {
   width: 150px !important;
-  background-color: #612568 !important;
+  background-color: #000000 !important;
   margin-left: auto;
   margin-right: auto;
 }
 .addProductButton:hover {
-  background-color: #7591f9 !important;
-}
-
-.menu {
-  margin-bottom: auto;
+  background-color: white !important;
+  color: #000000 !important;
+  cursor: pointer;
 }
 
 .menuItem {
-  display: flex;
+  display: block;
+  position: relative;
+  flex-direction: row;
   align-items: center;
-  font-size: 16px;
-  margin-bottom: 20px;
-  cursor: pointer;
-  padding: 10px;
-  text-align: left; /* Align text to the left */
-  transition: background-color 0.3s ease;
+  justify-content: center;
+  color: #fff;
+  font-size: 1rem;
+  padding: 15px 0;
+  margin-left: 10px;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+
+.menuItem b:nth-child(1){
+  position: absolute;
+  top: -15px;
+  height: 15px;
+  width: 100%;
+  background: #fff;
+  display: none;
+}
+
+.menuItem b:nth-child(1)::before{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-bottom-right-radius: 20px;
+  background: rgb(73, 57, 113);
+}
+
+.menuItem b:nth-child(2){
+  position: absolute;
+  bottom: -15px;
+  height: 15px;
+  width: 100%;
+  background: #fff;
+  display: none;
+}
+
+.menuItem b:nth-child(2)::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-top-right-radius: 20px;
+  background: rgb(73, 57, 113);
+}
+
+.menuItem.active b:nth-child(1),
+.menuItem.active b:nth-child(2) {
+  display: block;
 }
 
 .menuItem svg {
@@ -67,9 +113,14 @@
 }
 
 .menuItem:hover {
-  background-color: #7591f9 !important;
+  cursor: pointer;
 }
 
+.menuItem.active {
+  text-decoration: none;
+  color: #000;
+  background: rgb(254, 254, 254);
+}
 
 .logoutSection {
   margin-top: auto;
@@ -84,8 +135,8 @@
   transition: background-color 0.3s ease;
 }
 
-.logoutItem:hover {
-  background-color: #7591f9 !important;
+.logoutItem:hover { 
+  cursor: pointer;
 }
 
 .logoutItem svg {

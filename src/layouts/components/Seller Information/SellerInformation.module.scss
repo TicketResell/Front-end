@@ -1,0 +1,20 @@
+.seller-info {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+
+    &__avatar {
+        width: 80px;
+        height: 80px;
+    }
+
+    &__name {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #333;
+    }
+
+    &__rating, &__contact, &__status {
+        font-size: 0.9rem;
+        color: #555;
+    }
+}

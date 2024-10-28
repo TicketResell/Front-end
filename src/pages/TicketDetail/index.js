@@ -11,6 +11,7 @@ import onsale from '../../assets/images/onsale-logo.jpg';
 import api from "../../../src/config/axios";
 import styles from "./TicketDetail.module.scss";
 import { toast } from 'react-toastify';
+import SellerInformation from "../../layouts/components/Seller Information";
 
 const TicketDetail = () => {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ const TicketDetail = () => {
   const decodedEventTitle = decodeURIComponent(eventTitle);
 
   const ticket = location.state?.ticket;
+  const sellerInfor = location.state?.seller
 
   const cx = classNames.bind(styles);
   const initialImage = ticket?.imageUrls[0] || '';
@@ -33,7 +35,6 @@ const TicketDetail = () => {
   const [showIncompleteProfileModal, setShowIncompleteProfileModal] = useState(false);
   const [imagesSeries, setImageSeries] = useState(series);
   const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState({});
   const [reportSuccessMessage, setReportSuccessMessage] = useState("");
 
   // Check user login state from localStorage
@@ -153,11 +154,16 @@ const TicketDetail = () => {
     setReportText("");
   };
 
+  const handleClickSeller = () =>{
+    navigate("/sellerPage", { state: { sellerInfor } });
+  }
+
   return (
     <section className={cx("py-5")}>
       <Container>
         <Row className={cx("gx-5")}>
           <Col lg={6}>
+          <Row>
             <div className={cx("rounded-4", "mb-3", "d-flex", "justify-content-center")}>
               <img
                 style={{ maxWidth: "100%", maxHeight: "100vh", margin: "auto" }}
@@ -173,6 +179,12 @@ const TicketDetail = () => {
                 </a>
               ))}
             </div>
+            </Row>
+            <Row style={{marginTop : "40px"}}>
+                <div onClick={handleClickSeller} style={{cursor : "pointer"}}>
+                <SellerInformation seller={sellerInfor}/>
+                </div>
+            </Row>
           </Col>
 
           <Col lg={6}>
@@ -246,6 +258,7 @@ const TicketDetail = () => {
                   </Button>
                 </Col>
               </Row>
+
 
               {/* Modals for different scenarios */}
               <Modal show={showModal} onHide={handleCloseModal}>

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import classNames from 'classnames/bind';
 import styles from "./Notification.module.scss"
 
-function Notification({listNofitication}){
+function Notification({listNofitication = []}){
   const cx = classNames.bind(styles)  
   const notificationRef = useRef(null);
 
@@ -12,7 +12,6 @@ function Notification({listNofitication}){
       if (notificationRef.current && !notificationRef.current.contains(event.target)) {
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -21,10 +20,14 @@ function Notification({listNofitication}){
 
   return (
     <div style={{ position: 'relative' }}>
-        <div ref={notificationRef} className={cx("notificationBox")}>
+        <div ref={listNofitication} className={cx("notificationBox")}>
           <ul style={{ listStyleType: 'none', padding: '10px', margin: '0' }}>
             {listNofitication.map((notification, index) => (
-              <li key={index} className = {cx("notificationItem")}>{notification}</li>
+              <>
+              <strong>{notification.title}</strong>
+              <li key={index} className = {cx("notificationItem")}>{notification.message}</li>
+               <p style={{ color: "#aaa" }}>{notification.createdDate}</p>
+              </>
             ))}
           </ul>
         </div>
