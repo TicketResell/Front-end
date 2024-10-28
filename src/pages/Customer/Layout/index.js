@@ -12,6 +12,7 @@ import { useLocation } from "react-router-dom";
 import { useState , useEffect} from "react";
 import api from "../../../config/axios";
 import OrdersList from "../../../layouts/components/OrdersList";
+import ErrorPage from "../../ErrorPage";
 
 
 const cx = classNames.bind(styles);
@@ -24,7 +25,7 @@ export default function CustomerLayout() {
   const [user,setUser] = useState(null);
   const [ordersSeller,setOrdersSeller] = useState([]);
   const [ordersBuyer,setOrdersBuyer] = useState([]);
-
+  const [errorMessage,setErrorMessage] = useState("");
   const fetchOrdersListByBuyer = async () =>{
     try {
       console.log("User Current Buyer",user.id)
@@ -43,9 +44,14 @@ export default function CustomerLayout() {
       const response = await api.get(`/orders/seller/${user.id}`);
       const sellerOrderList = response.data;
       console.log("List oreder by Seller",sellerOrderList)
-      setOrdersSeller(sellerOrderList);
+      if (sellerOrderList.length === 0) {
+        setErrorMessage("No Seller Order Tickets List");
+      } else {
+        setOrdersSeller(sellerOrderList);
+      }
       } catch (error) {
-        console.error("Không có danh sách order", error);
+        console.log("Error Data",error.response.data);
+        setErrorMessage(error.response.data);
       }
   }
   
@@ -72,7 +78,7 @@ export default function CustomerLayout() {
         return ordersSeller.length > 0 ? (
           <OrdersList listOrders={ordersSeller} />
         ) : (
-          <p>Loading orders...</p>
+          <ErrorPage errorMessage={errorMessage}/>
         );
       case "chat":
         return <Chat ticket={ticket} user={user}/>;

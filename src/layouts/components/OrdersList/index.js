@@ -246,7 +246,9 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
             ))
           ) : (
             <tr>
-              <td colSpan="10">No orders found</td>
+              <td colSpan="10" > 
+                <h1 style={{color:"#dc3545"}}>No orders found</h1>
+              </td>
             </tr>
           )}
         </MDBTableBody>

@@ -14,12 +14,14 @@ import {
 import TicketEdit from "./TicketEdit"; 
 import api from "../../../config/axios";
 import { ToastContainer, toast, Bounce } from 'react-toastify';
+import ErrorPage from "../../ErrorPage";
 
 function TicketManage({ user }) {
   const [tickets, setTickets] = useState([]);
   const [editRowId, setEditRowId] = useState(null);
   const [showEditForm, setShowEditForm] = useState(false); // Điều khiển form chỉnh sửa
-
+  const [showErrorPage,setShowErrorPage] = useState(false);
+  const [errorMessage,setErrorMessage] = useState("");
   const handleEdit = (id) => {
     setEditRowId(id);
     setShowEditForm(true); // Hiển thị form chỉnh sửa
@@ -79,18 +81,10 @@ function TicketManage({ user }) {
       console.log("Respone",response);
       console.log("Ticketsby userID List", response.data);
       setTickets(response.data);
+      setShowErrorPage(false);
     } catch (err) {
-      toast.error(err.response.data, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
+      setShowErrorPage(true);
+      setErrorMessage(err.response.data);
     }
   };
 
@@ -99,8 +93,11 @@ function TicketManage({ user }) {
   }, [user.id]);
 
   return (
-    <Container>
-      <ToastContainer />
+    showErrorPage ? (
+      <ErrorPage errorMessage={errorMessage} />
+    ) : (
+      <Container>
+      <ToastContainer/>
       <Row>
         {showEditForm ? (
           <TicketEdit
@@ -186,6 +183,7 @@ function TicketManage({ user }) {
         )}
       </Row>
     </Container>
+    )
   );
 }
 

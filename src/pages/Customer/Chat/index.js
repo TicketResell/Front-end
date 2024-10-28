@@ -261,7 +261,6 @@ export default function Chat({ ticket, user }) {
           }) 
   
           // Gọi fetchChatHistory ở đây để đảm bảo WebSocket đã kết nối thành công
-          fetchChatHistory(user.id);
           fetchChatCoversation(user.id)
         } else {
           console.error("STOMP connection is not established");
@@ -333,7 +332,7 @@ export default function Chat({ ticket, user }) {
               lastActivityTime={conversation.timestamp}
               onClick={() => handleChatClick(index,conversation)}
             >
-              <Avatar src="https://i.ibb.co/wpnnQ3Q/a882ecea-527f-4cd7-b2c4-2587a2d10e23.jpg" />
+              <Avatar src="https://i.ibb.co/sg31cC8/download.png" />
             </Conversation>
           ))}
         </ConversationList>

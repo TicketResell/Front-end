@@ -7,27 +7,6 @@ import OrdersList from "../../../layouts/components/OrdersList";
 const cx = classNames.bind(styles);
 
 export default function Overview({listOrdersBuyer}) {
-  const listOrderToday = [
-    {
-      orderID : "1",
-      buyerID : "1",
-      ticketID : "1",
-      orderDate : "25/9/2023",
-      paymentID : "EIR9",
-      orderMethod : "COD",
-      totalAmount : "1294000",
-      status : "pending"
-    },{
-      orderID : "1",
-      buyerID : "1",
-      ticketID : "1",
-      orderDate : "25/9/2023",
-      paymentID : "EIR9",
-      orderMethod : "paypal",
-      totalAmount : "12394000",
-      status : "completed"
-    }
-  ]
   const types1 ={
     name : "Revenue",
     number : 400,
