@@ -9,7 +9,7 @@ const cx = classNames.bind(styles);
 export default function Overview({listOrdersBuyer,revenue,sales}) {
   const revenueTotal ={
     name : "Revenue",
-    number : revenue,
+    number : revenue.toLocaleString("vi-VN"),
     status : "up"
   }
   const salesTotal ={

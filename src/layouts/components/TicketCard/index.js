@@ -40,7 +40,7 @@ function TicketCard({ ticket,seller = {} }) {
               </ListGroup.Item>
               <ListGroup.Item>
                 <span className={cx("price-sale")}>
-                  <IoPricetagsSharp /> {ticket.price}$
+                  <IoPricetagsSharp /> {ticket.price.toLocaleString("vi-VN")} VND
                 </span>
               </ListGroup.Item>
             </ListGroup>

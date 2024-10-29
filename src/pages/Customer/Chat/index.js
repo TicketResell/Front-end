@@ -269,17 +269,6 @@ export default function Chat({ ticket, user }) {
     socket.current.activate();
   };
 
-  useEffect(() => {
-    // Đảm bảo rằng WebSocket chỉ được kết nối một lần khi component được mount
-    connectWebSocket();
-    determineRole();
-    return () => {
-      if (socket.current) {
-        socket.current.deactivate();
-      }
-    };
-  }, []);
-
   // Hàm xử lý khi click vào một Conversation
   const handleChatClick = async (index,conversation) => {
     setShowChatBox(true);
@@ -299,6 +288,23 @@ export default function Chat({ ticket, user }) {
     );
 
   };
+
+  useEffect(() => {
+    // Đảm bảo rằng WebSocket chỉ được kết nối một lần khi component được mount
+    connectWebSocket();
+    if(ticket){
+      const userID = ticket.userID;
+    }else{
+      setShowModal(true);
+      return;
+    }
+    determineRole();
+    return () => {
+      if (socket.current) {
+        socket.current.deactivate();
+      }
+    };
+  }, [ticket]);
 
   useEffect(() => {
     // Hiển thị modal để thông báo không có conversation với người nào

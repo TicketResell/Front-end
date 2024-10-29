@@ -5,7 +5,7 @@ import { Range } from "react-range";
 function Filter({ onFilterChange , onMinMaxChange}) {
   const STEP = 0.1;
   const MIN = 0;
-  const MAX = 300000;
+  const MAX = 20000000;
   const [priceRange, setPriceRange] = useState([MIN, MAX]);
 
   const handlePriceRange = (newPriceRange) => {
@@ -75,7 +75,7 @@ function Filter({ onFilterChange , onMinMaxChange}) {
       <Row>
         <Col>
           <h5>
-            Selected Price Range: {priceRange[0]} VND - {priceRange[1]} VND
+            Selected Price Range: {priceRange[0].toLocaleString("vi-VN")} VND - {priceRange[1].toLocaleString("vi-VN")} VND
           </h5>
         </Col>
       </Row>

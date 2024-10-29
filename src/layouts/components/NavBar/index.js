@@ -14,7 +14,6 @@ function NavigationBar() {
   const [signedIn, setSignedIn] = useState(false); 
   const [user, setUser] = useState(null); 
   const [showNofitication, setShowNofitication] = useState(false); 
-  const [categories, setCategories] = useState([]); 
   const [logoutMessage, setLogoutMessage] = useState("");
   const [listNofitication, setListNofitication] = useState([]); 
   const navigate = useNavigate(); 
@@ -31,15 +30,6 @@ function NavigationBar() {
     }
   };
 
-  const fetchCategoryNav = async () => {
-    try {
-      const response = await api.get("/categories");
-      setCategories(response.data);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
-  };
-
   const fetchListNotification = async (user) => {
     try {
       const response = await api.get(`/notifications/${user.id}`);
@@ -52,7 +42,6 @@ function NavigationBar() {
 
   useEffect(() => {
     fetchUser();
-    fetchCategoryNav();
   }, []);
 
   useEffect(() => {
@@ -96,16 +85,8 @@ function NavigationBar() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav" style={{ marginLeft: "40px" }}>
           <Nav className="me-auto">
-            {categories.map(category => (
-              <Nav.Link key={category.id} style={{ fontSize: "20px", color: "#000", marginRight: "40px" }}>
-                {category.name}
-              </Nav.Link>
-            ))}
             <Nav.Link href="aboutUs" style={{ fontSize: "20px", color: "#000", marginRight: "40px" }} onclick={handleAboutus}>
               About Us
-            </Nav.Link>
-            <Nav.Link href="categories" style={{ fontSize: "20px", color: "#000", marginRight: "40px" }}>
-              Categories
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>

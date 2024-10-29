@@ -175,9 +175,9 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
             <th scope="col" className={cx("custom-title")}>
               Total Amount
             </th>
-            <th scope="col" className={cx("custom-title")}>
+            {!isOrderBuyer && <th scope="col" className={cx("custom-title")}>
               Service Fee
-            </th>
+            </th>}
             <th scope="col" className={cx("custom-title")}>
               Payment Status
             </th>
@@ -200,8 +200,8 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
                 <td>{isOrderBuyer ? order.sellerName : order.buyerName}</td>
                 <td>{order.ticketName}</td>
                 <td>{order.quantity}</td>
-                <td>{order.totalAmount}</td>
-                <td>{order.serviceFee}</td>
+                <td>{order.totalAmount.toLocaleString("vi-VN")}</td>
+                {!isOrderBuyer &&  <td>{(order.serviceFee*order.totalAmount).toLocaleString("vi-VN")}</td>}
                 <td>{order.paymentStatus}</td>
                 <td>{order.orderStatus}</td>
                 <td>{order.orderMethod}</td>

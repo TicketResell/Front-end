@@ -24,7 +24,7 @@ export default function SmallCard ({types}){
           </Row>
           <Row>
             <Col>
-              <h1>{types.name === "Revenue" ? "$" : ""}{types.number}</h1>
+              <h1>{types.number.toLocaleString("vi-VN")} {types.name === "Revenue" ? "VND" : ""}</h1>
             </Col>
           </Row>
         </Container>

@@ -26,7 +26,7 @@ function Notification({listNofitication = []}){
               <>
               <strong>{notification.title}</strong>
               <li key={index} className = {cx("notificationItem")}>{notification.message}</li>
-               <p style={{ color: "#aaa" }}>{notification.createdDate}</p>
+               <p style={{ color: "#aaa" }}>{notification.createdDate.split("T")[0]}</p>
               </>
             ))}
           </ul>

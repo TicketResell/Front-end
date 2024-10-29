@@ -220,7 +220,7 @@ const TicketDetail = () => {
                 <dt className={cx("col-3")}>Location <IoLocationSharp />:</dt>
                 <dd className={cx("col-9")}>{ticket.location}</dd>
                 <dt className={cx("col-3")}>Price <IoPricetagsSharp />:</dt>
-                <dd className={cx("col-9")}>{ticket.price}$</dd>
+                <dd className={cx("col-9")}>{ticket.price.toLocaleString("vi-VN")} VND</dd>
                 <dt className={cx("col-3")}>Quantity:</dt>
                 <dd className={cx("col-9")}>{ticket.quantity}</dd>
               </dl>
