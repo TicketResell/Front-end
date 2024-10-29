@@ -188,6 +188,9 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
               Order Method
             </th>
             <th scope="col" className={cx("custom-title")}>
+              Order Date
+            </th>
+            <th scope="col" className={cx("custom-title")}>
               Action
             </th>
           </tr>
@@ -205,6 +208,7 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
                 <td>{order.paymentStatus}</td>
                 <td>{order.orderStatus}</td>
                 <td>{order.orderMethod}</td>
+                <td>{order.createdDate}</td>
                 <td>
                   {isOrderBuyer ? (
                     <>

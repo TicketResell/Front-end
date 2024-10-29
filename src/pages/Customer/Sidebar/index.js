@@ -4,7 +4,7 @@ import {
   FaDollarSign,
   FaComments,
   FaSignOutAlt,
-  FaTicketAlt,
+  FaTicketAlt,FaHome, 
 } from "react-icons/fa"; // Add FaLifeRing for support
 import { CgProfile } from "react-icons/cg";
 import { MdContactSupport } from "react-icons/md";
@@ -28,6 +28,9 @@ export default function Sidebar({ customer, onLayoutClick }) {
     // Redirect to login page
     navigate('/login'); 
   };
+  const handleHome = () =>{
+    navigate('/'); 
+  }
   return (
     <Container className={cx("sidebar")}>
       <Row className={cx("dashboardTitle")}>
@@ -105,10 +108,13 @@ export default function Sidebar({ customer, onLayoutClick }) {
           </div>
       </Row>
       <Row className={cx("menuItem")}>
+      <Col>
+          <div className={cx("logoutItem")} onClick={handleHome}>
+            Home <FaHome/>
+          </div>
+        </Col>
         <Col>
           <div className={cx("logoutItem")} onClick={handleLogout}>
-            <b></b>
-            <b></b>
             Logout <FaSignOutAlt />
           </div>
         </Col>

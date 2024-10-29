@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Container, Row, Col, Card } from "react-bootstrap";
-import "./index.scss";
+import styles from "./Order.module.scss";
 import { useLocation } from "react-router-dom";
 import { confirmPhone } from "../../services/api/RegisterAPI";
 import { FaLockOpen,FaLock } from "react-icons/fa";
 import api from "../../config/axios";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-
+import classNames from "classnames/bind";
 const OrderPage = () => {
+  const cx = classNames.bind(styles);
   const navigate = useNavigate();
   const location = useLocation();
   const ticket = location.state?.ticket;
@@ -38,6 +39,7 @@ const OrderPage = () => {
   const [isReadonly, setIsReadonly] = useState(false);
   const [buttonLabel, setButtonLabel] = useState("Save");
   const [disabled,setDisabled] = useState(true);
+  const [isPaymentCODSuccess,setIsPaymentCODSuccess] = useState(false);
 
   const UserLocalStorage = () => {
     const userData = localStorage.getItem("user");
@@ -156,7 +158,7 @@ if (!order.fullname || !order.phone || !order.address || errors.fullname || erro
 }
     const orderCraete = {
       buyerId : user.id,
-      sellerId : ticket.userID,
+      sellerId : ticket.seller.id,
       ticketId : ticket.id,
       quantity : quantity,
       totalAmount : order.totalAmount,
@@ -164,6 +166,7 @@ if (!order.fullname || !order.phone || !order.address || errors.fullname || erro
       orderStatus: "pending",
       orderMethod: order.orderMethod,
     }
+    console.log("Vé của bố ở đây",ticket);
     console.log("Create order",orderCraete);
     try {
       const response = await api.post("orders/create", orderCraete);
@@ -204,7 +207,7 @@ if (!order.fullname || !order.phone || !order.address || errors.fullname || erro
           });
         }
       }else{
-        navigate("/payment");
+        setIsPaymentCODSuccess(true);
       }
     } catch (error) {
       toast.error(error.response.data, {
@@ -222,7 +225,24 @@ if (!order.fullname || !order.phone || !order.address || errors.fullname || erro
     }
   }
 
+  const handleHomeClick = () =>{
+    setIsPaymentCODSuccess(false);
+    navigate("/customer");
+  }
+
   return (
+    isPaymentCODSuccess ? (
+      <div className={cx("body")}>
+      <div className={cx("card")}>
+    <div style={{borderRadius: "200px",height: "200px",width: "200px",background:"#F8FAF5",margin: "0 auto"}}>
+      <i className={cx("checkmark")}>✓</i>
+    </div>
+      <h1 className={cx("success-text")}>Success</h1> 
+      <p className={cx("success-payment-text")}>We received your purchase request;<br/> we'll be in touch shortly!</p>
+      <Button variant="success" onClick={handleHomeClick}> Back </Button>
+    </div>
+    </div>
+  ) : (
     <Container className="order-page">
       <ToastContainer/>
       <Row>
@@ -340,14 +360,14 @@ if (!order.fullname || !order.phone || !order.address || errors.fullname || erro
             <Card.Body>
               <h4>Order Summary</h4>
               <p>Ticket Title : {order.eventTitle}</p>
-              <p>Price: {order.price}$</p>
+              <p>Price: {order.price.toLocaleString("vi-VN")} VND</p>
               <p>Quantity: {order.quantity}</p>
-              <h4>Total Amount: {order.totalAmount}</h4>
+              <h4>Total Amount: {order.totalAmount.toLocaleString("vi-VN")} VND</h4>
             </Card.Body>
           </Card>
         </Col>
       </Row>
-    </Container>
+    </Container>)
   );
 };
 
