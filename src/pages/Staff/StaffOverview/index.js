@@ -7,6 +7,7 @@ import OrdersToday from "./OrdersToday";
 import SalesStatistics from "./SalesStatistics"; // Component mới cho thống kê vé bán
 import { useEffect, useState } from "react"; // Thêm useEffect và useState
 import axios from "axios"; // Thêm Axios
+import api from '../../../config/axios'
 
 const cx = classNames.bind(styles);
 
@@ -22,7 +23,11 @@ export default function Overview() {
   const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqYW5lX3NlbGxlciIsInJvbGUiOiJzdGFmZiIsInVzZXJfaW1hZ2UiOiJodHRwczovL2kuaWJiLmNvL3NnYlMyR0IvdC1pLXh1LW5nLmpwZyIsImlkIjoyLCJmdWxsbmFtZSI6IkphbmVDYXB0aWFuIiwiZXhwIjoxNzMwMjEwODI4LCJpYXQiOjE3Mjk2MDYwMjgsImVtYWlsIjoiamFuZUBleGFtcGxlLmNvbSJ9.hmT-f2hkQQdoJsAmqGvNg1lhA8IIZlUT8U680o7eU3Q"; // Thay thế với token của bạn
   // Fetch dữ liệu từ API
   const fetchRevenueAndSalesData = async () => {
-   
+    const token = localStorage.getItem("token"); // Lấy token từ localStorage
+    if (!token) {
+      setError("Token is missing. Please log in again.");
+      return;
+    }
 
     try {
       const revenueResponse = await axios.get("http://localhost:8084/api/staff/get-total-revenue-profit", {

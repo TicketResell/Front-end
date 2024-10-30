@@ -79,41 +79,47 @@ if (imagesChanged) {
   };
 
   // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-      if (JSON.stringify(formData.imageUrls) !== JSON.stringify(ticket.imageUrls)) {
-        const response = await api.put(`/tickets/${formData.id}`, formData);
+  try {
+    // Upload the ticket only if the image URLs have changed
+    if (JSON.stringify(formData.imageUrls) !== JSON.stringify(ticket.imageUrls)) {
+      const response = await api.put(`/tickets/${formData.id}`, formData);
 
-        if (response.status === 200) {
-          toast.success("Ticket updated successfully", {
-            position: "top-center",
-            autoClose: 3000,
-            theme: "light",
-            transition: Bounce,
-          });
-          onSave(formData);
-        }
-      } else {
-        toast.info("No changes to the images, no update needed.", {
+      if (response.status === 200) {
+        toast.success("Ticket updated successfully", {
           position: "top-center",
           autoClose: 3000,
           theme: "light",
           transition: Bounce,
         });
+        onSave(formData);
       }
-    } catch (error) {
-      toast.error("Failed to update ticket", {
-        position: "top-center",
-        autoClose: 5000,
-        theme: "light",
-        transition: Bounce,
-      });
-      console.error("Update error:", error);
-    }
-  };
+    } else {
+      // If the image URLs are the same, we still want to update other fields
+      const response = await api.put(`/tickets/${formData.id}`, formData);
 
+      if (response.status === 200) {
+        toast.success("Ticket updated successfully", {
+          position: "top-center",
+          autoClose: 3000,
+          theme: "light",
+          transition: Bounce,
+        });
+        onSave(formData);
+      }
+    }
+  } catch (error) {
+    toast.error("Failed to update ticket", {
+      position: "top-center",
+      autoClose: 5000,
+      theme: "light",
+      transition: Bounce,
+    });
+    console.error("Update error:", error);
+  }
+};
   return (
     <Form onSubmit={handleSubmit}>
       <ToastContainer />

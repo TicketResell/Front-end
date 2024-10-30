@@ -61,7 +61,6 @@ function Search({ onSearch }) {
 
       <ToastContainer />
       <Container className={` ${styles.wrapper} p-4 `} style={{ maxWidth: "600px" }}>
-        <h2 className={` ${styles.header} text-center`}>SEARCH TICKET</h2>
 
 
         {/* Thanh tìm kiếm */}
