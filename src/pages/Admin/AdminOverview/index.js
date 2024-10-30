@@ -21,6 +21,8 @@ const Admin = () => {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState("");
   const [selectedStatus, setSelectedStatus] = useState({});
+  const [transactions, setTransactions] = useState([]);
+
   const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbl91c2VyIiwicm9sZSI6ImFkbWluIiwidXNlcl9pbWFnZSI6Imh0dHBzOi8vdGguYmluZy5jb20vdGgvaWQvT0lQLm5NSXItbkI1djByYlB6V0VKemVaY1FIYUU3P3c9MjY0Jmg9MTgwJmM9NyZyPTAmbz01JmRwcj0xLjEmcGlkPTEuNyIsImlkIjozLCJmdWxsbmFtZSI6IkFETUlOIiwiZXhwIjoxNzMwNzM1NTQ4LCJpYXQiOjE3MzAxMzA3NDgsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20ifQ.7WhmJq4MJvZ5MbhogwDMxkotftPHGTxYII9l65LVfuM";
 
   // Fetch data from APIs
@@ -52,12 +54,22 @@ const Admin = () => {
       });
       setTotalOrders(ordersResponse.data);
 
+      const transactionsResponse = await axios.get("http://localhost:8084/api/admin/transactions", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setTransactions(transactionsResponse.data);
+
       const accountsResponse = await axios.get("http://localhost:8084/api/admin/view-accounts", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       setAccounts(accountsResponse.data);
+
+
 
       const ordersResponseData = await axios.get("http://localhost:8084/api/admin/all-orders", {
         headers: {
@@ -121,35 +133,35 @@ const Admin = () => {
 
   const [selectedPaymentStatus, setSelectedPaymentStatus] = useState({});
 
-const handlePaymentStatusChange = (orderId, status) => {
-  setSelectedPaymentStatus(prev => ({ ...prev, [orderId]: status }));
-};
+  const handlePaymentStatusChange = (orderId, status) => {
+    setSelectedPaymentStatus(prev => ({ ...prev, [orderId]: status }));
+  };
 
-const updatePaymentStatus = async (orderId, paymentStatus) => {
-  if (!paymentStatus) return;
+  const updatePaymentStatus = async (orderId, paymentStatus) => {
+    if (!paymentStatus) return;
 
-  try {
-    const response = await fetch(`http://localhost:8084/api/orders/update-payment-status/${orderId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        payment_status: paymentStatus,
-        vnpResponseCode: "",
-        vnpTransactionNo: "",
-      }),
-    });
+    try {
+      const response = await fetch(`http://localhost:8084/api/orders/update-payment-status/${orderId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          payment_status: paymentStatus,
+          vnpResponseCode: "",
+          vnpTransactionNo: "",
+        }),
+      });
 
-    if (response.ok) {
-      fetchOrders(); // Call fetchOrders to reload the order list
-    } else {
-      alert("Failed to update payment status.");
+      if (response.ok) {
+        fetchOrders(); // Call fetchOrders to reload the order list
+      } else {
+        alert("Failed to update payment status.");
+      }
+    } catch (error) {
+      console.error("Error updating payment status:", error);
     }
-  } catch (error) {
-    console.error("Error updating payment status:", error);
-  }
-};
+  };
 
 
   const handlePromote = async (id, currentRole) => {
@@ -212,6 +224,8 @@ const updatePaymentStatus = async (orderId, paymentStatus) => {
   return (
     <>
       <div className={cx("adminPage")}>
+
+
         {error && <div className="alert alert-danger">{error}</div>}
         <Row className={cx("rowHalfAbove", "justify-content-center")}>
           <Col md={5} className={cx("section1")}>
@@ -297,6 +311,12 @@ const updatePaymentStatus = async (orderId, paymentStatus) => {
                     }}
                   />
                 </Row>
+                <button
+                  style={{ backgroundColor: "white", color: "black", borderRadius: "20px solid", border: "white", marginTop: "10px" }}
+                  className={cx("btn", "btn-primary")}
+                  onClick={() => document.getElementById("order-table").scrollIntoView({ behavior: 'smooth' })}>
+                  View More
+                </button>
               </Col>
             </Row>
           </Col>
@@ -320,14 +340,12 @@ const updatePaymentStatus = async (orderId, paymentStatus) => {
 
                   />
                 </Row>
-                {/* <Row className={cx("sales")}>
-                  <SmallerCard
-                    types={{
-                      name: "Shipping Order",
-                      number: `${shipOrdersCount}`, // Display the count of completed orders
-                    }}
-                  />
-                </Row> */}
+                <button
+                  style={{ backgroundColor: "white", color: "black", borderRadius: "20px solid", border: "white", marginTop: "10px" }}
+                  className={cx("btn", "btn-primary")}
+                  onClick={() => document.getElementById("user-table").scrollIntoView({ behavior: 'smooth' })}>
+                  View More
+                </button>
               </Col>
             </Row>
           </Col>
@@ -351,8 +369,16 @@ const updatePaymentStatus = async (orderId, paymentStatus) => {
 
                   />
                 </Row>
+                <button
+                  style={{ backgroundColor: "white", color: "black", borderRadius: "20px solid", border: "white", marginTop: "10px" }}
+                  className={cx("btn", "btn-primary")}
+                  onClick={() => document.getElementById("order-table").scrollIntoView({ behavior: 'smooth' })}>
+                  View More
+                </button>
               </Col>
+
             </Row>
+
           </Col>
         </Row>
         {/* ------------------------------------------------------------------------ */}
@@ -362,6 +388,7 @@ const updatePaymentStatus = async (orderId, paymentStatus) => {
           <Row className={cx("user", "justify-content-center", "align-items-center")}>
             <Col>
               <div className={cx("table-container")}> {/* Sử dụng lớp CSS cho bảng */}
+                <h2 id="user-table"></h2>
                 <Table striped bordered hover>
                   <thead>
                     <tr>
@@ -454,127 +481,187 @@ const updatePaymentStatus = async (orderId, paymentStatus) => {
           </Row>
         </Col>
 
-        <Col className={cx("user_table")}>
-  <Row className={cx("user", "justify-content-center", "align-items-center")}>
-    <Col>
-      <div className={cx("table-container")}>
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th className="text-center">Order ID</th>
-              <th className="text-center">Email</th>
-              <th className="text-center">Phone</th>
-              <th className="text-center">Full Name</th>
-              <th className="text-center">Quantity</th>
-              <th className="text-center">Total Amount</th>
-              <th className="text-center">Service Fee</th>
-              <th className="text-center">Payment Status</th>
-              <th className="text-center">Order Status</th>
-              <th className="text-center">Order Method</th>
-              <th className="text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order) => (
-              <tr key={order.id}>
-                <td className="text-center">{order.id}</td>
-                <td className="text-center">{order.buyer.email}</td>
-                <td className="text-center">{order.buyer.phone}</td>
-                <td className="text-center">{order.buyer.fullname}</td>
-                <td className="text-center">{order.quantity}</td>
-                <td className="text-center">{order.totalAmount.toFixed(2)}</td>
-                <td className="text-center">{order.serviceFee.toFixed(2)}</td>
-                <td className="text-center">
-                  <span
-                    style={{
-                      display: "inline-block",
-                      padding: "5px 10px",
-                      borderRadius: "12px",
-                      backgroundColor: order.paymentStatus === "paid" ? "#dcf1e4" : "#f8d7da",
-                      color: order.paymentStatus === "paid" ? "#0e612f" : "#721c24",
-                    }}
-                  >
-                    {order.paymentStatus}
-                  </span>
-                </td>
-                <td className="text-center">
-                  <span
-                    style={{
-                      display: "inline-block",
-                      padding: "5px 10px",
-                      borderRadius: "12px",
-                      backgroundColor:
-                        order.orderStatus === "received"
-                          ? "#dcf1e4"
-                          : order.orderStatus === "completed"
-                            ? "#d4edda"
-                            : order.orderStatus === "cancelled"
-                              ? "#f8d7da"
-                              : order.orderStatus === "shipping"
-                                ? "#faf0dc"
-                                : "#f0f0f0",
-                      color:
-                        order.orderStatus === "received"
-                          ? "#0e612f"
-                          : order.orderStatus === "completed"
-                            ? "#155724"
-                            : order.orderStatus === "cancelled"
-                              ? "#721c24"
-                              : order.orderStatus === "shipping"
-                                ? "#8a6212"
-                                : "#000",
-                    }}
-                  >
-                    {order.orderStatus}
-                  </span>
-                </td>
+        <Col className={cx("order_table")}>
+          <Row className={cx("user", "justify-content-center", "align-items-center")}>
+            <Col>
+              <div className={cx("table-container")}>
+                <h2 id="order-table"></h2>
+                <Table striped bordered hover>
+                  <thead>
+                    <tr>
+                      <th className="text-center">Order ID</th>
+                      <th className="text-center">Email</th>
+                      <th className="text-center">Phone</th>
+                      <th className="text-center">Full Name</th>
+                      <th className="text-center">Quantity</th>
+                      <th className="text-center">Total Amount</th>
+                      <th className="text-center">Service Fee</th>
+                      <th className="text-center">Payment Status</th>
+                      <th className="text-center">Order Status</th>
+                      <th className="text-center">Order Method</th>
+                      <th className="text-center">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {orders.map((order) => (
+                      <tr key={order.id}>
+                        <td className="text-center">{order.id}</td>
+                        <td className="text-center">{order.buyer.email}</td>
+                        <td className="text-center">{order.buyer.phone}</td>
+                        <td className="text-center">{order.buyer.fullname}</td>
+                        <td className="text-center">{order.quantity}</td>
+                        <td className="text-center">{order.totalAmount.toFixed(2)}</td>
+                        <td className="text-center">{order.serviceFee.toFixed(2)}</td>
+                        <td className="text-center">
+                          <span
+                            style={{
+                              display: "inline-block",
+                              padding: "5px 10px",
+                              borderRadius: "12px",
+                              backgroundColor: order.paymentStatus === "paid" ? "#dcf1e4" : "#f8d7da",
+                              color: order.paymentStatus === "paid" ? "#0e612f" : "#721c24",
+                            }}
+                          >
+                            {order.paymentStatus}
+                          </span>
+                        </td>
+                        <td className="text-center">
+                          <span
+                            style={{
+                              display: "inline-block",
+                              padding: "5px 10px",
+                              borderRadius: "12px",
+                              backgroundColor:
+                                order.orderStatus === "received"
+                                  ? "#dcf1e4"
+                                  : order.orderStatus === "completed"
+                                    ? "#d4edda"
+                                    : order.orderStatus === "cancelled"
+                                      ? "#f8d7da"
+                                      : order.orderStatus === "shipping"
+                                        ? "#faf0dc"
+                                        : "#f0f0f0",
+                              color:
+                                order.orderStatus === "received"
+                                  ? "#0e612f"
+                                  : order.orderStatus === "completed"
+                                    ? "#155724"
+                                    : order.orderStatus === "cancelled"
+                                      ? "#721c24"
+                                      : order.orderStatus === "shipping"
+                                        ? "#8a6212"
+                                        : "#000",
+                            }}
+                          >
+                            {order.orderStatus}
+                          </span>
+                        </td>
 
-                <td className="text-center">{order.orderMethod}</td>
-                <td className="text-center">
-                  {/* Order Status Update */}
-                  <Form.Select
-                    onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                    defaultValue={selectedStatus[order.id] || order.orderStatus}
-                    style={{ display: 'inline-block', width: 'auto', marginRight: '5px' }}
-                  >
-                    <option value="" disabled>Select Status</option>
-                    <option value="received">Received</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
-                    <option value="shipping">Shipping</option>
-                  </Form.Select>
-                  <Button
-                    style={{ borderRadius: "30px", marginBottom: '5px', marginRight:"5px" }}
-                    variant="primary"
-                    onClick={() => updateOrderStatus(order.id, selectedStatus[order.id])}>
-                    Update Order 
-                  </Button>
+                        <td className="text-center">{order.orderMethod}</td>
+                        <td className="text-center">
+                          {/* Order Status Update */}
+                          <Form.Select
+                            onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                            defaultValue={selectedStatus[order.id] || order.orderStatus}
+                            style={{ display: 'inline-block', width: 'auto', marginRight: '5px' }}
+                          >
+                            <option value="" disabled>Select Status</option>
+                            <option value="received">Received</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="shipping">Shipping</option>
+                          </Form.Select>
+                          <Button
+                            style={{ borderRadius: "30px", marginBottom: '5px', marginRight: "5px" }}
+                            variant="primary"
+                            onClick={() => updateOrderStatus(order.id, selectedStatus[order.id])}>
+                            Update Order
+                          </Button>
 
-                  {/* Payment Status Update */}
-                  <Form.Select
-                    onChange={(e) => handlePaymentStatusChange(order.id, e.target.value)}
-                    defaultValue={selectedPaymentStatus[order.id] || order.paymentStatus}
-                    style={{ display: 'inline-block', width: 'auto', marginRight: '5px' }}
-                  >
-                    <option value="" disabled>Select Payment Status</option>
-                    <option value="paid">Paid</option>
-                    <option value="failed">Failed</option>
-                  </Form.Select>
-                  <Button
-                    style={{ borderRadius: "30px" }}
-                    variant="secondary"
-                    onClick={() => updatePaymentStatus(order.id, selectedPaymentStatus[order.id])}>
-                    Update Payment
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      </div>
-    </Col>
-  </Row>
-</Col>
+                          {/* Payment Status Update */}
+                          <Form.Select
+                            onChange={(e) => handlePaymentStatusChange(order.id, e.target.value)}
+                            defaultValue={selectedPaymentStatus[order.id] || order.paymentStatus}
+                            style={{ display: 'inline-block', width: 'auto', marginRight: '5px' }}
+                          >
+
+                            <option value="paid">Paid</option>
+                            <option value="failed">Failed</option>
+                          </Form.Select>
+                          <Button
+                            style={{ borderRadius: "30px" }}
+                            variant="secondary"
+                            onClick={() => updatePaymentStatus(order.id, selectedPaymentStatus[order.id])}>
+                            Update Payment
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
+            </Col>
+          </Row>
+        </Col>
+
+        <Col className={cx("transaction_table")}>
+          <Row className={cx("transaction", "justify-content-center", "align-items-center")}>
+            <Col>
+              <div className={cx("table-container")}> {/* Sử dụng lớp CSS cho bảng */}
+                <h2 id="transaction-table"></h2>
+                <Table striped bordered hover>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Transaction Date</th>
+                      <th>Amount</th>
+                      <th>Status</th>
+                      <th>Payment Method</th>
+                      <th className="text-center">Buyer's Name</th> {/* Cột Buyer Username */}
+                      <th className="text-center">Seller's Name</th> {/* Cột Seller Username */}
+                      <th className="text-center">Service Fee</th> {/* Cột Service Fee */}
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {transactions.map((transaction) => (
+                      <tr key={transaction.id}>
+                        <td>{transaction.id}</td>
+                        <td>{new Date(transaction.createdDate).toLocaleDateString()}</td>
+                        <td>${transaction.transactionAmount ? transaction.transactionAmount.toFixed(2) : '0.00'}</td> {/* Hiển thị transactionAmount */}
+                        <td className="text-center">
+                          <span
+                            style={{
+                              display: "inline-block",
+                              padding: "5px 10px",
+                              borderRadius: "12px",
+                              backgroundColor:
+                                transaction.order.orderStatus === "completed" ? "#dcf1e4" :
+                                  transaction.order.orderStatus === "pending" ? "#fff4e6" :
+                                    transaction.order.orderStatus === "failed" ? "#fbf1dd" : "#f0f0f0", // Màu sắc cho trạng thái
+                              color:
+                                transaction.order.orderStatus === "completed" ? "#0e612f" :
+                                  transaction.order.orderStatus === "cancelled" ? "#856404" :
+                                    transaction.order.orderStatus === "received" ? "#8a6111" : "#000", // Màu chữ
+
+                            }}
+                          >
+                            {transaction.order.orderStatus}
+                          </span>
+                        </td>
+                        <td>{transaction.order.orderMethod}</td>
+                        <td className="text-center">{transaction.buyer.username}</td> {/* Hiển thị Buyer Username */}
+                        <td className="text-center">{transaction.seller.username}</td> {/* Hiển thị Seller Username */}
+                        <td className="text-center">${transaction.order.serviceFee ? transaction.order.serviceFee.toFixed(2) : '0.00'}</td> {/* Hiển thị Service Fee */}
+                        <td>{/* Có thể thêm mô tả nếu cần */}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
+            </Col>
+          </Row>
+        </Col>
 
 
       </div>
