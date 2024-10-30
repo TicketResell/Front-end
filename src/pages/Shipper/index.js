@@ -35,7 +35,7 @@ const Shipper = () => {
       return;
     }
   
-    // Tải hình ảnh lên ImgBB và nhận URL
+ 
     const uploadedUrls = await uploadImgBB(selectedImage);
     const validUrls = uploadedUrls.filter((url) => url !== null);
   
@@ -45,13 +45,13 @@ const Shipper = () => {
     }
   
     const requestData = {
-      imageUrl: validUrls[0], // URL của hình ảnh đã tải lên
+      imageUrl: validUrls[0], 
     };
     
     try {
       await axios.put(`http://localhost:8084/set-shipping-status/${orderId}`, requestData, {
         headers: {
-          Authorization: `Bearer ${token}`, // Kiểm tra xem token có đúng định dạng không
+          Authorization: `Bearer ${token}`, 
         },
       });
     } catch (error) {
@@ -59,7 +59,7 @@ const Shipper = () => {
     }
     
   
-    // In ra log thông tin request
+
     console.log("Sending request to set shipping status:");
     console.log("URL:", `http://localhost:8084/set-shipping-status/${orderId}`);
     console.log("Method:", "PUT");
@@ -69,20 +69,20 @@ const Shipper = () => {
     console.log("Body:", requestData);
   
     try {
-      await axios.put(`http://localhost:8084/set-shipping-status/${orderId}`, requestData, {
+      await axios.put(`http://localhost:8084/order/set-shipping-status/${orderId}`, requestData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
   
-      // Tùy chọn, cập nhật lại danh sách đơn hàng
+
       const response = await axios.get("http://localhost:8084/order/show-all-order/ship", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       setOrders(response.data);
-      setSelectedImage(null); // Đặt lại hình ảnh đã chọn
+      setSelectedImage(null); 
     } catch (error) {
       console.error("Error confirming shipment:", error);
     }
@@ -90,13 +90,13 @@ const Shipper = () => {
   
   const cancelShipment = async (orderId) => {
     try {
-      await axios.put(`http://localhost:8084/set-shipping-status-false/${orderId}`, null, {
+      await axios.put(`http://localhost:8084/order/set-shipping-status-false/${orderId}`, null, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      // Tùy chọn, cập nhật lại danh sách đơn hàng
+
       const response = await axios.get("http://localhost:8084/order/show-all-order/ship", {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -126,7 +126,7 @@ const Shipper = () => {
                   <th className="text-center">Payment Status</th>
                   <th className="text-center">Order Status</th>
                   <th className="text-center">Order Method</th>
-                  <th className="text-center">Image</th> {/* Cột mới cho hình ảnh */}
+                  <th className="text-center">Image</th> 
                   <th className="text-center">Action</th>
                 </tr>
               </thead>
@@ -144,26 +144,26 @@ const Shipper = () => {
                     <td className="text-center">{order.orderStatus}</td>
                     <td>{order.orderMethod}</td>
                     <td className="text-center">
-                      {order.imageUrl && <img src={order.imageUrl} alt="Order" style={{ width: '50px', height: '50px' }} />} {/* Hiển thị hình ảnh nếu có */}
+                      {order.imageUrl && <img src={order.imageUrl} alt="Order" style={{ width: '50px', height: '50px' }} />} 
                     </td>
                     <td className="text-center">
                       <input
                         type="file"
                         accept="image/*"
-                        onChange={(e) => setSelectedImage(e.target.files)} // Lưu danh sách hình ảnh được chọn
+                        onChange={(e) => setSelectedImage(e.target.files)} 
                         style={{ marginRight: '10px' }}
                       />
                       <Button
                         style={{ borderRadius: "30px", backgroundColor:"green", border:"green", marginRight: '5px' }}
                         variant="primary"
-                        onClick={() => confirmShipment(order.id)} // Gọi confirmShipment khi nhấn
+                        onClick={() => confirmShipment(order.id)} 
                       >
                         Confirm Successful
                       </Button>
                       <Button
                         style={{ borderRadius: "30px", backgroundColor: "red", border: "red" }}
                         variant="danger"
-                        onClick={() => cancelShipment(order.id)} // Gọi cancelShipment khi nhấn
+                        onClick={() => cancelShipment(order.id)}
                       >
                         Confirm Cancel
                       </Button>

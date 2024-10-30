@@ -87,7 +87,7 @@ const Admin = () => {
     fetchRevenueAndSalesData();
   }, []);
 
-  // Function to update order status
+
   const updateOrderStatus = async (orderId, status) => {
     try {
       const response = await axios.put(`http://localhost:8084/api/orders/update-order-status/${orderId}`, {
@@ -154,7 +154,7 @@ const Admin = () => {
       });
 
       if (response.ok) {
-        fetchOrders(); // Call fetchOrders to reload the order list
+        fetchOrders(); 
       } else {
         alert("Failed to update payment status.");
       }
@@ -168,40 +168,40 @@ const Admin = () => {
     try {
       let newRole;
 
-      // Xác định vai trò mới dựa trên vai trò hiện tại
+     
       if (currentRole === "user") {
-        newRole = "staff"; // Nâng cấp từ user lên staff
+        newRole = "staff"; 
       } else if (currentRole === "staff") {
-        newRole = "admin"; // Nâng cấp từ staff lên admin
+        newRole = "admin"; 
       } else {
         alert(`Account with role '${currentRole}' cannot be promoted.`);
-        return; // Nếu không phải user hoặc staff, không thực hiện nâng cấp
+        return; 
       }
 
-      // Đối tượng JSON chứa role mới cần gửi
+  
       const payload = {
-        role: newRole, // Vai trò mới
+        role: newRole, 
       };
 
-      // Gọi API với id trong đường dẫn và payload trong thân yêu cầu
+
       const response = await axios.put(`http://localhost:8084/api/admin/promote/${id}`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json', // Đảm bảo Content-Type là application/json
+          'Content-Type': 'application/json', 
         },
       });
 
-      // Gọi lại hàm fetchAccounts để lấy dữ liệu mới
-      await fetchAccounts(); // Cập nhật danh sách tài khoản
+   
+      await fetchAccounts(); 
 
     } catch (error) {
       console.error("Failed to promote account:", error);
-      setError("Failed to promote account."); // Thông báo lỗi
+      setError("Failed to promote account."); 
     }
   };
 
 
-  // Hàm fetchAccounts vẫn giữ nguyên
+
   const fetchAccounts = async () => {
     try {
       const accountsResponse = await axios.get("http://localhost:8084/api/admin/view-accounts", {
@@ -290,7 +290,7 @@ const Admin = () => {
                   <SmallerCard
                     types={{
                       name: "Complete Orders",
-                      number: `${completedOrdersCount}`, // Display the count of completed orders
+                      number: `${completedOrdersCount}`,
                     }}
                   />
                 </Row>
@@ -298,7 +298,7 @@ const Admin = () => {
                   <SmallerCard
                     types={{
                       name: "Cancel Orders",
-                      number: `${cancelOrdersCount}`, // Display the count of completed orders
+                      number: `${cancelOrdersCount}`,
                     }}
 
                   />
@@ -307,7 +307,7 @@ const Admin = () => {
                   <SmallerCard
                     types={{
                       name: "Shipping Orders",
-                      number: `${shipOrdersCount}`, // Display the count of completed orders
+                      number: `${shipOrdersCount}`, 
                     }}
                   />
                 </Row>
@@ -327,7 +327,7 @@ const Admin = () => {
                   <SmallerCard
                     types={{
                       name: "Active Users",
-                      number: `${activeUsersCount}`, // Display the count of completed orders
+                      number: `${activeUsersCount}`, 
                     }}
                   />
                 </Row>
@@ -335,7 +335,7 @@ const Admin = () => {
                   <SmallerCard
                     types={{
                       name: "Ban Users",
-                      number: `${banUsersCount}`, // Display the count of completed orders
+                      number: `${banUsersCount}`, 
                     }}
 
                   />
@@ -356,7 +356,7 @@ const Admin = () => {
                   <SmallerCard
                     types={{
                       name: "Paid Orders",
-                      number: `${paidOrdersCount}`, // Display the count of completed orders
+                      number: `${paidOrdersCount}`, 
                     }}
                   />
                 </Row>
@@ -364,7 +364,7 @@ const Admin = () => {
                   <SmallerCard
                     types={{
                       name: "Cancel Order",
-                      number: `${pendingOrdersCount}`, // Display the count of completed orders
+                      number: `${pendingOrdersCount}`,
                     }}
 
                   />
@@ -402,7 +402,7 @@ const Admin = () => {
                       <th className="text-center">Status</th>
                       <th className="text-center">Verified Email</th>
                       <th className="text-center">Role</th>
-                      <th className="text-center">Action</th> {/* Cột mới cho hành động */}
+                      <th className="text-center">Action</th> 
                     </tr>
                   </thead>
                   <tbody>
@@ -427,8 +427,8 @@ const Admin = () => {
                               display: "inline-block",
                               padding: "5px 10px",
                               borderRadius: "12px",
-                              backgroundColor: account.status === "banned" ? "#fbf1dd" : account.status === "active" ? "#dcf1e4" : "#f0f0f0", // Custom colors for "banned" and "active"
-                              color: account.status === "banned" ? "#8a6111" : account.status === "active" ? "#0e612f" : "#000", // Text color
+                              backgroundColor: account.status === "banned" ? "#fbf1dd" : account.status === "active" ? "#dcf1e4" : "#f0f0f0", 
+                              color: account.status === "banned" ? "#8a6111" : account.status === "active" ? "#0e612f" : "#000", 
                             }}
                           >
                             {account.status}
@@ -456,7 +456,7 @@ const Admin = () => {
                                     ? "#438c41"
                                     : account.role === "shipper"
                                       ? "#9469bf"
-                                      : "#000", // Text color
+                                      : "#000",
                             }}
                           >
                             {account.role}
@@ -607,7 +607,7 @@ const Admin = () => {
         <Col className={cx("transaction_table")}>
           <Row className={cx("transaction", "justify-content-center", "align-items-center")}>
             <Col>
-              <div className={cx("table-container")}> {/* Sử dụng lớp CSS cho bảng */}
+              <div className={cx("table-container")}>
                 <h2 id="transaction-table"></h2>
                 <Table striped bordered hover>
                   <thead>
@@ -617,9 +617,9 @@ const Admin = () => {
                       <th>Amount</th>
                       <th>Status</th>
                       <th>Payment Method</th>
-                      <th className="text-center">Buyer's Name</th> {/* Cột Buyer Username */}
-                      <th className="text-center">Seller's Name</th> {/* Cột Seller Username */}
-                      <th className="text-center">Service Fee</th> {/* Cột Service Fee */}
+                      <th className="text-center">Buyer's Name</th> 
+                      <th className="text-center">Seller's Name</th> 
+                      <th className="text-center">Service Fee</th> 
                       <th>Description</th>
                     </tr>
                   </thead>
@@ -628,7 +628,7 @@ const Admin = () => {
                       <tr key={transaction.id}>
                         <td>{transaction.id}</td>
                         <td>{new Date(transaction.createdDate).toLocaleDateString()}</td>
-                        <td>${transaction.transactionAmount ? transaction.transactionAmount.toFixed(2) : '0.00'}</td> {/* Hiển thị transactionAmount */}
+                        <td>${transaction.transactionAmount ? transaction.transactionAmount.toFixed(2) : '0.00'}</td> 
                         <td className="text-center">
                           <span
                             style={{
@@ -638,21 +638,25 @@ const Admin = () => {
                               backgroundColor:
                                 transaction.order.orderStatus === "completed" ? "#dcf1e4" :
                                   transaction.order.orderStatus === "pending" ? "#fff4e6" :
-                                    transaction.order.orderStatus === "failed" ? "#fbf1dd" : "#f0f0f0", // Màu sắc cho trạng thái
+                                    transaction.order.orderStatus === "failed" ? "#fbf1dd" :
+                                      transaction.order.orderStatus === "orderbombing" ? "#fbf1dd" : 
+                                        "#f0f0f0",
                               color:
                                 transaction.order.orderStatus === "completed" ? "#0e612f" :
                                   transaction.order.orderStatus === "cancelled" ? "#856404" :
-                                    transaction.order.orderStatus === "received" ? "#8a6111" : "#000", // Màu chữ
-
+                                    transaction.order.orderStatus === "received" ? "#8a6111" :
+                                      transaction.order.orderStatus === "orderbombing" ? "#ff0000" : 
+                                        "#000",
                             }}
                           >
                             {transaction.order.orderStatus}
                           </span>
                         </td>
+
                         <td>{transaction.order.orderMethod}</td>
-                        <td className="text-center">{transaction.buyer.username}</td> {/* Hiển thị Buyer Username */}
-                        <td className="text-center">{transaction.seller.username}</td> {/* Hiển thị Seller Username */}
-                        <td className="text-center">${transaction.order.serviceFee ? transaction.order.serviceFee.toFixed(2) : '0.00'}</td> {/* Hiển thị Service Fee */}
+                        <td className="text-center">{transaction.buyer.username}</td>
+                        <td className="text-center">{transaction.seller.username}</td> 
+                        <td className="text-center">${transaction.order.serviceFee ? transaction.order.serviceFee.toFixed(2) : '0.00'}</td>
                         <td>{/* Có thể thêm mô tả nếu cần */}</td>
                       </tr>
                     ))}

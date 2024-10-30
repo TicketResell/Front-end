@@ -19,7 +19,7 @@ export default function Overview() {
   });
   const [totalUser, setTotalUser] = useState(0); // State cho tổng số user
   const [error, setError] = useState("");
-  const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqYW5lX3NlbGxlciIsInJvbGUiOiJzdGFmZiIsInVzZXJfaW1hZ2UiOiJodHRwczovL2kuaWJiLmNvL3NnYlMyR0IvdC1pLXh1LW5nLmpwZyIsImlkIjoyLCJmdWxsbmFtZSI6IkphbmVDYXB0aWFuIiwiZXhwIjoxNzMwMjEwODI4LCJpYXQiOjE3Mjk2MDYwMjgsImVtYWlsIjoiamFuZUBleGFtcGxlLmNvbSJ9.hmT-f2hkQQdoJsAmqGvNg1lhA8IIZlUT8U680o7eU3Q"; // Thay thế với token của bạn
+  const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cmlkeiIsInJvbGUiOiJzdGFmZiIsInVzZXJfaW1hZ2UiOiJodHRwczovL2kuaWJiLmNvL3pyRjBGNFcvZG93bmxvYWQtMzYuanBnIiwiaWQiOjE2LCJmdWxsbmFtZSI6IkjhuqNpIFF1w6JuIiwiZXhwIjoxNzMwODMwNDA2LCJpYXQiOjE3MzAyMjU2MDYsImVtYWlsIjoibWluaHRyaTEwNTA0QGdtYWlsLmNvbSJ9.TtyAhtkbu4oTl90tHKCfmz5kaGhfdp7z5S4CDObfY30"; // Thay thế với token của bạn
   // Fetch dữ liệu từ API
   const fetchRevenueAndSalesData = async () => {
    
