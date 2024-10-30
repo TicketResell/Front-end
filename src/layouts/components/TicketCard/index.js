@@ -1,4 +1,4 @@
-import { Card, ListGroup, Button, Container, Row, Col } from "react-bootstrap";
+import { Card, ListGroup, Button, Container, Row, Col,Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import styles from "./TicketCard.module.scss";
 import classNames from "classnames/bind";
@@ -18,7 +18,7 @@ function TicketCard({ ticket,seller = {} }) {
 
   return (
     <Card className={cx("card")} onClick={handleClickCard}>
-      <Card.Img variant="top" src={ticket.imageUrls[0]} alt="2" />
+      <Card.Img variant="top" src={ticket.imageUrls[0]} alt="2" thumbnail style={{ width: "286px", height: "170px", objectFit: "cover" }} />
       <Card.Body className={cx("card-body")}>
         <Card.Title className={cx("card-title")}>{ticket.eventTitle}</Card.Title>
         <Card.Text>{ticket.ticketDetails}</Card.Text>
@@ -27,7 +27,7 @@ function TicketCard({ ticket,seller = {} }) {
       <Container className={cx("card-container")}>
         <Row>
           <Col xs={3}>
-            <Card.Img src={seller.userImage ||"https://i.ibb.co/sg31cC8/download.png"} alt="1" />
+            <Image src={seller.userImage ||"https://i.ibb.co/sg31cC8/download.png"} alt="1" fluid thumbnail/>
           </Col>
           <Col xs={9}>
             <ListGroup className="list-group-flush">
