@@ -26,6 +26,10 @@ api.interceptors.request.use(handleBefore, (error) => {
   return Promise.reject(error);
 });
 
+apiWithoutPrefix.interceptors.request.use(handleBefore, (error) => {
+  return Promise.reject(error);
+});
+
 // Export cả hai instance
 export default api;
 export {apiWithoutPrefix };

@@ -8,9 +8,9 @@ import { LuMessagesSquare } from "react-icons/lu";
 import classNames from "classnames/bind";
 import soldout from '../../assets/images/soldout-logo.png';
 import onsale from '../../assets/images/onsale-logo.jpg';
-import api from "../../../src/config/axios";
+import api, { apiWithoutPrefix } from "../../../src/config/axios";
 import styles from "./TicketDetail.module.scss";
-import { toast } from 'react-toastify';
+import { ToastContainer,Bounce, toast } from 'react-toastify';
 import SellerInformation from "../../layouts/components/Seller Information";
 
 const TicketDetail = () => {
@@ -42,6 +42,7 @@ const TicketDetail = () => {
     const userData = localStorage.getItem('user');
     const userToken = localStorage.getItem('token');
     if (userData) {
+      console.log("User Login",JSON.parse(userData));
       setUser(JSON.parse(userData));
     }
     return userToken;
@@ -122,7 +123,7 @@ const TicketDetail = () => {
     const userToken = fetchUserFromLocalStorage();
     try {
       const response = await api.post(`/ratings/create-report`, {
-        reportedUserId: ticket.userID,
+        reportedUserId: ticket.seller.id,
         reporterUserId: user.id,
         productId: ticket.id,
         reason: reportText,
@@ -158,9 +159,27 @@ const TicketDetail = () => {
     navigate("/sellerPage", { state: { sellerInfor } });
   }
 
+  const handleChat = async (userId,user2Id) =>{
+    try {
+      const response = await apiWithoutPrefix.post(`/check-conversation/${userId}/${user2Id}`);
+      if(response.status === 200){
+        toast.success('Redirect to seller', {
+          position: "top-center",
+          autoClose: 5000,
+          theme: "light",
+          transition: Bounce,
+      });
+      }
+      navigate("/customer", { state: { ticket, currentLayout: "chat"} })
+    } catch (error) {
+      console.error("Lỗi chat rồi");
+    }
+   
+  }
   return (
     <section className={cx("py-5")}>
       <Container>
+        <ToastContainer/>
         <Row className={cx("gx-5")}>
           <Col lg={6}>
           <Row>
@@ -251,7 +270,7 @@ const TicketDetail = () => {
 
                 <Col xs={5} className={cx("d-flex", "justify-content-start")}>
                   <Button
-                    onClick={() => navigate("/customer", { state: { ticket, currentLayout: "chat" } })}
+                    onClick={() => handleChat(ticket.seller.id,user.id)}
                     className={cx("btn", "btn-lg", "px-4", "w-auto")}
                     style={{ backgroundColor: "#17a2b8", color: "white" }}>
                     <LuMessagesSquare className="me-1" /> Chat

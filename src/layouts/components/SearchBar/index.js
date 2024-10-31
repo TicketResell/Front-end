@@ -26,28 +26,44 @@ function Search({ onSearch }) {
       });
       return;
     }
-
-    const infoSearch = {
-      query: searchQuery,
-      type: ticketType, // Kết hợp loại vé khi tìm kiếm
-    };
-
-    try {
-      const response = await api.get(`/tickets/search/${searchQuery}`, infoSearch);
-      onSearch(response.data);
-    } catch (error) {
-      toast.error(error.response?.data || "An error occurred during search.", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
+console.log("Ticket Types",ticketType);
+    if(ticketType === "" ){
+      try {
+        const response = await api.get(`/tickets/search/${searchQuery}`);
+        onSearch(response.data);
+      } catch (error) {
+        toast.error(error.response?.data || "An error occurred during search.", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+      }
+    }else{
+      try {
+        const response = await api.get(`/tickets/search-ticket-/${ticketType}/${searchQuery}`);
+        console.log("Tìm kiếm theo type ",response.data);
+        onSearch(response.data);
+      } catch (error) {
+        toast.error(error.response?.data || "An error occurred during search.", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+      }
     }
+
   };
 
   // Hàm xử lý chọn loại vé

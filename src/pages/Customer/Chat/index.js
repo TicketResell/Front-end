@@ -15,7 +15,7 @@ import {
 import { Button, Modal } from 'react-bootstrap';
 import { Client } from "@stomp/stompjs";
 import { ToastContainer, toast, Bounce } from "react-toastify";
-import api from "../../../config/axios";
+import api, { apiWithoutPrefix } from "../../../config/axios";
 import uploadImgBB from "../../../config/imgBB";
 
 export default function Chat({ ticket, user }) {
@@ -28,6 +28,7 @@ export default function Chat({ ticket, user }) {
   const [conversations, setConversations] = useState([]);
   const [receiverId, setReceiverId] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [isOnline, setIsOnline] = useState(false);
   const [showChatBox,setShowChatBox] = useState(false);
   const socket = useRef(null);
   const msgListRef = useRef(null);
@@ -163,12 +164,13 @@ export default function Chat({ ticket, user }) {
     input.click();
   };
 
-  const fetchChatHistory = (userId,user2Id) => {
+  const fetchChatHistory = async (userId,user2Id) => {
     try {
-      socket.current.publish({
-        destination: "/app/chat/history",
-        body: JSON.stringify({userId,user2Id})
-      });
+      const response = await apiWithoutPrefix.get(`/chat-history/${userId}/${user2Id}`)
+      console.log("Lấy lịch sử chat 2 con thằng này cho bố",response.data);
+      const chatHistory = JSON.parse(response.data);
+      console.log("Chat History", chatHistory);
+      setMessages(chatHistory);
       console.log("ChatHistory published successfully!");
     } catch (error) {
       console.error("Error publishing ChatHistory:", error);
@@ -234,14 +236,14 @@ export default function Chat({ ticket, user }) {
             });
             console.log("Message subscribed successfully!");
           } catch (error) {
-            
+            console.error("Không lấy được tin nhắn")
           }
-          // Kéo lịch sử chat của một user bằng userId
-          socket.current.subscribe("/topic/history", (history) => {
-            const chatHistory = JSON.parse(history.body);
-            console.log("Chat History", chatHistory);
-            setMessages(chatHistory);
-          });
+
+          socket.current.subscribe("/topic/online-status",(isOnline)=>{
+            const online = JSON.parse(isOnline.body);
+            console.log("Is Online",online);
+            setIsOnline(online);
+          }) 
 
           socket.current.subscribe("/topic/conversations",(convesation)=>{
             const chatConversation = JSON.parse(convesation.body);
@@ -270,7 +272,7 @@ export default function Chat({ ticket, user }) {
   };
 
   // Hàm xử lý khi click vào một Conversation
-  const handleChatClick = async (index,conversation) => {
+  const handleChatConversationClick = async (index,conversation) => {
     setShowChatBox(true);
     setActiveConservation(index); // Cập nhật conversation đang active
     setReceiverId(conversation.user2);
@@ -335,9 +337,9 @@ export default function Chat({ ticket, user }) {
               active={activeConservation === index}
               unreadDot={conversation.unreadCount > 0}
               lastActivityTime={conversation.timestamp}
-              onClick={() => handleChatClick(index,conversation)}
+              onClick={() => handleChatConversationClick(index,conversation)}
             >
-              <Avatar src="https://i.ibb.co/sg31cC8/download.png" />
+              <Avatar src={conversation.userImage || "https://i.ibb.co/sg31cC8/download.png" } />
             </Conversation>
           ))}
         </ConversationList>
@@ -345,7 +347,7 @@ export default function Chat({ ticket, user }) {
       <ChatContainer>
         <ConversationHeader>
           {/* Avatar cho người nhận */}
-          {userAvatar && <Avatar src={userAvatar} status="dnd" />}
+          {userAvatar && <Avatar src={userAvatar} status={isOnline ? "available" : "dnd"} />}
           <ConversationHeader.Content
             userName={userName}
           ></ConversationHeader.Content>

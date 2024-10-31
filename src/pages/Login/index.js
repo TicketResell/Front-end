@@ -66,6 +66,7 @@ function Login() {
                 const { jwt } = response.data;
                 const decodedUser = jwtDecode(jwt);
                 localStorage.setItem("token", jwt);
+                console.log("Token",jwt);
                 localStorage.setItem("user", JSON.stringify(decodedUser));
 
                 toast.success('Đăng nhập thành công!', {
