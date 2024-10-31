@@ -163,11 +163,11 @@ export default function Chat({ ticket, user }) {
     input.click();
   };
 
-  const fetchChatHistory = (id) => {
+  const fetchChatHistory = (userId,user2Id) => {
     try {
       socket.current.publish({
         destination: "/app/chat/history",
-        body: JSON.stringify(id)
+        body: JSON.stringify({userId,user2Id})
       });
       console.log("ChatHistory published successfully!");
     } catch (error) {
@@ -278,7 +278,7 @@ export default function Chat({ ticket, user }) {
     await getUserImageByID(conversation.user2);
 
     //Lấy một khung chat mới bằng cách tải history chat của user cụ thể
-    fetchChatHistory(conversation.user2);
+    fetchChatHistory(user.id,conversation.user2);
 
     //Chỉnh unreadCount về 0 khi click vào nghĩa là đã đọc rồi
     setConversations((prevConversations) =>
@@ -331,7 +331,7 @@ export default function Chat({ ticket, user }) {
             <Conversation
               key={index}
               name={conversation.user2FullName}
-              info={conversation.lastMessage}
+              info={conversation.lastMessage.startsWith("https://i.ibb.co") ? "Sent 1 photo" : conversation.lastMessage}
               active={activeConservation === index}
               unreadDot={conversation.unreadCount > 0}
               lastActivityTime={conversation.timestamp}

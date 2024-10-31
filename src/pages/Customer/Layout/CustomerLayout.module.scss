@@ -1,7 +1,12 @@
 .container {
-    height: 100vh;
+  height: 100vh;
   }
   
+  .rowFullHeight {
+    background-color: #EAECF0;
+    height: 100%;
+  }
+
   .wrapper {
     background-color: #FFFFFF;
     padding: 10px;
@@ -9,7 +14,3 @@
     margin-bottom: 10px;
   }
   
-  .rowFullHeight {
-    background-color: #EAECF0;
-    height: 100%;
-  }

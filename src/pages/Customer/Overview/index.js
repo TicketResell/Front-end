@@ -26,11 +26,11 @@ export default function Overview({listOrdersBuyer,revenue,sales}) {
     <>
       <Row className={cx("rowHalfAbove")}>
         <Col xs={6}>
-          <Row ><SmallerCard types={revenueTotal}/></Row>
-          <Row ><SmallerCard types={salesTotal}/></Row>
+          <Row className={cx("item-container")} ><SmallerCard types={revenueTotal}/></Row>
+          <Row className={cx("item-container")}><SmallerCard types={salesTotal}/></Row>
         </Col>
         <Col xs={6} >
-          <RevenueChart revenue={revenue1}/>
+          <RevenueChart className={cx("item-container")} revenue={revenue1}/>
         </Col>
       </Row>
       <Row className={cx("rowHalfDown")}>

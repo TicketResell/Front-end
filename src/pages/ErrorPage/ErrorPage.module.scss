@@ -45,3 +45,23 @@
     }
   }
 }
+.notification-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #dc3545;
+  border-radius: 5px;
+  padding: 20px;
+  color: #dc3545; 
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+  width: 100%;
+  max-width: 800px; /* Điều chỉnh độ rộng tối đa */
+  margin: 20px auto; /* Căn giữa thông báo */
+}
+
+
+.notification-icon {
+  margin-bottom: 12px;
+  font-size: 35px;
+}

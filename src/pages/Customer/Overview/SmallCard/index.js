@@ -11,7 +11,7 @@ Chart.register(CategoryScale, LinearScale, LineElement, PointElement, Filler);
 export default function SmallCard ({types}){
 
   return (
-    <Card style={{margin: "5px 0 5px 5px"  }}>
+    <Card style={{margin: "5px 0 5px 5px" ,height: "210px" }}>
       <Card.Body>
         <Container>
           <Row>
@@ -22,9 +22,9 @@ export default function SmallCard ({types}){
               <Card.Title>{types.name} this quarter</Card.Title>
             </Col>
           </Row>
-          <Row>
-            <Col>
-              <h1>{types.number.toLocaleString("vi-VN")} {types.name === "Revenue" ? "VND" : ""}</h1>
+          <Row className="d-flex justify-content-center align-items-center" style={{ height: "100%" }}>
+            <Col className="text-center">
+              <h1 style={{ fontSize: "3rem" }}>{types.number.toLocaleString("vi-VN")} {types.name === "Revenue" ? "VND" : ""}</h1>
             </Col>
           </Row>
         </Container>

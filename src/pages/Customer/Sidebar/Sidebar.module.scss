@@ -1,6 +1,8 @@
 .sidebar {
-  background-color: #493971;
-  height: 100vh;
+  width: 100%;
+  background-color: #FF6F61 ;
+  flex-grow: 1; 
+  height: 100%;
   padding: 20px;
   color: #fff;
 }
@@ -59,6 +61,7 @@
   margin-left: 10px;
   border-top-left-radius: 20px;
   border-bottom-left-radius: 20px;
+  overflow: hidden;
 }
 
 .menuItem b:nth-child(1){
@@ -78,7 +81,7 @@
   width: 100%;
   height: 100%;
   border-bottom-right-radius: 20px;
-  background: rgb(73, 57, 113);
+  background: #FF6F61;
 }
 
 .menuItem b:nth-child(2){
@@ -98,7 +101,7 @@
   width: 100%;
   height: 100%;
   border-top-right-radius: 20px;
-  background: rgb(73, 57, 113);
+  background: #FF6F61;
 }
 
 .menuItem.active b:nth-child(1),

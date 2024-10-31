@@ -137,7 +137,7 @@ export default function CustomerLayout() {
     <Container fluid className={cx("container")}>
       <Row className={cx("rowFullHeight")}>
         <Col xs={2} className={cx("wrapper", "p-3")}>
-          <Sidebar customer={user} onLayoutClick={handleLayoutClick} />
+          <Sidebar customer={user} onLayoutClick={handleLayoutClick}  />
         </Col>
         <Col xs={10} className={cx("rowFullHeight")}>
           {renderLayout()}

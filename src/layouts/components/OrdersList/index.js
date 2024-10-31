@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { MDBTable, MDBTableHead, MDBTableBody } from "mdb-react-ui-kit";
 import classNames from "classnames/bind";
-import styles from "./OrdersToday.module.scss";
+import styles from "./OrdersList.module.scss";
 import Pagination from "../Pagination";
 import { Button, Modal, Form } from "react-bootstrap";
 import api from "../../../config/axios";
 import { ImStarFull, ImStarEmpty } from "react-icons/im";
+import { IoWarning } from "react-icons/io5";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 
 function OrdersList({ listOrders = [], isOrderBuyer }) {
@@ -251,7 +252,12 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
           ) : (
             <tr>
               <td colSpan="10" > 
-                <h1 style={{color:"#dc3545"}}>No orders found</h1>
+              <div className={cx("notification-container")}>
+            <span className={cx("notification-icon")}>
+              <IoWarning />
+            </span>
+            <h2>You haven't bought any tickets yet</h2>
+          </div>
               </td>
             </tr>
           )}
