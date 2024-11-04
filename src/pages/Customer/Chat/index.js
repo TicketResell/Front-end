@@ -168,7 +168,7 @@ export default function Chat({ ticket, user }) {
     try {
       const response = await apiWithoutPrefix.get(`/chat-history/${userId}/${user2Id}`)
       console.log("Lấy lịch sử chat 2 con thằng này cho bố",response.data);
-      const chatHistory = JSON.parse(response.data);
+      const chatHistory = response.data;
       console.log("Chat History", chatHistory);
       setMessages(chatHistory);
       console.log("ChatHistory published successfully!");
@@ -178,17 +178,35 @@ export default function Chat({ ticket, user }) {
     
   };
 
-  const fetchChatCoversation = (id) => {
+  const fetchChatConversation = async (userId,user2Id) => {
     try {
+      const response = await apiWithoutPrefix.post(`/check-conversation/${userId}/${user2Id}`);
+      if(response.data === "Conversation exists, you can use WebSocket Module."){
+
+      }
+      //Lấy danh sách conversation về dựa trên user login
       socket.current.publish({
         destination: "/app/chat/conversations",
-        body: JSON.stringify(id)
+        body: JSON.stringify(userId)
       });
+
+      socket.current.publish({
+        destination: "/app/chat/set-hasRead-status",
+        body: JSON.stringify({userId,user2Id})
+      });
+
       console.log("Chat Conservation published successfully!");
     } catch (error) {
       console.error("Error publishing Chat Conversation:", error);
     }
 
+  };
+
+  const fetchOnlineStatus = async (userId) =>{
+    socket.current.publish({
+      destination: "/app/chat/online-status",
+      body: JSON.stringify(userId)
+    });
   };
 
   //Lấy tên người dùng bằng id
@@ -241,6 +259,13 @@ export default function Chat({ ticket, user }) {
 
           socket.current.subscribe("/topic/online-status",(isOnline)=>{
             const online = JSON.parse(isOnline.body);
+            console.log("IS ONLINE LET GOOOO",online);
+            console.log("Is Online",online);
+            setIsOnline(online);
+          }) 
+
+          socket.current.subscribe("/topic/read-status",(isRead)=>{
+            const online = JSON.parse(isOnline.body);
             console.log("Is Online",online);
             setIsOnline(online);
           }) 
@@ -251,7 +276,8 @@ export default function Chat({ ticket, user }) {
             setConversations(chatConversation);
           }) 
 
-          fetchChatCoversation(user.id)
+          fetchChatConversation(user.id,ticket.seller.id);
+          fetchOnlineStatus(user.id);
         } else {
           console.error("STOMP connection is not established");
         }

@@ -161,16 +161,10 @@ const TicketDetail = () => {
 
   const handleChat = async (userId,user2Id) =>{
     try {
-      const response = await apiWithoutPrefix.post(`/check-conversation/${userId}/${user2Id}`);
-      if(response.status === 200){
-        toast.success('Redirect to seller', {
-          position: "top-center",
-          autoClose: 5000,
-          theme: "light",
-          transition: Bounce,
-      });
-      }
-      navigate("/customer", { state: { ticket, currentLayout: "chat"} })
+      setTimeout(()=>{
+        navigate("/customer", { state: { ticket, currentLayout: "chat"} })
+      },2000)
+      
     } catch (error) {
       console.error("Lỗi chat rồi");
     }
