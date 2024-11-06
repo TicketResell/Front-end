@@ -159,7 +159,7 @@ const TicketDetail = () => {
     navigate("/sellerPage", { state: { sellerInfor } });
   }
 
-  const handleChat = async (userId,user2Id) =>{
+  const handleChat = async () =>{
     try {
       setTimeout(()=>{
         navigate("/customer", { state: { ticket, currentLayout: "chat"} })
@@ -264,7 +264,7 @@ const TicketDetail = () => {
 
                 <Col xs={5} className={cx("d-flex", "justify-content-start")}>
                   <Button
-                    onClick={() => handleChat(ticket.seller.id,user.id)}
+                    onClick={handleChat}
                     className={cx("btn", "btn-lg", "px-4", "w-auto")}
                     style={{ backgroundColor: "#17a2b8", color: "white" }}>
                     <LuMessagesSquare className="me-1" /> Chat

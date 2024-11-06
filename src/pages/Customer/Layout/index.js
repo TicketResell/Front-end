@@ -21,7 +21,6 @@ export default function CustomerLayout() {
   const location = useLocation();
   const [currentLayout, setCurrentLayout] = useState("overview");
   const ticket = location.state?.ticket;
-  const checkConversation = location.state?.checkConversation;
   console.log("Location Ticket",ticket);
   const [user,setUser] = useState(null);
   const [ordersSeller,setOrdersSeller] = useState([]);
@@ -103,7 +102,7 @@ export default function CustomerLayout() {
           <ErrorPage errorMessage={errorMessage}/>
         );
       case "chat":
-        return <Chat ticket={ticket} user={user} checkConversation={checkConversation}/>;
+        return <Chat ticket={ticket} user={user}/>;
       case "newTicket":
         return <NewTick user={user}/>
       case "setTicket":

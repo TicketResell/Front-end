@@ -28,7 +28,6 @@ export default function Chat({ ticket, user }) {
   const [conversations, setConversations] = useState([]);
   const [receiverId, setReceiverId] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [isOnline, setIsOnline] = useState(false);
   const [showChatBox,setShowChatBox] = useState(false);
   const socket = useRef(null);
   const msgListRef = useRef(null);
@@ -180,19 +179,11 @@ export default function Chat({ ticket, user }) {
 
   const fetchChatConversation = async (userId,user2Id) => {
     try {
-      const response = await apiWithoutPrefix.post(`/check-conversation/${userId}/${user2Id}`);
-      if(response.data === "Conversation exists, you can use WebSocket Module."){
-
-      }
+      await apiWithoutPrefix.post(`/check-conversation/${userId}/${user2Id}`);
       //Lấy danh sách conversation về dựa trên user login
       socket.current.publish({
         destination: "/app/chat/conversations",
         body: JSON.stringify(userId)
-      });
-
-      socket.current.publish({
-        destination: "/app/chat/set-hasRead-status",
-        body: JSON.stringify({userId,user2Id})
       });
 
       console.log("Chat Conservation published successfully!");
@@ -200,13 +191,6 @@ export default function Chat({ ticket, user }) {
       console.error("Error publishing Chat Conversation:", error);
     }
 
-  };
-
-  const fetchOnlineStatus = async (userId) =>{
-    socket.current.publish({
-      destination: "/app/chat/online-status",
-      body: JSON.stringify(userId)
-    });
   };
 
   //Lấy tên người dùng bằng id
@@ -257,19 +241,6 @@ export default function Chat({ ticket, user }) {
             console.error("Không lấy được tin nhắn")
           }
 
-          socket.current.subscribe("/topic/online-status",(isOnline)=>{
-            const online = JSON.parse(isOnline.body);
-            console.log("IS ONLINE LET GOOOO",online);
-            console.log("Is Online",online);
-            setIsOnline(online);
-          }) 
-
-          socket.current.subscribe("/topic/read-status",(isRead)=>{
-            const online = JSON.parse(isOnline.body);
-            console.log("Is Online",online);
-            setIsOnline(online);
-          }) 
-
           socket.current.subscribe("/topic/conversations",(convesation)=>{
             const chatConversation = JSON.parse(convesation.body);
             console.log("Conversation Chat",chatConversation);
@@ -277,7 +248,6 @@ export default function Chat({ ticket, user }) {
           }) 
 
           fetchChatConversation(user.id,ticket.seller.id);
-          fetchOnlineStatus(user.id);
         } else {
           console.error("STOMP connection is not established");
         }
@@ -365,7 +335,7 @@ export default function Chat({ ticket, user }) {
               lastActivityTime={conversation.timestamp}
               onClick={() => handleChatConversationClick(index,conversation)}
             >
-              <Avatar src={conversation.userImage || "https://i.ibb.co/sg31cC8/download.png" } />
+              <Avatar src={conversation.userImage || "https://i.ibb.co/sg31cC8/download.png" } status={conversation.user2Status === true ? "available" : "dnd"}/>
             </Conversation>
           ))}
         </ConversationList>
@@ -373,7 +343,7 @@ export default function Chat({ ticket, user }) {
       <ChatContainer>
         <ConversationHeader>
           {/* Avatar cho người nhận */}
-          {userAvatar && <Avatar src={userAvatar} status={isOnline ? "available" : "dnd"} />}
+          {userAvatar && <Avatar src={userAvatar} status={user.status === true ? "available" : "dnd"} />}
           <ConversationHeader.Content
             userName={userName}
           ></ConversationHeader.Content>
