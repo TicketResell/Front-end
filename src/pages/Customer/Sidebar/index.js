@@ -79,7 +79,7 @@ export default function Sidebar({ customer, onLayoutClick }) {
             <FaDollarSign /> Order
           </div>
 
-          <div className={cx("menuItem",{ active: activeItem === "chat" })} onClick={() => {onLayoutClick("chat");setActiveItem("chat");}}>
+          <div className={cx("menuItem",{ active: activeItem === "chat" })} onClick={() => {onLayoutClick("chat"); setActiveItem("chat");}}>
           <b></b>
           <b></b>
             <FaComments /> Chat

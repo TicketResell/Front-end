@@ -5,7 +5,7 @@ import { publicRoutes, privateRoutes } from "./pages/routes";
 import DefaultLayout from "./layouts/DefaultLayout";
 import ErrorPage from './pages/ErrorPage';
 import ProtectedRoute from '../src/pages/routes/ProtectedRoute';
-import { apiWithoutPrefix } from "./config/axios";
+import api from "./config/axios";
 
 function App() {
   const specifiedRoutes = [...publicRoutes, ...privateRoutes];
@@ -15,20 +15,31 @@ function App() {
     const user = JSON.parse(localStorage.getItem("user"));
     setUser(user);
   }
-  const handleBrowserClose = async (status) =>{
-    
-    await apiWithoutPrefix.post(`/set-user-status/${status}/${user.id}`)
-  }
+  const setUserStatus = async (status) => {
+      try {
+        await api.post(`/accounts/set-user-online/${status}/${user.id}`);
+      } catch (error) {
+        console.error("Failed to update user status:", error);
+      }
+  };
+
   useEffect(() => {
     fetchUserLogin();
+  }, []);
+
+  useEffect(() => {
+      setUserStatus("online");
+
+
+    // Khi đóng trình duyệt sẽ set là offline
     const handleBeforeUnload = (event) => {
       event.preventDefault();
-      handleBrowserClose("offline");
+      setUserStatus("offline");
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
 
-    // Gỡ bỏ sự kiện khi component unmount
+    // Dọn dẹp tất cả các sự kiện
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };

@@ -21,7 +21,6 @@ export default function CustomerLayout() {
   const location = useLocation();
   const [currentLayout, setCurrentLayout] = useState("overview");
   const ticket = location.state?.ticket;
-  console.log("Location Ticket",ticket);
   const [user,setUser] = useState(null);
   const [ordersSeller,setOrdersSeller] = useState([]);
   const [ordersBuyer,setOrdersBuyer] = useState([]);
@@ -116,7 +115,9 @@ export default function CustomerLayout() {
     }
   };
   useEffect(() => {
+    if(!user){
       fetchUser();  
+    }
       if(ticket){
       setCurrentLayout(location.state.currentLayout);
     }

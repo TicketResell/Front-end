@@ -369,15 +369,6 @@ export default function NewTick({ user }) {
                   <Dropdown.Item eventKey="VIP">
                   VIP
                   </Dropdown.Item>
-                  <Dropdown.Item eventKey="Group">
-                  Group
-                  </Dropdown.Item>
-                  <Dropdown.Item eventKey="Student">
-                  Student
-                  </Dropdown.Item>
-                  <Dropdown.Item eventKey="Family">
-                  Family
-                  </Dropdown.Item>
                 </DropdownButton>
               </Col>
             </Form.Group>

@@ -109,8 +109,6 @@ const TicketDetail = () => {
     }
   };
 
-  console.log("Ticket ở đây",ticket)
-
   const handleReportProduct = () => {
     if (!user) {
       toast.info("Please log in to report a product.");

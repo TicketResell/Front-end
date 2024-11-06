@@ -48,7 +48,8 @@ function NavigationBar() {
     fetchListNotification(user);
   }, [user]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await api.post(`/accounts/set-user-online/${"offline"}/${user.id}`);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     setSignedIn(false);

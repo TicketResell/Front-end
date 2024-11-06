@@ -23,6 +23,7 @@ export default function Chat({ ticket, user }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [userName, setUserName] = useState("");
   const [userAvatar, setUserAvatar] = useState("");
+  const [userStatus,setUserStatus] = useState({});
   const [connected, setConnected] = useState(false);
   const [activeConservation, setActiveConservation] = useState(null);
   const [conversations, setConversations] = useState([]);
@@ -42,6 +43,17 @@ export default function Chat({ ticket, user }) {
       const response = await api.post(`/accounts/get-avatar/${id}`); // Gửi id trong URL
       console.log("UserImage : ", response.data);
       setUserAvatar(response.data);
+    } catch (error) {
+      console.error("Error fetching user name", error);
+    }
+  };
+
+  const getUserStatusByID = async (id) => {
+    console.log("Id dùng để get userStatus của người đối phương", id);
+    try {
+      const response = await api.get(`/accounts/get-user-online-status/${id}`); // Gửi id trong URL
+      console.log("User Status : ", response.data);
+      setUserStatus(response.data);
     } catch (error) {
       console.error("Error fetching user name", error);
     }
@@ -214,6 +226,7 @@ export default function Chat({ ticket, user }) {
     setReceiverId(receiverId);
     await getUserNameByID(receiverId); 
     await getUserImageByID(receiverId); 
+    await getUserStatusByID(receiverId);
   };
 
   const connectWebSocket = () => {
@@ -246,12 +259,10 @@ export default function Chat({ ticket, user }) {
             console.log("Conversation Chat",chatConversation);
             setConversations(chatConversation);
           }) 
-
-          fetchChatConversation(user.id,ticket.seller.id);
         } else {
           console.error("STOMP connection is not established");
         }
-  
+        fetchChatConversation(user.id,ticket.seller.id);
         // Xác định vai trò sau khi kết nối thành công
         determineRole();
       },
@@ -274,7 +285,7 @@ export default function Chat({ ticket, user }) {
     setReceiverId(conversation.user2);
     await getUserNameByID(conversation.user2);
     await getUserImageByID(conversation.user2);
-
+    await getUserStatusByID(conversation.user2)
     //Lấy một khung chat mới bằng cách tải history chat của user cụ thể
     fetchChatHistory(user.id,conversation.user2);
 
@@ -335,7 +346,7 @@ export default function Chat({ ticket, user }) {
               lastActivityTime={conversation.timestamp}
               onClick={() => handleChatConversationClick(index,conversation)}
             >
-              <Avatar src={conversation.userImage || "https://i.ibb.co/sg31cC8/download.png" } status={conversation.user2Status === true ? "available" : "dnd"}/>
+              <Avatar src={conversation.user2Img || "https://i.ibb.co/sg31cC8/download.png" } status={conversation.user2OnlineStatus === true ? "available" : "dnd"}/>
             </Conversation>
           ))}
         </ConversationList>
@@ -343,7 +354,7 @@ export default function Chat({ ticket, user }) {
       <ChatContainer>
         <ConversationHeader>
           {/* Avatar cho người nhận */}
-          {userAvatar && <Avatar src={userAvatar} status={user.status === true ? "available" : "dnd"} />}
+          {userAvatar && <Avatar src={userAvatar} status={userStatus.online === true ? "available" : "dnd"} />}
           <ConversationHeader.Content
             userName={userName}
           ></ConversationHeader.Content>
