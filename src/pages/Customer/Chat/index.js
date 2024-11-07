@@ -189,9 +189,13 @@ export default function Chat({ ticket, user }) {
     
   };
 
-  const fetchChatConversation = async (userId,user2Id) => {
+  const fetchChatConversation = async (userId,user2Id = null) => {
     try {
-      await apiWithoutPrefix.post(`/check-conversation/${userId}/${user2Id}`);
+      if(userId && user2Id) {
+        await apiWithoutPrefix.post(`/check-conversation/${userId}/${user2Id}`);
+      }
+      console.log("UserID1 fetchChatConversation", userId);
+      console.log("UserID2 fetchChatConversation", user2Id);
       //Lấy danh sách conversation về dựa trên user login
       socket.current.publish({
         destination: "/app/chat/conversations",
@@ -262,7 +266,12 @@ export default function Chat({ ticket, user }) {
         } else {
           console.error("STOMP connection is not established");
         }
-        fetchChatConversation(user.id,ticket.seller.id);
+        if(ticket){
+          fetchChatConversation(user.id,ticket.seller.id);
+        }else{
+          fetchChatConversation(user.id);
+        }
+        
         // Xác định vai trò sau khi kết nối thành công
         determineRole();
       },
@@ -280,6 +289,7 @@ export default function Chat({ ticket, user }) {
 
   // Hàm xử lý khi click vào một Conversation
   const handleChatConversationClick = async (index,conversation) => {
+    await apiWithoutPrefix.post(`/chat/set-hasRead-status/${user.id}/${conversation.user2}`);
     setShowChatBox(true);
     setActiveConservation(index); // Cập nhật conversation đang active
     setReceiverId(conversation.user2);
@@ -301,13 +311,6 @@ export default function Chat({ ticket, user }) {
   useEffect(() => {
     // Đảm bảo rằng WebSocket chỉ được kết nối một lần khi component được mount
     connectWebSocket();
-    if(ticket){
-      const userID = ticket.userID;
-    }else{
-      setShowModal(true);
-      return;
-    }
-    determineRole();
     return () => {
       if (socket.current) {
         socket.current.deactivate();

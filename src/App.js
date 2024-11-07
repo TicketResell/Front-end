@@ -28,8 +28,9 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if(user){
       setUserStatus("online");
-
+    }
 
     // Khi đóng trình duyệt sẽ set là offline
     const handleBeforeUnload = (event) => {

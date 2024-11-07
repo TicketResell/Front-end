@@ -13,6 +13,7 @@ import styles from "./Sidebar.module.scss";
 import Spinner from "react-bootstrap/Spinner";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import api from "../../../config/axios";
 
 const cx = classNames.bind(styles);
 
@@ -21,8 +22,9 @@ export default function Sidebar({ customer, onLayoutClick }) {
 
   const navigate = useNavigate(); // Initialize navigation
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     // Clear session or localStorage (Assuming you store the token in localStorage)
+    await api.post(`/accounts/set-user-online/${"offline"}/${customer.id}`);
     localStorage.removeItem('token'); // Or remove any session or cookie information
 
     // Redirect to login page
