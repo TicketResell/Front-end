@@ -60,8 +60,8 @@ export default function Chat({ ticket, user }) {
   };
 
   const handleSendMessage = async (mess) => {
-    const senderId = user.id;
 
+    const senderId = user.id;
     console.log("User message:", mess);
     if (!connected) {
       console.error("WebSocket is not connected");
@@ -159,7 +159,7 @@ export default function Chat({ ticket, user }) {
 
         reconnectWebSocket(); // Gọi hàm để kết nối lại khi bị mất do chờ hình ảnh lên imgBB quá lâu
         console.log("Sending message image:", messageToSend);
-
+        
         try{
           socket.current.publish({
             destination: "/app/sendMessage",
@@ -289,15 +289,15 @@ export default function Chat({ ticket, user }) {
 
   // Hàm xử lý khi click vào một Conversation
   const handleChatConversationClick = async (index,conversation) => {
-    await apiWithoutPrefix.post(`/chat/set-hasRead-status/${user.id}/${conversation.user2}`);
+    await apiWithoutPrefix.post(`/chat/set-hasRead-status/${user.id}/${conversation}`);
     setShowChatBox(true);
     setActiveConservation(index); // Cập nhật conversation đang active
-    setReceiverId(conversation.user2);
-    await getUserNameByID(conversation.user2);
-    await getUserImageByID(conversation.user2);
-    await getUserStatusByID(conversation.user2)
+    setReceiverId(conversation);
+    await getUserNameByID(conversation);
+    await getUserImageByID(conversation);
+    await getUserStatusByID(conversation)
     //Lấy một khung chat mới bằng cách tải history chat của user cụ thể
-    fetchChatHistory(user.id,conversation.user2);
+    fetchChatHistory(user.id,conversation);
 
     //Chỉnh unreadCount về 0 khi click vào nghĩa là đã đọc rồi
     setConversations((prevConversations) =>
@@ -316,7 +316,7 @@ export default function Chat({ ticket, user }) {
         socket.current.deactivate();
       }
     };
-  }, [ticket]);
+  }, [ticket,messages]);
 
   useEffect(() => {
     // Hiển thị modal để thông báo không có conversation với người nào
@@ -342,14 +342,14 @@ export default function Chat({ ticket, user }) {
           {filteredUsers.map((conversation, index) => (
             <Conversation
               key={index}
-              name={conversation.user2FullName}
+              name={conversation.user1 === user.id ? conversation.user2FullName : conversation.user1FullName}
               info={conversation.lastMessage.startsWith("https://i.ibb.co") ? "Sent 1 photo" : conversation.lastMessage}
               active={activeConservation === index}
               unreadDot={conversation.unreadCount > 0}
               lastActivityTime={conversation.timestamp}
-              onClick={() => handleChatConversationClick(index,conversation)}
+              onClick={() => handleChatConversationClick(index,conversation.user1 === user.id ? conversation.user2 : conversation.user1)}
             >
-              <Avatar src={conversation.user2Img || "https://i.ibb.co/sg31cC8/download.png" } status={conversation.user2OnlineStatus === true ? "available" : "dnd"}/>
+              <Avatar src={conversation.user1 === user.id ? conversation.user2Img : conversation.user1Img || "https://i.ibb.co/sg31cC8/download.png" } status={conversation.user1 === user.id ? (conversation.user2OnlineStatus === true ? "available" : "dnd") : (conversation.user1OnlineStatus === true ? "available" : "dnd")}/>
             </Conversation>
           ))}
         </ConversationList>

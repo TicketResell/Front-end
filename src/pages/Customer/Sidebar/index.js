@@ -35,9 +35,6 @@ export default function Sidebar({ customer, onLayoutClick }) {
   }
   return (
     <Container className={cx("sidebar")}>
-      <Row className={cx("dashboardTitle")}>
-        <Col>DASHBOARD</Col>
-      </Row>
       <Row className={cx("customerInfo")}>
         {/*<Image src={customer.image} roundedCircle className={cx("customerImage")} />*/}
         {customer ? (
