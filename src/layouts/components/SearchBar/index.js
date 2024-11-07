@@ -82,9 +82,6 @@ console.log("Ticket Types",ticketType);
 
         {/* Thanh tìm kiếm */}
         <InputGroup className="mb-3">
-          <InputGroup.Text>
-            <FaSearch />
-          </InputGroup.Text>
           <Form.Control
             placeholder="Search by event title"
             value={searchQuery}

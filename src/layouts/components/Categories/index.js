@@ -15,7 +15,7 @@ function Categories({ categories, clickCategory, clickAll }) {
           {categories.map((category) => (
             <Col key={category.id} xs={12} md={6} lg={3} className={cx("mb-4")}>
               <div className={cx("card")}>
-                <img src={crowd} alt={category.name} />
+                <img src={category.image} alt={category.name} />
                 <div className={cx("info")}>
                   <h1 style={{color : "white"}}>{category.name}</h1>
                   <p></p>

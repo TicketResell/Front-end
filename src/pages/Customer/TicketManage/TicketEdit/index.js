@@ -11,6 +11,7 @@ function TicketEdit({ ticket, onSave }) {
   const cx = classNames.bind(styles);
   const [formData, setFormData] = useState(ticket);
   const [showImages, setShowImages] = useState(ticket.imageUrls || []);
+  const [priceError, setPriceError] = useState("");
 
   const handleImageChange = async (e) => {
     const imageList = Array.from(e.target.files);
@@ -69,9 +70,24 @@ if (imagesChanged) {
     }
 
     if (name === "quantity") {
+      if (value === "") {
+        setFormData({ ...formData, quantity: value });
+        return;
+      }
       // Limit the quantity to a maximum of 30
-      const newQuantity = Math.min(Number(value), 30);
+      const newQuantity = Math.max(1, Math.min(Number(value), 30));
       setFormData({ ...formData, quantity: newQuantity });
+      return;
+    }
+
+    if (name === "price") {
+      const numericValue = value.replace(/[^\d]/g, "");
+      setFormData({ ...formData, price: numericValue });
+      if (numericValue < 10000 || numericValue > 20000000) {
+        setPriceError("The change price is not within the valid range from 10,000 to 20,000,000 VND");
+      } else {
+        setPriceError("");
+      }
       return;
     }
 
@@ -81,10 +97,19 @@ if (imagesChanged) {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (formData.price < 10000 || formData.price > 20000000) {
+      toast.error("Cannot save if the amount is not valid", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      return; 
+    }
   
     try {
-      // Upload the ticket only if the image URLs have changed
-      if (JSON.stringify(formData.imageUrls) !== JSON.stringify(ticket.imageUrls)) {
+      console.log("Form thay đổi trả cho backend",formData);
         const response = await api.put(`/tickets/${formData.id}`, formData);
   
         if (response.status === 200) {
@@ -96,20 +121,6 @@ if (imagesChanged) {
           });
           onSave(formData);
         }
-      } else {
-        // If the image URLs are the same, we still want to update other fields
-        const response = await api.put(`/tickets/${formData.id}`, formData);
-  
-        if (response.status === 200) {
-          toast.success("Ticket updated successfully", {
-            position: "top-center",
-            autoClose: 3000,
-            theme: "light",
-            transition: Bounce,
-          });
-          onSave(formData);
-        }
-      }
     } catch (error) {
       toast.error("Failed to update ticket", {
         position: "top-center",
@@ -197,13 +208,14 @@ if (imagesChanged) {
         </Form.Group>
 
         <Form.Group>
-          <Form.Label>Price</Form.Label>
+          <Form.Label>Price (VND)</Form.Label>
           <Form.Control
             type="number"
             name="price"
-            value={formData.price}
+            value={formData.price.toLocaleString('vi-VN')}
             onChange={handleInputChange}
           />
+           {priceError && <div style={{ color: "red" }}>{priceError}</div>}
         </Form.Group>
 
         <Form.Group>
