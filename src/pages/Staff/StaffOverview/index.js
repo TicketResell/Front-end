@@ -5,56 +5,44 @@ import SmallerCard from "./SmallCard";
 import RevenueChart from "./RevenueChart";
 import OrdersToday from "./OrdersToday";
 import SalesStatistics from "./SalesStatistics"; // Component mới cho thống kê vé bán
-import { useEffect, useState } from "react"; // Thêm useEffect và useState
-import axios from "axios"; // Thêm Axios
+import { useEffect, useState } from "react";
+import api from "../../../config/axios";
 
 const cx = classNames.bind(styles);
 
 export default function Overview() {
-  // State cho dữ liệu doanh thu, số lượng vé và số lượng user
   const [revenue, setRevenue] = useState(null);
   const [salesData, setSalesData] = useState({
-    totalSales: 0, // Giá trị khởi tạo cho tổng số vé
-    timeframe: "Tháng 9", // Khoảng thời gian ví dụ
+    totalSales: 0,
+    timeframe: "Tháng 9",
   });
-  const [totalUser, setTotalUser] = useState(0); // State cho tổng số user
+  const [totalUser, setTotalUser] = useState(0);
   const [error, setError] = useState("");
-  const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0cmlkeiIsInJvbGUiOiJzdGFmZiIsInVzZXJfaW1hZ2UiOiJodHRwczovL2kuaWJiLmNvL3pyRjBGNFcvZG93bmxvYWQtMzYuanBnIiwiaWQiOjE2LCJmdWxsbmFtZSI6IkjhuqNpIFF1w6JuIiwiZXhwIjoxNzMwODMwNDA2LCJpYXQiOjE3MzAyMjU2MDYsImVtYWlsIjoibWluaHRyaTEwNTA0QGdtYWlsLmNvbSJ9.TtyAhtkbu4oTl90tHKCfmz5kaGhfdp7z5S4CDObfY30"; // Thay thế với token của bạn
+
   // Fetch dữ liệu từ API
   const fetchRevenueAndSalesData = async () => {
-   
-
     try {
-      const revenueResponse = await axios.get("http://localhost:8084/api/staff/get-total-revenue-profit", {
-        headers: {
-          Authorization: `Bearer ${token}`, // Thêm token vào Authorization header
-        },
-      });
+      // Fetch revenue and profit data
+      const revenueResponse = await api.get("/staff/get-total-revenue-profit");
 
-      // Cập nhật dữ liệu từ API
       setRevenue({
-        money: revenueResponse.data.revenue.toFixed(2), // Làm tròn đến 2 chữ số thập phân
-        percent: revenueResponse.data.profit * 100, // Chuyển đổi profit thành phần trăm
-        status: revenueResponse.data.profit >= 0 ? "up" : "down", // Xác định trạng thái
+        money: revenueResponse.data.revenue.toFixed(2),
+        percent: revenueResponse.data.profit * 100,
+        status: revenueResponse.data.profit >= 0 ? "up" : "down",
       });
 
-      // Giả sử tổng số vé là giá trị khởi tạo
+      // Update total sales (replace 3200 with real data if available)
       setSalesData((prevState) => ({
         ...prevState,
-        totalSales: 3200, // Cập nhật tổng số vé, thay thế bằng giá trị thật nếu cần
+        totalSales: 3200,
       }));
 
-      // Fetch tổng số user
-      const userResponse = await axios.get("http://localhost:8084/api/staff/get-number-of-user", {
-        headers: {
-          Authorization: `Bearer ${token}`, // Thêm token vào Authorization header
-        },
-      });
-
-      setTotalUser(userResponse.data); // Cập nhật tổng số user
+      // Fetch total number of users
+      const userResponse = await api.get("/staff/get-number-of-user");
+      setTotalUser(userResponse.data);
     } catch (err) {
-      console.error("Error fetching revenue, sales or user data:", err);
-      setError("Could not fetch data."); // Xử lý lỗi
+      console.error("Error fetching revenue, sales, or user data:", err);
+      setError("Could not fetch data.");
     }
   };
 
@@ -62,9 +50,8 @@ export default function Overview() {
     fetchRevenueAndSalesData();
   }, []);
 
-  // Nếu chưa có dữ liệu, có thể hiển thị thông báo hoặc loader
   if (!revenue) {
-    return <div>Loading...</div>; // Hoặc bạn có thể hiển thị thông báo lỗi
+    return <div>Loading...</div>;
   }
 
   return (
@@ -75,9 +62,9 @@ export default function Overview() {
             <SmallerCard
               types={{
                 name: "Revenue",
-                number: `$${revenue.money}`, // Định dạng giá trị tiền tệ
-                percent: revenue.percent.toFixed(2), // Làm tròn phần trăm
-                status: revenue.status, // Trạng thái tăng hoặc giảm
+                number: `$${revenue.money}`,
+                percent: revenue.percent.toFixed(2),
+                status: revenue.status,
               }}
             />
           </Row>
@@ -85,9 +72,9 @@ export default function Overview() {
             <SmallerCard
               types={{
                 name: "Sales",
-                number: salesData.totalSales, // Sử dụng tổng số vé từ API
-                percent: 10, // Thay thế bằng dữ liệu thật nếu có
-                status: "up", // Thay thế bằng dữ liệu thật nếu có
+                number: salesData.totalSales,
+                percent: 10, // Replace with real data if available
+                status: "up",
               }}
             />
           </Row>
@@ -95,20 +82,19 @@ export default function Overview() {
             <SmallerCard
               types={{
                 name: "Total Users",
-                number: totalUser, // Hiển thị tổng số user
-                percent: 5, // Thay thế bằng dữ liệu thật nếu có
-                status: "up", // Thay thế bằng dữ liệu thật nếu có
+                number: totalUser,
+                percent: 5, // Replace with real data if available
+                status: "up",
               }}
             />
           </Row>
         </Col>
         <Col xs={6}>
-          {/* Biểu đồ Doanh thu */}
           <RevenueChart
             revenue={{
               money: `$${revenue.money}`,
-              thisYear: [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160], // Dữ liệu giả cho năm nay
-              lastYear: [40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150], // Dữ liệu giả cho năm trước
+              thisYear: [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160],
+              lastYear: [40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150],
             }}
           />
         </Col>

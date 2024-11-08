@@ -5,7 +5,7 @@ import SmallerCard from "./SmallCard";
 import RevenueChart from "./RevenueChart";
 import SalesStatistics from "./SalesStatistics";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../config/axios";
 
 const cx = classNames.bind(styles);
 
@@ -23,16 +23,11 @@ const Admin = () => {
   const [selectedStatus, setSelectedStatus] = useState({});
   const [transactions, setTransactions] = useState([]);
 
-  const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbl91c2VyIiwicm9sZSI6ImFkbWluIiwidXNlcl9pbWFnZSI6Imh0dHBzOi8vdGguYmluZy5jb20vdGgvaWQvT0lQLm5NSXItbkI1djByYlB6V0VKemVaY1FIYUU3P3c9MjY0Jmg9MTgwJmM9NyZyPTAmbz01JmRwcj0xLjEmcGlkPTEuNyIsImlkIjozLCJmdWxsbmFtZSI6IkFETUlOIiwiZXhwIjoxNzMwNzM1NTQ4LCJpYXQiOjE3MzAxMzA3NDgsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20ifQ.7WhmJq4MJvZ5MbhogwDMxkotftPHGTxYII9l65LVfuM";
-
+  const token = "";  
   // Fetch data from APIs
   const fetchRevenueAndSalesData = async () => {
     try {
-      const revenueResponse = await axios.get("http://localhost:8084/api/staff/get-total-revenue-profit", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const revenueResponse = await api.get("/staff/get-total-revenue-profit");
 
       setRevenue({
         money: revenueResponse.data.revenue.toFixed(2),
@@ -40,42 +35,19 @@ const Admin = () => {
         status: revenueResponse.data.profit >= 0 ? "up" : "down",
       });
 
-      const userResponse = await axios.get("http://localhost:8084/api/staff/get-number-of-user", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const userResponse = await api.get("/staff/get-number-of-user");
       setTotalUser(userResponse.data);
 
-      const ordersResponse = await axios.get("http://localhost:8084/api/admin/count-orders", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const ordersResponse = await api.get("/admin/count-orders");
       setTotalOrders(ordersResponse.data);
 
-      const transactionsResponse = await axios.get("http://localhost:8084/api/admin/transactions", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
+      const transactionsResponse = await api.get("/admin/transactions");
       setTransactions(transactionsResponse.data);
 
-      const accountsResponse = await axios.get("http://localhost:8084/api/admin/view-accounts", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const accountsResponse = await api.get("/admin/view-accounts");
       setAccounts(accountsResponse.data);
 
-
-
-      const ordersResponseData = await axios.get("http://localhost:8084/api/admin/all-orders", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const ordersResponseData = await api.get("/admin/all-orders");
       setOrders(ordersResponseData.data);
     } catch (err) {
       console.error("Error fetching data:", err);
@@ -87,36 +59,27 @@ const Admin = () => {
     fetchRevenueAndSalesData();
   }, []);
 
-
   const updateOrderStatus = async (orderId, status) => {
     try {
-      const response = await axios.put(`http://localhost:8084/api/orders/update-order-status/${orderId}`, {
-        order_status: status, // Sending the selected status
+      const response = await api.put(`/orders/update-order-status/${orderId}`, {
+        order_status: status,
       });
 
       // Handle success response
       await fetchOrders();
-      // Optionally refresh the orders or show a success message here
     } catch (error) {
-      // Handle error response
       console.error('Error updating order status:', error.response ? error.response.data : error.message);
     }
   };
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get("http://localhost:8084/api/admin/all-orders", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setOrders(response.data); // Assuming response.data contains the orders array
+      const response = await api.get("/admin/all-orders");
+      setOrders(response.data); 
     } catch (error) {
       console.error('Error fetching orders:', error.response ? error.response.data : error.message);
     }
   };
-
 
   const completedOrdersCount = orders.filter(order => order.orderStatus === 'completed').length;
   const cancelOrdersCount = orders.filter(order => order.orderStatus === 'cancelled').length;
@@ -130,7 +93,6 @@ const Admin = () => {
     setSelectedStatus((prev) => ({ ...prev, [orderId]: status }));
   };
 
-
   const [selectedPaymentStatus, setSelectedPaymentStatus] = useState({});
 
   const handlePaymentStatusChange = (orderId, status) => {
@@ -141,19 +103,13 @@ const Admin = () => {
     if (!paymentStatus) return;
 
     try {
-      const response = await fetch(`http://localhost:8084/api/orders/update-payment-status/${orderId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          payment_status: paymentStatus,
-          vnpResponseCode: "",
-          vnpTransactionNo: "",
-        }),
+      const response = await api.put(`/orders/update-payment-status/${orderId}`, {
+        payment_status: paymentStatus,
+        vnpResponseCode: "",
+        vnpTransactionNo: "",
       });
 
-      if (response.ok) {
+      if (response.status === 200) {
         fetchOrders(); 
       } else {
         alert("Failed to update payment status.");
@@ -163,11 +119,9 @@ const Admin = () => {
     }
   };
 
-
   const handlePromote = async (id, currentRole) => {
     try {
       let newRole;
-
      
       if (currentRole === "user") {
         newRole = "staff"; 
@@ -178,48 +132,34 @@ const Admin = () => {
         return; 
       }
 
-  
       const payload = {
         role: newRole, 
       };
 
+      const response = await api.put(`/admin/promote/${id}`, payload);
 
-      const response = await axios.put(`http://localhost:8084/api/admin/promote/${id}`, payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json', 
-        },
-      });
-
-   
       await fetchAccounts(); 
 
     } catch (error) {
       console.error("Failed to promote account:", error);
-      setError("Failed to promote account."); 
+      setError("Failed to promote account.");
     }
   };
 
-
-
   const fetchAccounts = async () => {
     try {
-      const accountsResponse = await axios.get("http://localhost:8084/api/admin/view-accounts", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setAccounts(accountsResponse.data); // Cập nhật state với dữ liệu mới
+      const accountsResponse = await api.get("/admin/view-accounts");
+      setAccounts(accountsResponse.data);
     } catch (error) {
       console.error("Failed to fetch accounts:", error);
       setError("Failed to fetch accounts.");
     }
   };
 
-
   if (!revenue) {
     return <div>Loading...</div>;
   }
+
 
   return (
     <>
@@ -584,7 +524,7 @@ const Admin = () => {
                             defaultValue={selectedPaymentStatus[order.id] || order.paymentStatus}
                             style={{ display: 'inline-block', width: 'auto', marginRight: '5px' }}
                           >
-
+                            <option value="" disabled>Select Status</option>
                             <option value="paid">Paid</option>
                             <option value="failed">Failed</option>
                           </Form.Select>

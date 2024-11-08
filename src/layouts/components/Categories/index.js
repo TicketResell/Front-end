@@ -17,7 +17,7 @@ function Categories({ categories, clickCategory, clickAll }) {
               <div className={cx("card")}>
                 <img src={category.image} alt={category.name} />
                 <div className={cx("info")}>
-                  <h1 style={{color : "white"}}>{category.name}</h1>
+                  <h1 style={{color : "white", fontSize:"25px"}}>{category.name}</h1>
                   <p></p>
                   <button onClick={() => clickCategory(category.id)}>
                     View More

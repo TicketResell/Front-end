@@ -28,26 +28,26 @@ function Home() {
   const [maxPrice, setMaxPrice] = useState(0);
   const itemsPerPage = 4;
   const navigate = useNavigate();
-    const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
 
 
-   // Nhận giá trị MIN và MAX từ Filter
-   const handleMinMaxChange = (min, max) => {
+  // Nhận giá trị MIN và MAX từ Filter
+  const handleMinMaxChange = (min, max) => {
     setMinPrice(min);
     setMaxPrice(max);
   };
 
   useEffect(() => {
     if (token) {
-        const user = jwtDecode(token);
-        // Nếu người dùng là admin hoặc staff, chuyển hướng đến trang dashboard của họ
-        if (user.role === 'admin') {
-            navigate('/admin');
-        } else if (user.role === 'staff') {
-            navigate('/staff');
-        }
+      const user = jwtDecode(token);
+      // Nếu người dùng là admin hoặc staff, chuyển hướng đến trang dashboard của họ
+      if (user.role === 'admin') {
+        navigate('/admin');
+      } else if (user.role === 'staff') {
+        navigate('/staff');
+      }
     }
-}, [token, navigate]);
+  }, [token, navigate]);
 
   const filterTickets = (tickets, priceRange) => {
     return tickets.filter(
@@ -135,23 +135,34 @@ function Home() {
 
   useEffect(() => {
     handleFilterChange([minPrice, maxPrice]); // Giá trị mặc định của bộ lọc ban đầu
-  }, [nearlyExpiredPage, normalPage, nearlyExpiredTickets, normalTickets,minPrice,maxPrice]);
+  }, [nearlyExpiredPage, normalPage, nearlyExpiredTickets, normalTickets, minPrice, maxPrice]);
 
   return (
     <>
-      <Container style={{ paddingTop: "30px", margin:"0px" }}>
+      <Container style={{ paddingTop: "30px", margin: "0px" }}>
         <section
         >
           <Row>
-              <Categories
-                categories={categories}
-                clickCategory={handleCategoryClick}
-                clickAll={fetchTickets}
-              />
+            <Categories
+              categories={categories}
+              clickCategory={handleCategoryClick}
+              clickAll={fetchTickets}
+            />
           </Row>
           <Row>
-              <Search onSearch={handleSearchResults} categories={categories} />
-              <Filter onFilterChange={handleFilterChange} onMinMaxChange={handleMinMaxChange}/>
+            <Col xs={12} md={6} className="mb-4 d-flex flex-column"> 
+                <Search onSearch={handleSearchResults} categories={categories}/>
+                <Filter onFilterChange={handleFilterChange} onMinMaxChange={handleMinMaxChange}/>
+            </Col>
+            <Col xs={12} md={6} className="mb-4 d-flex flex-column">
+              <div
+                className={cx("img-slides")}
+                style={{
+                  backgroundImage: `url('https://i.pinimg.com/enabled/564x/a7/03/90/a7039087bb901ccef5d27e7ae7a01e23.jpg')`,
+                }}
+              ></div>
+            </Col>
+
           </Row>
         </section>
 
@@ -186,18 +197,18 @@ function Home() {
           </div>
         ) : (
           <Carousel>
-          <Carousel.Item>
-          <Container> 
-            <Row>
-              {filteredNearlyExpired.map((ticket) => (
-                <Col key={ticket.id} xs={12} md={3}>
-                  <TicketCard ticket={ticket} seller={ticket.seller}/>
-                </Col>
-              ))}
-            </Row>
-            </Container> 
-          </Carousel.Item>
-        </Carousel>
+            <Carousel.Item>
+              <Container>
+                <Row>
+                  {filteredNearlyExpired.map((ticket) => (
+                    <Col key={ticket.id} xs={12} md={3}>
+                      <TicketCard ticket={ticket} seller={ticket.seller} />
+                    </Col>
+                  ))}
+                </Row>
+              </Container>
+            </Carousel.Item>
+          </Carousel>
         )}
 
         <Pagination
@@ -217,17 +228,17 @@ function Home() {
             <h2>NO NORMAL TICKET FOUND MATCHING YOUR SEARCH</h2>
           </div>
         ) : (
-          
-            <Container> 
-              <Row>
-                {filteredNormal.map((ticket) => (
-                  <Col key={ticket.id} xs={12} md={3}>
-                    <TicketCard ticket={ticket} seller={ticket.seller}/>
-                  </Col>
-                ))}
-              </Row>
-              </Container> 
-           
+
+          <Container>
+            <Row>
+              {filteredNormal.map((ticket) => (
+                <Col key={ticket.id} xs={12} md={3}>
+                  <TicketCard ticket={ticket} seller={ticket.seller} />
+                </Col>
+              ))}
+            </Row>
+          </Container>
+
         )}
         <Pagination
           currentPage={normalPage}
