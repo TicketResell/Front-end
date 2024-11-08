@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../../config/axios";
 import "./index.scss"; 
 
 function StaffList() {
@@ -7,15 +7,8 @@ function StaffList() {
   const [error, setError] = useState("");
 
   const fetchUsers = async () => {
-    const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqYW5lX3NlbGxlciIsInJvbGUiOiJzdGFmZiIsInVzZXJfaW1hZ2UiOiJodHRwczovL2kuaWJiLmNvL3NnYlMyR0IvdC1pLXh1LW5nLmpwZyIsImlkIjoyLCJmdWxsbmFtZSI6IkphbmVDYXB0aWFuIiwiZXhwIjoxNzMwMjEwODI4LCJpYXQiOjE3Mjk2MDYwMjgsImVtYWlsIjoiamFuZUBleGFtcGxlLmNvbSJ9.hmT-f2hkQQdoJsAmqGvNg1lhA8IIZlUT8U680o7eU3Q"; // Token của staff bạn cần thêm vào request
-
     try {
-      const response = await axios.get("http://localhost:8084/api/staff/get-list-user", {
-        headers: {
-          Authorization: `Bearer ${token}`, 
-        },
-      });
-
+      const response = await api.get("/staff/get-list-user"); 
       setUsers(response.data); 
     } catch (err) {
       setError("Error fetching users.");
@@ -23,28 +16,20 @@ function StaffList() {
     }
   };
 
-
   const banUser = async (userId) => {
-    const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqYW5lX3NlbGxlciIsInJvbGUiOiJzdGFmZiIsInVzZXJfaW1hZ2UiOiJodHRwczovL2kuaWJiLmNvL3NnYlMyR0IvdC1pLXh1LW5nLmpwZyIsImlkIjoyLCJmdWxsbmFtZSI6IkphbmVDYXB0aWFuIiwiZXhwIjoxNzMwMjEwODI4LCJpYXQiOjE3Mjk2MDYwMjgsImVtYWlsIjoiamFuZUBleGFtcGxlLmNvbSJ9.hmT-f2hkQQdoJsAmqGvNg1lhA8IIZlUT8U680o7eU3Q"; // Token của staff bạn cần thêm vào request
-
     try {
-        const response = await axios.post(`http://localhost:8084/api/staff/get-ban-user/${userId}`, {}, {
-        headers: {
-          Authorization: `Bearer ${token}`, 
-        },
-      });
-
+      const response = await api.post(`/staff/get-ban-user/${userId}`, {});
       if (response.data) {
         setUsers(users.filter(user => user.id !== userId));
       }
     } catch (err) {
-        if (err.response) {
-          console.error("Error banning user:", err.response.data);
-          setError(`Error banning user: ${err.response.data.message || err.response.statusText}`);
-        } else {
-          console.error("Error banning user.", err);
-          setError("Error banning user.");
-        }
+      if (err.response) {
+        console.error("Error banning user:", err.response.data);
+        setError(`Error banning user: ${err.response.data.message || err.response.statusText}`);
+      } else {
+        console.error("Error banning user.", err);
+        setError("Error banning user.");
+      }
     }
   };
 

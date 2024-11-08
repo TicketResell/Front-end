@@ -1,0 +1,72 @@
+.rating-list-container {
+    margin: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+  
+    .rating-table {
+      width: 100%;
+      border-collapse: collapse;
+  
+      th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border: 1px solid #ddd;
+      }
+  
+      th {
+        background-color: #4CAF50;
+        color: white;
+        font-weight: bold;
+        font-size: 16px;
+      }
+  
+      td {
+        background-color: #fff;
+        color: #333;
+        font-size: 14px;
+      }
+  
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+  
+      tr:hover {
+        background-color: #ddd;
+      }
+  
+      th, td {
+        &:first-child {
+          border-left: none;
+        }
+        &:last-child {
+          border-right: none;
+        }
+      }
+    }
+  
+    p {
+      color: red;
+      font-weight: bold;
+    }
+  }
+  
+  .status-badge {
+    padding: 5px 10px;
+    border-radius: 12px;
+    display: inline-block;
+  }
+  .status-paid { background-color: #dcf1e4; color: #0e612f; }
+  .status-failed { background-color: #f8d7da; color: #721c24; }
+  .status-received { background-color: #dcf1e4; color: #0e612f; }
+  .status-completed { background-color: #d4edda; color: #155724; }
+  .status-cancelled { background-color: #f8d7da; color: #721c24; }
+  .status-shipping { background-color: #faf0dc; color: #8a6212; }
+  
