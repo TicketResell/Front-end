@@ -109,10 +109,11 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
 
   const handleRatingSubmit = async (e) => {
     e.preventDefault();
+    console.log("REQUEST CODE:" + orderChosen.buyerId + " " + currentUser.id + " " + starRate + " " + ratingText)
     try {
       const response = await api.post("/ratings", {
         buyerId: orderChosen.buyerId,
-        orderId: currentUser.id,
+        orderId: orderChosen.id,
         ratingScore: starRate,
         feedback: ratingText,
       });
@@ -240,8 +241,8 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
                   ) : (
                     <Button
                       className={cx("btn-response")}
-                      onClick={() => handleShipped(order)}
-                      disabled={order.orderMethod === "COD" ? true : false}
+                      onClick={() => handleShipped(order.id)}
+                      disabled={order.orderStatus !== "pending" ? true : false}
                     >
                       Confirm Shipped
                     </Button>

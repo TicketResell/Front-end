@@ -53,6 +53,7 @@ function Notification() {
           {listNotification.map((notification) => (
             <li key={notification.id} className={cx("notificationItem")}>
               <strong>{notification.title}</strong>
+
               <p>{notification.message}</p>
               <p style={{ color: "#aaa" }}>
                 {notification.createdDate ? notification.createdDate.split("T")[0] : "No date available"}
@@ -64,6 +65,7 @@ function Notification() {
           ))}
         </ul>
       </div>
+
     </div>
   );
 }

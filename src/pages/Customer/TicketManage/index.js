@@ -90,7 +90,7 @@ function TicketManage({ user }) {
 
   useEffect(() => {
     fetchTicketsByUserID();
-  }, [user.id]);
+  }, [user.id,showEditForm]);
 
   return (
     showErrorPage ? (
@@ -142,7 +142,7 @@ function TicketManage({ user }) {
                   <td>{ticket.eventDate}</td>
                   <td>{ticket.ticketDetails}</td>
                   <td>{ticket.location}</td>
-                  <td>{ticket.price}</td>
+                  <td>{ticket.price.toLocaleString("vi-VN")}</td>
                   <td>
                     <MDBBadge
                       color={

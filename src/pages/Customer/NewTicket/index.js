@@ -22,6 +22,7 @@ export default function NewTick({ user }) {
   const [showImages, setShowImages] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("Select Category");
+  const [priceError, setPriceError] = useState("");
   
   // Khai báo formData ở đây
   const [formData, setFormData] = useState({
@@ -97,9 +98,23 @@ export default function NewTick({ user }) {
     }
   
     if (name === "quantity") {
-      // Giới hạn số lượng tối đa là 30 và không nhỏ hơn 1
-      const newQuantity = Math.max(Math.min(Number(value), 30), 1);
+      if (value === "") {
+        setFormData({ ...formData, quantity: value });
+        return;
+      }
+      // Limit the quantity to a maximum of 30
+      const newQuantity = Math.max(1, Math.min(Number(value), 30));
       setFormData({ ...formData, quantity: newQuantity });
+      return;
+    }
+
+    if (name === "price") {
+      setFormData({ ...formData, price: value });
+      if (value < 10000 || value > 20000000) {
+        setPriceError("The change price is not within the valid range from 10,000 to 20,000,000 VND");
+      } else {
+        setPriceError("");
+      }
       return;
     }
   
@@ -135,6 +150,16 @@ export default function NewTick({ user }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (formData.price < 10000 || formData.price > 20000000) {
+      toast.error("Cannot save if the amount is not valid", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      return; 
+    }
 
     if (
       !formData.eventTitle ||
@@ -437,6 +462,7 @@ export default function NewTick({ user }) {
                   value={formData.price}
                   onChange={handleInputChange}
                 />
+                {priceError && <div style={{ color: "red" }}>{priceError}</div>}
               </Col>
             </Form.Group>
 
