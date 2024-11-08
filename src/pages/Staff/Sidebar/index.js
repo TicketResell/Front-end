@@ -86,6 +86,9 @@ export default function Sidebar({ staff, onLayoutClick }) {
           <div className={cx("menuItem")} onClick={() => onLayoutClick("getorder")}>
             <FaLifeRing /> Manage Orders
           </div>
+          <div className={cx("menuItem")} onClick={() => onLayoutClick("getrating")}>
+            <FaLifeRing /> Manage Ratings
+          </div>
         </Col>
       </Row>
       <Row className={cx("menuItem")}>

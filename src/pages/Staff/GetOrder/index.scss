@@ -57,3 +57,15 @@
     font-weight: bold;
   }
 }
+
+.status-badge {
+  padding: 5px 10px;
+  border-radius: 12px;
+  display: inline-block;
+}
+.status-paid { background-color: #dcf1e4; color: #0e612f; }
+.status-failed { background-color: #f8d7da; color: #721c24; }
+.status-received { background-color: #dcf1e4; color: #0e612f; }
+.status-completed { background-color: #d4edda; color: #155724; }
+.status-cancelled { background-color: #f8d7da; color: #721c24; }
+.status-shipping { background-color: #faf0dc; color: #8a6212; }

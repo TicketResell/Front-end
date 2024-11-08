@@ -14,6 +14,8 @@ import { useEffect } from 'react';
 import StaffList from "../GetUser";
 import ReportList from "../GetReport";
 import OrderList from "../GetOrder";
+import RatingList from "../GetRatings";
+
 
 
 
@@ -78,8 +80,10 @@ export default function StaffLayout() {
           return <StaffList user={user}/>
       case "getreport":
           return <ReportList user={user}/>
-          case "getorder":
+      case "getorder":
           return <OrderList user={user}/>
+          case "getrating":
+            return <RatingList user={user}/>
       default:
         return <Overview />;
     }
