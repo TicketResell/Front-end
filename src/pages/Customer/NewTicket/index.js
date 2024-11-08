@@ -137,7 +137,7 @@ export default function NewTick({ user }) {
     try {
       const response = await api.get("/categories");
       const fetchedCategories = response.data;
-  
+      console.log("Category trên New Tick",fetchedCategories)
       if (Array.isArray(fetchedCategories)) {
         setCategories(fetchedCategories);
       } else {
@@ -452,7 +452,7 @@ export default function NewTick({ user }) {
 
             <Form.Group as={Row} className="mb-3" controlId="formOriginalPrice">
               <Form.Label column sm="2">
-                Price $
+                Price VND
               </Form.Label>
               <Col sm="10">
                 <Form.Control

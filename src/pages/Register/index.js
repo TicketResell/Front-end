@@ -41,6 +41,8 @@ function Register() {
     setFullname(value);
     if (value.trim() === "") {
       setErrors((prev) => ({ ...prev, fullname: "Do not leave blank cells" }));
+    }else if( /\d/.test(value)){
+      setErrors((prev) => ({ ...prev, fullname: "FullName cannot enter numbers" }));
     } else {
       setErrors((prev) => ({ ...prev, fullname: "" }));
     }
@@ -51,6 +53,8 @@ function Register() {
     setUsername(value);
     if (value.trim() === "") {
       setErrors((prev) => ({ ...prev, username: "Do not leave blank cells" }));
+    }else if(!/[a-zA-Z]/.test(value)){
+      setErrors((prev) => ({ ...prev, username: "Username must contain at least one letter" }));
     } else if (value.includes(" ")) {
       setErrors((prev) => ({
         ...prev,
