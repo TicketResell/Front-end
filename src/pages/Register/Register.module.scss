@@ -55,7 +55,16 @@ $btn-color: #333;
     }
   }
 
-  .passwordIcon {
+  .form-check-label {
+    color: $text-color;
+    font-size: 0.9rem;
+  }
+
+  .form-check-input {
+    accent-color: $primary-color;
+  }
+
+  .password-icon {
     color: $icon-color;
     font-size: 1.25rem;
     position: absolute;
@@ -64,15 +73,6 @@ $btn-color: #333;
     transform: translateY(-50%);
     cursor: pointer;
     z-index: 2;
-  }
-
-  .form-check-label {
-    color: $text-color;
-    font-size: 0.9rem;
-  }
-
-  .form-check-input {
-    accent-color: $primary-color;
   }
 
   .btn {

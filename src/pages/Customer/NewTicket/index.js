@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Form,
@@ -13,6 +13,7 @@ import styles from "./NewTick.module.scss";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import api from "../../../config/axios";
 import uploadImgBB from "../../../config/imgBB";
+import apiLocation from "../../../config/vietNamLocation";
 
 const cx = classNames.bind(styles);
 
@@ -23,7 +24,18 @@ export default function NewTick({ user }) {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("Select Category");
   const [priceError, setPriceError] = useState("");
-  
+  //Location
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+
+  const [selectedProvinceName, setSelectedProvinceName] = useState("Select Province");
+  const [selectedDistrictName, setSelectedDistrictName] = useState("Select District");
+  const [selectedWardName, setSelectedWardName] = useState("Select Ward");
+
+  const [selectedProvinceCode, setSelectedProvinceCode] = useState(0);
+  const [selectedDistrictCode, setSelectedDistrictCode] = useState(0);
+
   // Khai báo formData ở đây
   const [formData, setFormData] = useState({
     price: "",
@@ -37,7 +49,7 @@ export default function NewTick({ user }) {
     createddate: new Date(),
     imageUrls: [],
     status: "onsale",
-    quantity : "",
+    quantity: "",
   });
 
   const handleImageChange = async (e) => {
@@ -75,7 +87,7 @@ export default function NewTick({ user }) {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-  
+
     if (name === "eventDate") {
       const currentDate = new Date();
       const selectedDate = new Date(value);
@@ -83,20 +95,30 @@ export default function NewTick({ user }) {
 
       // Nếu ngày nhập nhỏ hơn ngày hiện tại thì reset về ngày hôm nay
       if (selectedDate < currentDate) {
-        const today = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
-        setFormData({ ...formData, eventDate: today});
-        toast.error("The event date was not selected in the past. Reset to current date", {
-          position: "top-center",
-          autoClose: 5000,
-          theme: "light",
-          transition: Bounce,
-        });
+        const today = `${currentDate.getFullYear()}-${(
+          currentDate.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, "0")}-${currentDate
+          .getDate()
+          .toString()
+          .padStart(2, "0")}`;
+        setFormData({ ...formData, eventDate: today });
+        toast.error(
+          "The event date was not selected in the past. Reset to current date",
+          {
+            position: "top-center",
+            autoClose: 5000,
+            theme: "light",
+            transition: Bounce,
+          }
+        );
         return;
-      }else{
+      } else {
         setFormData({ ...formData, eventDate: selectedDate });
       }
     }
-  
+
     if (name === "quantity") {
       if (value === "") {
         setFormData({ ...formData, quantity: value });
@@ -111,33 +133,53 @@ export default function NewTick({ user }) {
     if (name === "price") {
       setFormData({ ...formData, price: value });
       if (value < 10000 || value > 20000000) {
-        setPriceError("The change price is not within the valid range from 10,000 to 20,000,000 VND");
+        setPriceError(
+          "The change price is not within the valid range from 10,000 to 20,000,000 VND"
+        );
       } else {
         setPriceError("");
       }
       return;
     }
-  
+
     setFormData({ ...formData, [name]: value });
   };
-  
 
   const handleCategorySelect = (categoryId, categoryName) => {
-    console.log("Category",categoryId);
+    console.log("Category", categoryId);
     setFormData({ ...formData, categoryId });
-    setSelectedCategory(categoryName); 
+    setSelectedCategory(categoryName);
   };
-  const handleSelectedTicketType = (e) =>{
-    console.log("Ticket Type",e);
-    setTicketType(e)
+
+  const handleProvinceSelect = (provinceCode, provinceName) => {
+    console.log("Province Code", provinceCode);
+    setSelectedProvinceCode(provinceCode);
+    setSelectedProvinceName(provinceName);
+    setSelectedDistrictName("Select District");
+    setSelectedWardName("Select Ward");
+  };
+
+  const handleDistrictsSelect = (districtCode, districtName) => {
+    console.log("District", districtCode);
+    setSelectedDistrictCode(districtCode);
+    setSelectedDistrictName(districtName);
+  };
+
+  const handleWardsSelect = (wardCode, wardName) => {
+    setSelectedWardName(wardName);
+  };
+
+  const handleSelectedTicketType = (e) => {
+    console.log("Ticket Type", e);
+    setTicketType(e);
     setFormData({ ...formData, ticketType: e });
-  }
+  };
 
   const fetchCategories = async () => {
     try {
       const response = await api.get("/categories");
       const fetchedCategories = response.data;
-      console.log("Category trên New Tick",fetchedCategories)
+      console.log("Category trên New Tick", fetchedCategories);
       if (Array.isArray(fetchedCategories)) {
         setCategories(fetchedCategories);
       } else {
@@ -148,23 +190,47 @@ export default function NewTick({ user }) {
     }
   };
 
+  const fetchProvinces = async () => {
+    try {
+      const response = await apiLocation.get("/");
+      console.log("Provinces List", response.data.results);
+      const provinceList = response.data.results;
+      setProvinces(provinceList);
+    } catch (error) {
+      console.error("Không kéo được location", error);
+    }
+  };
+
+  const fetchDistricts = async (pid) => {
+    try {
+      const response = await apiLocation.get(`/district/${pid}`);
+      console.log("Districts List", response.data.results);
+      const districtList = response.data.results;
+      setDistricts(districtList);
+    } catch (error) {
+      console.error("Không kéo được location", error);
+    }
+  };
+
+  const fetchWards = async (did) => {
+    try {
+      const response = await apiLocation.get(`/ward/${did}`);
+      console.log("Wards List", response.data.results);
+      const wardList = response.data.results;
+      setWards(wardList);
+    } catch (error) {
+      console.error("Không kéo được location", error);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (formData.price < 10000 || formData.price > 20000000) {
-      toast.error("Cannot save if the amount is not valid", {
-        position: "top-center",
-        autoClose: 5000,
-        theme: "light",
-        transition: Bounce,
-      });
-      return; 
-    }
-
+    console.log("Thông tin vé", formData);
     if (
       !formData.eventTitle ||
       !formData.eventDate ||
       ticketType === "Select Ticket Type" ||
+      !formData.ticketDetails ||
       !formData.location ||
       !formData.price ||
       selectedCategory === "Select Category" ||
@@ -172,6 +238,16 @@ export default function NewTick({ user }) {
       formData.imageUrls.length === 0
     ) {
       toast.error("Vui lòng nhập đầy đủ thông tin vé", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+
+    if (!formData.imageUrls || formData.imageUrls.length === 0) {
+      toast.error("Vui lòng tải lên ít nhất một ảnh", {
         position: "top-center",
         autoClose: 5000,
         theme: "light",
@@ -188,10 +264,28 @@ export default function NewTick({ user }) {
         transition: Bounce,
       });
       return;
+    } else if (/[^a-zA-Z0-9\s]/.test(formData.eventTitle)) {
+      toast.error("Tiêu đề sự kiện không được có kí tự đặc biệt", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
     }
 
     if (!formData.eventDate) {
       toast.error("Vui lòng nhập ngày diễn ra sự kiện", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+
+    if (new Date(formData.eventDate) < new Date()) {
+      toast.error("Ngày sự kiện không được chọn trong quá khứ.", {
         position: "top-center",
         autoClose: 5000,
         theme: "light",
@@ -220,6 +314,24 @@ export default function NewTick({ user }) {
       return;
     }
 
+    if (!formData.ticketDetails) {
+      toast.error("Vui lòng nhập mô tả chi tiết vé", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    } else if (/[^a-zA-Z0-9\s]/.test(formData.ticketDetails)) {
+      toast.error("Mô tả chi tiết không được có kí tự đặc biệt", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+
     if (!formData.location) {
       toast.error("Vui lòng nhập địa điểm sự kiện", {
         position: "top-center",
@@ -240,18 +352,8 @@ export default function NewTick({ user }) {
       return;
     }
 
-    if (!formData.imageUrls || formData.imageUrls.length === 0) {
-      toast.error("Vui lòng tải lên ít nhất một ảnh", {
-        position: "top-center",
-        autoClose: 5000,
-        theme: "light",
-        transition: Bounce,
-      });
-      return;
-    }
-
-    if (new Date(formData.eventDate) < new Date()) {
-      toast.error("Ngày sự kiện không được chọn trong quá khứ.", {
+    if (formData.price < 10000 || formData.price > 20000000) {
+      toast.error("Cannot save if the amount is not valid", {
         position: "top-center",
         autoClose: 5000,
         theme: "light",
@@ -261,13 +363,17 @@ export default function NewTick({ user }) {
     }
 
     setLoading(true);
+    const totalLocation = formData.location=","+selectedWardName+","+selectedDistrictName+","+selectedProvinceName
+    const { location, ...formDataWithoutLocation } = formData;
+    const formDataToSend = { ...formDataWithoutLocation, location: totalLocation }
+     
 
     try {
-      console.log("Form data",formData);
-      const response = await api.post("/tickets/create", formData);
+      console.log("Form data", formDataToSend);
+      const response = await api.post("/tickets/create", formDataToSend);
       console.log(response.data);
-      if(response.status === 200){
-        toast.success('Đã tạo vé thành công ', {
+      if (response.status === 200) {
+        toast.success("Đã tạo vé thành công ", {
           position: "top-center",
           autoClose: 5000,
           hideProgressBar: false,
@@ -291,7 +397,7 @@ export default function NewTick({ user }) {
           imageUrls: [],
           status: "onsale",
           quantity: "",
-        }); 
+        });
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -306,8 +412,17 @@ export default function NewTick({ user }) {
     }
   };
   useEffect(() => {
+    fetchProvinces();
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    fetchDistricts(selectedProvinceCode);
+  }, [selectedProvinceCode]);
+
+  useEffect(() => {
+    fetchWards(selectedDistrictCode);
+  }, [selectedDistrictCode]);
 
   return (
     <Container className={cx("wrapper", "d-flex")}>
@@ -385,15 +500,9 @@ export default function NewTick({ user }) {
                   onSelect={(e) => handleSelectedTicketType(e)}
                   variant="outline-secondary"
                 >
-                  <Dropdown.Item eventKey="Standard">
-                  Standard
-                  </Dropdown.Item>
-                  <Dropdown.Item eventKey="Premium">
-                  Premium
-                  </Dropdown.Item>
-                  <Dropdown.Item eventKey="VIP">
-                  VIP
-                  </Dropdown.Item>
+                  <Dropdown.Item eventKey="Standard">Standard</Dropdown.Item>
+                  <Dropdown.Item eventKey="Premium">Premium</Dropdown.Item>
+                  <Dropdown.Item eventKey="VIP">VIP</Dropdown.Item>
                 </DropdownButton>
               </Col>
             </Form.Group>
@@ -406,27 +515,31 @@ export default function NewTick({ user }) {
                 <DropdownButton
                   title={selectedCategory}
                   onSelect={(e) => {
-                    const selectedCat = categories.find(cat => cat.id === parseInt(e));
+                    const selectedCat = categories.find(
+                      (cat) => cat.id === parseInt(e)
+                    );
                     handleCategorySelect(e, selectedCat.name);
                   }}
                   variant="outline-secondary"
                 >
-                  {Array.isArray(categories) && categories.map((category)=>(
-                    <Dropdown.Item eventKey={category.id}>
-                    {category.name}
-                    </Dropdown.Item>
-                  ))}
+                  {Array.isArray(categories) &&
+                    categories.map((category) => (
+                      <Dropdown.Item eventKey={category.id}>
+                        {category.name}
+                      </Dropdown.Item>
+                    ))}
                 </DropdownButton>
               </Col>
             </Form.Group>
 
             <Form.Group as={Row} className="mb-3" controlId="formTicketDetails">
               <Form.Label column sm="2">
-              Ticket Details
+                Ticket Details
               </Form.Label>
               <Col sm="10">
                 <Form.Control
-                  as="textarea" rows={3}
+                  as="textarea"
+                  rows={3}
                   name="ticketDetails"
                   placeholder="Enter Ticket Details"
                   value={formData.ticketDetails}
@@ -434,6 +547,8 @@ export default function NewTick({ user }) {
                 />
               </Col>
             </Form.Group>
+
+            {/*Location*/}
 
             <Form.Group as={Row} className="mb-3" controlId="formLocation">
               <Form.Label column sm="2">
@@ -447,6 +562,76 @@ export default function NewTick({ user }) {
                   value={formData.location}
                   onChange={handleInputChange}
                 />
+              </Col>
+            </Form.Group>
+
+            {/*Location Detail*/}
+            <Form.Group as={Row} className="mb-3">
+              <Form.Label column sm="2">
+              </Form.Label>
+
+              <Col sm="3"  style={{ marginRight: '15px' }} >
+                <Form.Label>Provinces</Form.Label>
+                <DropdownButton
+                  title={selectedProvinceName}
+                  onSelect={(e) => {
+                    const selectedPro = provinces.find(
+                      (pro) => pro.province_id === e
+                    );
+                    console.log("Province đang chọn",selectedPro);
+                    handleProvinceSelect(e, selectedPro.province_name);
+                  }}
+                  variant="outline-secondary"
+                >
+                  {Array.isArray(provinces) &&
+                    provinces.map((province) => (
+                      <Dropdown.Item eventKey={province.province_id}>
+                        {province.province_name}
+                      </Dropdown.Item>
+                    ))}
+                </DropdownButton>
+              </Col>
+
+              <Col sm="3"  style={{ marginRight: '15px' }} >
+                <Form.Label>Districts</Form.Label>
+                <DropdownButton
+                  title={selectedDistrictName}
+                  onSelect={(e) => {
+                    const selectedDis = districts.find(
+                      (dis) => dis.district_id === e
+                    );
+                    handleDistrictsSelect(e, selectedDis.district_name);
+                  }}
+                  variant="outline-secondary"
+                >
+                  {Array.isArray(districts) &&
+                    districts.map((district) => (
+                      <Dropdown.Item eventKey={district.district_id}>
+                        {district.district_name}
+                      </Dropdown.Item>
+                    ))}
+                </DropdownButton>
+              </Col>
+
+              <Col sm="3"  style={{ marginRight: '15px' }}>
+                <Form.Label>Wards</Form.Label>
+                <DropdownButton
+                  title={selectedWardName}
+                  onSelect={(e) => {
+                    const selectedWard = wards.find(
+                      (ward) => ward.ward_id === e
+                    );
+                    handleWardsSelect(e, selectedWard.ward_name);
+                  }}
+                  variant="outline-secondary"
+                >
+                  {Array.isArray(wards) &&
+                    wards.map((ward) => (
+                      <Dropdown.Item eventKey={ward.ward_id}>
+                        {ward.ward_name}
+                      </Dropdown.Item>
+                    ))}
+                </DropdownButton>
               </Col>
             </Form.Group>
 
@@ -466,11 +651,7 @@ export default function NewTick({ user }) {
               </Col>
             </Form.Group>
 
-            <Form.Group
-              as={Row}
-              className="mb-3"
-              controlId="formQuantity"
-            >
+            <Form.Group as={Row} className="mb-3" controlId="formQuantity">
               <Form.Label column sm="2">
                 Quantity
               </Form.Label>

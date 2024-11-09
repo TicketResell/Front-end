@@ -1,4 +1,4 @@
-import { Form, Button, Container, Row, Col, Spinner } from "react-bootstrap";
+import { Form, Button, Spinner } from "react-bootstrap";
 import classNames from "classnames/bind";
 import styles from "./Register.module.scss";
 import { Link, useNavigate } from "react-router-dom";
