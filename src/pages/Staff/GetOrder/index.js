@@ -1,11 +1,18 @@
 import { useState, useEffect } from "react";
 import api from "../../../config/axios";
 import { Modal, Button, Form } from "react-bootstrap";
+import Pagination from "../../../layouts/components/Pagination";
+import { FaBan } from "react-icons/fa";
 import "./index.scss";
-
+import { MDBBadge } from "mdb-react-ui-kit";
 function OrderList() {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState("");
+  const [orderPage, setOrderPage] = useState(0);
+  const itemsPerPage = 12;
+  const offset = orderPage * itemsPerPage;
+  const currentOrders = orders.slice(offset, offset + itemsPerPage);
+
   const [selectedStatus, setSelectedStatus] = useState({});
 
   // Modal states for Payment Status and Order Status
@@ -22,6 +29,7 @@ function OrderList() {
   const fetchOrders = async () => {
     try {
       const response = await api.get("/staff/get-all-orders");
+      console.log("Response",response.data);
       setOrders(response.data);
     } catch (err) {
       setError("Error fetching orders.");
@@ -59,8 +67,8 @@ function OrderList() {
         <thead>
           <tr>
             <th>Order ID</th>
-            <th>Buyer ID</th>
-            <th>Seller ID</th>
+            <th>Buyer Name </th>
+            <th>Seller Name</th>
             <th>Ticket ID</th>
             <th>Quantity</th>
             <th>Total Amount</th>
@@ -72,39 +80,58 @@ function OrderList() {
           </tr>
         </thead>
         <tbody>
-          {orders.map(order => (
+          {currentOrders.map((order,index) => (
             <tr key={order.id}>
-              <td>{order.id}</td>
-              <td>{order.buyerId}</td>
-              <td>{order.sellerId}</td>
-              <td>{order.ticketId}</td>
+              <td>{offset + index + 1}</td>
+              <td>{order.buyerName}</td>
+              <td>{order.sellerName}</td>
+              <td>{order.ticketName}</td>
               <td>{order.quantity}</td>
               <td>{order.totalAmount}</td>
               <td>{order.serviceFee}</td>
-              <td>{order.paymentStatus}</td>
+              <td><MDBBadge
+                      color={
+                        order.paymentStatus === "paid"
+                          ? "warning"
+                          : "success"}
+                      pill
+                    >
+                      {order.paymentStatus}
+                    </MDBBadge></td>
               <td>
-                <Form.Control
-                  as="select"
-                  value={selectedStatus[order.id] || order.orderStatus}
-                  onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                >
-                  <option value="pending">Pending</option>
-                  <option value="completed">Completed</option>
-                  <option value="cancelled">Cancelled</option>
-                </Form.Control>
+              <MDBBadge
+                      color={
+                        order.orderStatus === "pending"
+                          ? "warning"
+                          : order.orderStatus === "shipping"
+                          ? "dark"
+                          : order.orderStatus === "received"
+                          ? "primary"
+                          : order.orderStatus === "canceled"
+                          ? "danger"
+                          : "success"
+                      }
+                      pill
+                    >
+                      {order.orderStatus}
+                    </MDBBadge>
               </td>
               <td>{order.orderMethod}</td>
               <td>
-                <Button
-                  onClick={() => updateOrderStatus(order.id, selectedStatus[order.id] || order.orderStatus)}
-                >
+                {order.orderStatus === "received" ?<Button onClick={() => updateOrderStatus(order.id, selectedStatus[order.id] || order.orderStatus)}>
                   Update Status
-                </Button>
+                </Button> : <FaBan size={30}/>}
+
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      <Pagination
+          currentPage={orderPage}
+          pageCount={Math.ceil(orders.length / itemsPerPage)}
+          onPageChange={(selectedPage) => setOrderPage(selectedPage)}
+        />
     </div>
   );
 }

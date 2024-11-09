@@ -1,11 +1,19 @@
 import { useState, useEffect } from "react";
 import api from "../../../config/axios";
+import { ToastContainer, toast, Bounce } from 'react-toastify';
+import { Button } from "react-bootstrap";
+import { FaLock } from "react-icons/fa";
+import Pagination from "../../../layouts/components/Pagination";
 import "./index.scss"; 
 
 function StaffList() {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState("");
-
+  const [userPage, setUserPage] = useState(0);
+  const itemsPerPage = 5;
+  const offset = userPage * itemsPerPage;
+  const currentUsers = users.slice(offset, offset + itemsPerPage);
+  
   const fetchUsers = async () => {
     try {
       const response = await api.get("/staff/get-list-user"); 
@@ -18,10 +26,21 @@ function StaffList() {
 
   const banUser = async (userId) => {
     try {
-      const response = await api.post(`/staff/get-ban-user/${userId}`, {});
-      if (response.data) {
-        setUsers(users.filter(user => user.id !== userId));
+      const response = await api.get(`/staff/get-ban-user/${userId}`);
+      if (response.data === true) {
+        toast.success("Ban user successfully", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
       }
+      fetchUsers();
     } catch (err) {
       if (err.response) {
         console.error("Error banning user:", err.response.data);
@@ -39,6 +58,7 @@ function StaffList() {
 
   return (
     <div className="staff-list-container">
+      <ToastContainer/>
       <h1>Staff Users</h1>
       {error && <p>{error}</p>}
       <table className="staff-table">
@@ -50,7 +70,6 @@ function StaffList() {
             <th>Fullname</th>
             <th>Email</th>
             <th>Phone</th>
-            <th>Address</th>
             <th>Status</th>
             <th>Verified Email</th>
             <th>Role</th>
@@ -58,25 +77,29 @@ function StaffList() {
           </tr>
         </thead>
         <tbody>
-          {users.map(user => (
+          {currentUsers.map((user,index) => (
             <tr key={user.id}>
-              <td>{user.id}</td>
+              <td>{offset + index + 1}</td>
               <td><img src={user.userImage} alt={user.fullname} className="user-avatar" /></td>
               <td>{user.username}</td>
               <td>{user.fullname}</td>
               <td>{user.email}</td>
               <td>{user.phone}</td>
-              <td>{user.address}</td>
               <td>{user.status}</td>
               <td>{user.verifiedEmail ? "Yes" : "No"}</td>
               <td>{user.role}</td>
               <td>
-                <button onClick={() => banUser(user.id)}>Ban</button> 
+                {user.status === "active" ?  <Button variant="outline-danger" onClick={() => banUser(user.id)} >Ban</Button> : <FaLock />}  
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      <Pagination
+          currentPage={userPage}
+          pageCount={Math.ceil(users.length / itemsPerPage)}
+          onPageChange={(selectedPage) => setUserPage(selectedPage)}
+        />
     </div>
   );
 }

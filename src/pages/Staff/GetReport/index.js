@@ -1,11 +1,20 @@
 import { useState, useEffect } from "react";
 import api from "../../../config/axios";
 import { Modal, Button, Form } from "react-bootstrap";
+import {
+  MDBBadge
+} from "mdb-react-ui-kit";
 import "./index.scss"; 
+import { ToastContainer, toast, Bounce } from 'react-toastify';
+import Pagination from "../../../layouts/components/Pagination";
 
 function ReportList() {
   const [reports, setReports] = useState([]);
   const [error, setError] = useState("");
+  const [reportPage, setReportPage] = useState(0);
+  const itemsPerPage = 5;
+  const offset = reportPage * itemsPerPage;
+  const currentReports = reports.slice(offset, offset + itemsPerPage);
 
   // Modal state for report status update
   const [showStatusModal, setShowStatusModal] = useState(false);
@@ -46,12 +55,24 @@ function ReportList() {
   
     try {
       const response = await api.post(`/staff/change-report-status/${selectedReport.id}?status=${newStatus}`);
-  
       // Log the response to ensure it matches the expected string format
       console.log(response.data);
-  
+      if(response.status === 200){
+        toast.success("Status updated successfully", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+      }
       fetchReports();
       handleCloseStatusModal();
+
     } catch (err) {
       setError("Error updating report status.");
       console.error("Update Report Status Error:", err);
@@ -61,14 +82,15 @@ function ReportList() {
 
   return (
     <div className="report-list-container">
+      <ToastContainer/>
       <h1>Reported Users</h1>
       {error && <p>{error}</p>}
       <table className="report-table">
         <thead>
           <tr>
-            <th>Report ID</th>
-            <th>Reported User ID</th>
-            <th>Reporter User ID</th>
+            <th>ID</th>
+            <th>Reporter User Name</th>
+            <th>Reported User Name</th>
             <th>Reason</th>
             <th>Status</th>
             <th>Report Date</th>
@@ -76,13 +98,25 @@ function ReportList() {
           </tr>
         </thead>
         <tbody>
-          {reports.map(report => (
+          {currentReports.map( (report,index) => (
             <tr key={report.id}>
-              <td>{report.id}</td>
-              <td>{report.reportedUserId}</td>
-              <td>{report.reporterUserId}</td>
+              <td>{offset +index + 1}</td>
+              <td>{report.reporterUser.username}</td>
+              <td>{report.reportedUser ? report.reportedUser.username : "Null"}</td>
               <td>{report.reason}</td>
-              <td>{report.status}</td>
+              <td><MDBBadge
+                      color={
+                        report.status === "reviewed"
+                          ? "warning"
+                          : report.status === "pending"
+                          ? "success"
+                          : "danger"
+                      }
+                      pill
+                    >
+                      {report.status}
+                    </MDBBadge>
+                    </td>
               <td>{new Date(report.reportDate).toLocaleString()}</td>
               <td>
                 <Button onClick={() => handleOpenStatusModal(report)}>Update Status</Button>
@@ -91,7 +125,11 @@ function ReportList() {
           ))}
         </tbody>
       </table>
-
+      <Pagination
+          currentPage={reportPage}
+          pageCount={Math.ceil(reports.length / itemsPerPage)}
+          onPageChange={(selectedPage) => setReportPage(selectedPage)}
+        />
       {/* Modal for updating report status */}
       <Modal show={showStatusModal} onHide={handleCloseStatusModal}>
         <Modal.Header closeButton>

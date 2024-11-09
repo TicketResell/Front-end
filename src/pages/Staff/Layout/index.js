@@ -5,7 +5,6 @@ import Sidebar from "../StaffSidebar";
 import Overview from "../StaffOverview";
 import noImg from "../../../assets/images/crowd-background.jpg";
 import Profile from "../../Profile";
-import TicketManage from "../TicketManage";
 import NotificationManagement from "../Notification";
 import { useState } from "react";
 import { useLocation } from 'react-router-dom';
@@ -69,8 +68,6 @@ export default function StaffLayout() {
         return <Overview />;
       case "profile":
         return <Profile user={user}/>
-      case "ticketManage":
-        return <TicketManage user={user}/>
       case "notification":
         return <NotificationManagement user={user}/>
         case "getuser":

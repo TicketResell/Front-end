@@ -15,6 +15,7 @@ import TicketEdit from "./TicketEdit";
 import api from "../../../config/axios";
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import ErrorPage from "../../ErrorPage";
+import Pagination from "../../../layouts/components/Pagination";
 
 function TicketManage({ user }) {
   const [tickets, setTickets] = useState([]);
@@ -22,6 +23,13 @@ function TicketManage({ user }) {
   const [showEditForm, setShowEditForm] = useState(false); // Điều khiển form chỉnh sửa
   const [showErrorPage,setShowErrorPage] = useState(false);
   const [errorMessage,setErrorMessage] = useState("");
+  
+  const [ticketPage, setTicketPage] = useState(0);
+  const itemsPerPage = 5;
+  const offset = ticketPage * itemsPerPage;
+  const currentTickets = tickets.slice(offset, offset + itemsPerPage);
+
+
   const handleEdit = (id) => {
     setEditRowId(id);
     setShowEditForm(true); // Hiển thị form chỉnh sửa
@@ -123,8 +131,8 @@ function TicketManage({ user }) {
               </tr>
             </MDBTableHead>
             <MDBTableBody>
-              {tickets.map((ticket) => (
-                <tr key={ticket.id}>
+              {currentTickets.map((ticket,index) => (
+                <tr key={index + offset + 1}>
                   <td>{ticket.id}</td>
                   <td>
                     {ticket.imageUrls.map((imgSrc) => (
@@ -181,6 +189,11 @@ function TicketManage({ user }) {
             </MDBTableBody>
           </MDBTable>
         )}
+        <Pagination
+          currentPage={ticketPage}
+          pageCount={Math.ceil(tickets.length / itemsPerPage)}
+          onPageChange={(selectedPage) => setTicketPage(selectedPage)}
+        />
       </Row>
     </Container>
     )

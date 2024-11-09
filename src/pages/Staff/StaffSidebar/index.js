@@ -36,9 +36,6 @@ export default function Sidebar({ staff, onLayoutClick }) {
           <div className={cx("menuItem")} onClick={() => onLayoutClick('notification')}>
             <FaComments /> Notification Manage
           </div>
-          <div className={cx("menuItem")} onClick={() => onLayoutClick('ticketManage')}>
-            <FaTicketAlt /> Ticket Manage
-          </div>
           <div className={cx("menuItem")} onClick={() => onLayoutClick('profile')}>
             <CgProfile /> Profile
           </div>
