@@ -13,19 +13,6 @@ function OrderList() {
   const offset = orderPage * itemsPerPage;
   const currentOrders = orders.slice(offset, offset + itemsPerPage);
 
-  const [selectedStatus, setSelectedStatus] = useState({});
-
-  // Modal states for Payment Status and Order Status
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [showOrderModal, setShowOrderModal] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState(null);
-
-  // For Payment Modal
-  const [newPaymentStatus, setNewPaymentStatus] = useState("");
-  
-  // For Order Modal
-  const [newOrderStatus, setNewOrderStatus] = useState("");
-
   const fetchOrders = async () => {
     try {
       const response = await api.get("/staff/get-all-orders");
@@ -41,22 +28,18 @@ function OrderList() {
     fetchOrders();
   }, []);
 
-  const updateOrderStatus = async (orderId, status) => {
-    try {
-      await api.put(`/orders/update-order-status/${orderId}`, {
-        order_status: status,
-      });
-      await fetchOrders();
-    } catch (error) {
-      console.error("Error updating order status:", error.response ? error.response.data : error.message);
+  const updateOrderStatus = async (orderId) => {
+    const confirmDelete = window.confirm("Are you sure to change cancelled status");
+    if(confirmDelete){
+      try {
+        await api.put(`/orders/update-order-status/${orderId}`, {
+          order_status: "cancelled",
+        });
+        await fetchOrders();
+      } catch (error) {
+        console.error("Error updating order status:", error.response ? error.response.data : error.message);
+      }
     }
-  };
-
-  const handleStatusChange = (orderId, status) => {
-    setSelectedStatus((prevStatus) => ({
-      ...prevStatus,
-      [orderId]: status,
-    }));
   };
 
   return (
@@ -118,8 +101,8 @@ function OrderList() {
               </td>
               <td>{order.orderMethod}</td>
               <td>
-                {order.orderStatus === "received" ?<Button onClick={() => updateOrderStatus(order.id, selectedStatus[order.id] || order.orderStatus)}>
-                  Update Status
+                {order.orderStatus === "received" ? <Button variant="danger" onClick={() => updateOrderStatus(order.id)}>
+                  Cancelled
                 </Button> : <FaBan size={30}/>}
 
               </td>
