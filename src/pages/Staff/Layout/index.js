@@ -3,11 +3,10 @@ import classNames from "classnames/bind";
 import styles from "./StaffLayout.module.scss";
 import Sidebar from "../StaffSidebar";
 import Overview from "../StaffOverview";
-import Transaction from "../Transaction";
 import noImg from "../../../assets/images/crowd-background.jpg";
 import Profile from "../../Profile";
 import TicketManage from "../TicketManage";
-import Feedback from "../Feedback";
+import NotificationManagement from "../Notification";
 import { useState } from "react";
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -68,14 +67,12 @@ export default function StaffLayout() {
     switch (currentLayout) {
       case "overview":
         return <Overview />;
-      case "transaction":
-        return <Transaction listTransactions={listTransactions}/>;
       case "profile":
         return <Profile user={user}/>
       case "ticketManage":
         return <TicketManage user={user}/>
-      case "feedback":
-        return <Feedback user={user}/>
+      case "notification":
+        return <NotificationManagement user={user}/>
         case "getuser":
           return <StaffList user={user}/>
       case "getreport":

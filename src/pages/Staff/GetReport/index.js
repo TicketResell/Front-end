@@ -16,6 +16,7 @@ function ReportList() {
   const fetchReports = async () => {
     try {
       const response = await api.get("/staff/view-all-report");
+      console.log("User Report ",response.data);
       setReports(response.data); 
     } catch (err) {
       setError("Error fetching reports.");

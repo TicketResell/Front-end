@@ -1,26 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Container, Form, Button, Alert } from 'react-bootstrap';
 import axios from 'axios';
-import styles from './Feedback.module.scss';
+import styles from './Notification.module.scss';
 import classNames from 'classnames/bind';
+import api from '../../../config/axios';
 
 const cx = classNames.bind(styles);
 
-export default function FeedbackManagement() {
-    const [feedbacks, setFeedbacks] = useState([]);
+export default function NotificationManagement() {
+    const [notifications, setNotifications] = useState([]);
     const [error, setError] = useState('');
     const [response, setResponse] = useState({}); // Store responses by feedback ID
 
+    const fetchFeedback = async () => {
+        try {
+            const response = await api.get("/notifications"); // Get all feedback
+            console.log("Notification response",response.data);
+            setNotifications(response.data);
+        } catch (err) {
+            setError('Could not retrieve feedback. Please try again later.');
+        }
+    };
     // Fetch feedback from backend on component mount
     useEffect(() => {
-        const fetchFeedback = async () => {
-            try {
-                const response = await axios.get('http://localhost:3000/feedback'); // Get all feedback
-                setFeedbacks(response.data);
-            } catch (err) {
-                setError('Could not retrieve feedback. Please try again later.');
-            }
-        };
         fetchFeedback();
     }, []);
 
@@ -35,8 +37,8 @@ export default function FeedbackManagement() {
             const feedbackResponse = { response: response[feedbackId], status: 'Responded' };
             await axios.put(`http://localhost:3000/feedback/${feedbackId}`, feedbackResponse); // Update feedback with response
 
-            setFeedbacks((prevFeedbacks) => 
-                prevFeedbacks.map((fb) => fb.id === feedbackId ? { ...fb, response: feedbackResponse.response, status: feedbackResponse.status } : fb)
+            setNotifications((prevnotifications) => 
+                prevnotifications.map((fb) => fb.id === feedbackId ? { ...fb, response: feedbackResponse.response, status: feedbackResponse.status } : fb)
             );
             setError('');
         } catch (err) {
@@ -46,7 +48,7 @@ export default function FeedbackManagement() {
 
     return (
         <Container className={cx('feedback-management-container', 'my-4')}>
-            <h3 className={cx('feedback-management-title')}>User Feedback Management</h3>
+            <h3 className={cx('feedback-management-title')}>User Notification Management</h3>
 
             {error && (
                 <Alert variant="danger" className={cx('alert-danger')} onClose={() => setError('')} dismissible>
@@ -54,46 +56,46 @@ export default function FeedbackManagement() {
                 </Alert>
             )}
 
-            {feedbacks.length === 0 ? (
+            {notifications.length === 0 ? (
                 <Alert variant="info" className={cx('alert-info')}>
-                    No feedback available at the moment.
+                    No Notification available at the moment.
                 </Alert>
             ) : (
                 <Table striped bordered hover className={cx('feedback-table')}>
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Name</th>
+                            <th>createdDate</th>
                             <th>Email</th>
                             <th>Feedback</th>
-                            <th>Status</th>
+                            <th>Title</th>
                             <th>Response</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {feedbacks.map((feedback, index) => (
-                            <tr key={feedback.id}>
+                        {notifications.map((notification, index) => (
+                            <tr key={notification.id}>
                                 <td>{index + 1}</td>
-                                <td>{feedback.name}</td>
-                                <td>{feedback.email}</td>
-                                <td>{feedback.message}</td>
-                                <td>{feedback.status}</td>
+                                <td>{notification.user ? notification.user.fullname : 'Notification System'}</td>
+                                <td>{notification.createdDate}</td>
+                                <td>{notification.message}</td>
+                                <td>{notification.title}</td>
                                 <td>
-                                    {feedback.status === 'Responded' ? (
-                                        feedback.response
+                                    {notification.status === 'Responded' ? (
+                                        notification.response
                                     ) : (
                                         <Form.Control
                                             type="text"
                                             placeholder="Write a response..."
-                                            value={response[feedback.id] || ''}
-                                            onChange={(e) => setResponse({ ...response, [feedback.id]: e.target.value })}
+                                            value={response[notification.id] || ''}
+                                            onChange={(e) => setResponse({ ...response, [notification.id]: e.target.value })}
                                         />
                                     )}
                                 </td>
                                 <td>
-                                    {feedback.status === 'Pending' && (
-                                        <Button variant="primary" onClick={() => handleResponseSubmit(feedback.id)}>
+                                    {notification.status === 'Pending' && (
+                                        <Button variant="primary" onClick={() => handleResponseSubmit(notification.id)}>
                                             Submit Response
                                         </Button>
                                     )}

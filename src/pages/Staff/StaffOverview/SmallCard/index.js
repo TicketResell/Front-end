@@ -3,6 +3,7 @@ import { Card, Row, Col, Container } from 'react-bootstrap';
 import { GrMoney } from "react-icons/gr"; //Revenue
 import { PiChartLineUpBold, PiChartLineDownBold } from "react-icons/pi";
 import { FaDollarSign } from "react-icons/fa6"; //Sales
+import { FaUser } from "react-icons/fa";
 import { Line } from 'react-chartjs-2';
 import { Chart, CategoryScale, LinearScale, LineElement, PointElement, Filler } from 'chart.js';
 
@@ -53,7 +54,7 @@ export default function SmallCard ({types}){
         <Container>
           <Row>
             <Col xs={2}>
-            {types.name === "Revenue" ? (<GrMoney style={{ fontSize: '2rem', color: '#5e46ff' }} />) : (<FaDollarSign style={{ fontSize: '2rem', color: '#5e46ff' }} />) }
+            {types.name === "Revenue" ? (<GrMoney style={{ fontSize: '2rem', color: '#5e46ff' }} />) : types.name ==="Profit" ?  (<FaDollarSign style={{ fontSize: '2rem', color: '#5e46ff' }} />) : (<FaUser style={{ fontSize: '2rem', color: '#5e46ff' }} />) }
             </Col>
             <Col>
               <Card.Title>{types.name} this week</Card.Title>
@@ -61,10 +62,7 @@ export default function SmallCard ({types}){
           </Row>
           <Row>
             <Col>
-              <h1>{types.name === "Revenue" ? "$" : ""}{types.number}</h1>
-              <p style={{ color: types.status === "up" ? '#17B26A' : '#F04438' }}>
-                {types.status === "up" ? (<PiChartLineUpBold />):(<PiChartLineDownBold/>) } {types.percent}% vs last week
-              </p>
+              <h1 style={{marginTop : "40px"}}>{types.number.toLocaleString("vi-VN")}{types.name === "Revenue" ? "VND" : ""}</h1>
             </Col>
             <Col xs={4}>
               <div style={{ height: '50px' }}> 

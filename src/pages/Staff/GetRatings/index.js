@@ -12,6 +12,7 @@ function RatingList() {
   const fetchRatings = async () => {
     try {
       const response = await api.get("/ratings"); // Ensure your base URL is configured properly in your axios instance
+      console.log("Rating list",response.data);
       setRatings(response.data);
     } catch (err) {
       setError("Error fetching ratings.");
@@ -45,10 +46,9 @@ function RatingList() {
           <tr>
             <th>Rating ID</th>
             <th>Created Date</th>
-            <th>Buyer ID</th>
             <th>Buyer Name</th>
-            <th>Rating</th>
-            <th>Comment</th>
+            <th>Rating Score</th>
+            <th>Message</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -57,10 +57,9 @@ function RatingList() {
             <tr key={rating.id}>
               <td>{rating.id}</td>
               <td>{rating.createdDate}</td>
-              <td>{rating.buyer.id}</td>
               <td>{rating.buyer.fullname}</td>
-              <td>{rating.rating}</td>
-              <td>{rating.comment}</td>
+              <td>{rating.ratingScore}</td>
+              <td>{rating.feedback}</td>
               <td>
                 <Button
                   variant="danger"
