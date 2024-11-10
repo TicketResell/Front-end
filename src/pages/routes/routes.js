@@ -14,7 +14,7 @@ import StaffLayout from '../Staff/Layout';
 import TicketDetail from '../TicketDetail';
 import ErrorPage from '../ErrorPage';
 import SellerPage from '../Seller Page';
-import Shipper from '../Shipper';
+import ShipperLayout from '../Shipper/Layout';
 
 
 const publicRoutes = [
@@ -35,7 +35,7 @@ const privateRoutes = [
     { path: '/payment', component: Payment, layout: HeaderOnly, role: 'user'},
     { path: '/customer', component: CustomerLayout,layout : null, role: 'user'},
     { path: '/admin',component: Admin, layout: null, role: 'admin'},
-    { path: '/shipper',component: Shipper, layout: null, role: 'shipper'},
+    { path: '/shipper',component: ShipperLayout, layout: null, role: 'shipper'},
     { path: '/staff',component: StaffLayout, layout: null, role: 'staff'},
 ];
 

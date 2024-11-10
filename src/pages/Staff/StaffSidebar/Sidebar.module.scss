@@ -18,8 +18,8 @@
   }
   
   .staffImage {
-    width: 100px;
-    height: 100px;
+    width: auto;
+    height: 150%;
     margin-bottom: 10px;
     object-fit: cover; /* Ensures the image maintains its aspect ratio */
     border-radius: 100%;

@@ -2,12 +2,12 @@ import { Container, Row, Col, Button, Image } from "react-bootstrap";
 import { FaRegChartBar, FaDollarSign, FaComments, FaSignOutAlt, FaTicketAlt } from "react-icons/fa"; // Add FaLifeRing for support
 import { CgProfile } from "react-icons/cg";
 import classNames from "classnames/bind";
-import styles from "./Sidebar.module.scss";
+import styles from "./ShipperSidebar.module.scss";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 
 const cx = classNames.bind(styles);
 
-export default function Sidebar({ staff, onLayoutClick }) {
+export default function Sidebar({ shipper, onLayoutClick }) {
   const navigate = useNavigate(); // Initialize navigation
 
   const handleLogout = () => {
@@ -24,36 +24,22 @@ export default function Sidebar({ staff, onLayoutClick }) {
         <Col>DASHBOARD</Col>
       </Row>
       <Row className={cx("staffInfo")}>
-        <Image src={staff.user_image} roundedCircle className={cx("staffImage")} />
-        <div className={cx("staffName")}>{staff.name}</div>
-        <div className={cx("staffRole")}>Staff</div>
+        <Image src={shipper.user_image} roundedCircle className={cx("staffImage")} />
+        <div className={cx("staffName")}>{shipper.fullname}</div>
+        <div className={cx("staffRole")}>Shipper</div>
       </Row>
       <Row className={cx("menu")}>
         <Col>
           <div className={cx("menuItem")} onClick={() => onLayoutClick('overview')}>
             <FaRegChartBar /> Overview
           </div>
-          <div className={cx("menuItem")} onClick={() => onLayoutClick('notification')}>
-            <FaComments /> Notification Manage
-          </div>
-          <div className={cx("menuItem")} onClick={() => onLayoutClick('ticketManage')}>
-            <FaTicketAlt /> Ticket Manage
-          </div>
           <div className={cx("menuItem")} onClick={() => onLayoutClick('profile')}>
             <CgProfile /> Profile
-          </div>
-          <div className={cx("menuItem")} onClick={() => onLayoutClick('getreport')}>
-            <CgProfile /> Manager Report
-          </div>
-          <div className={cx("menuItem")} onClick={() => onLayoutClick('getuser')}>
-            <CgProfile /> Manage User
           </div>
           <div className={cx("menuItem")} onClick={() => onLayoutClick('getorder')}>
             <CgProfile /> Manage Order
           </div>
-          <div className={cx("menuItem")} onClick={() => onLayoutClick('getrating')}>
-            <CgProfile /> Manage Ratings
-          </div>
+
         </Col>
       </Row>
       <Row className={cx("menuItem")}>
