@@ -144,7 +144,7 @@ function OrderList({ user }) {
             <th>Payment Status</th>
             <th>Order Status</th>
             <th>Order Method</th>
-            <th>Image</th>
+            <th>Image Verification</th>
             <th>Actions</th>
           </tr>
         </thead>
