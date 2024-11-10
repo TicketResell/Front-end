@@ -4,6 +4,7 @@ import {
   Row,
   ButtonGroup,
   ToggleButton,
+  Modal,
 } from "react-bootstrap";
 import {
   MDBBadge,
@@ -23,12 +24,12 @@ function TicketManage({ user }) {
   const [showEditForm, setShowEditForm] = useState(false); // Điều khiển form chỉnh sửa
   const [showErrorPage,setShowErrorPage] = useState(false);
   const [errorMessage,setErrorMessage] = useState("");
-  
+  const [showModalImage, setShowModalImage] = useState(false);
   const [ticketPage, setTicketPage] = useState(0);
   const itemsPerPage = 5;
   const offset = ticketPage * itemsPerPage;
   const currentTickets = tickets.slice(offset, offset + itemsPerPage);
-
+  const [selectedImage, setSelectedImage] = useState("");
 
   const handleEdit = (id) => {
     setEditRowId(id);
@@ -100,6 +101,12 @@ function TicketManage({ user }) {
     fetchTicketsByUserID();
   }, [user.id,showEditForm]);
 
+  const handleImageClick = (imgSrc) => {
+    setSelectedImage(imgSrc);
+    setShowModalImage(true);
+  };
+
+
   return (
     showErrorPage ? (
       <ErrorPage errorMessage={errorMessage} />
@@ -135,14 +142,17 @@ function TicketManage({ user }) {
                 <tr key={index + offset + 1}>
                   <td>{ticket.id}</td>
                   <td>
+                  <div style={{ display: "flex", gap: "5px" }}>
                     {ticket.imageUrls.map((imgSrc) => (
                       <img
                         src={imgSrc}
                         alt="ticket"
-                        style={{ width: "45px", height: "45px", marginRight: "10px" }}
+                        style={{ width: "45px", height: "45px"}}
                         className="rounded-circle"
+                        onClick={()=>handleImageClick(imgSrc)}
                       />
                     ))}
+                    </div>
                   </td>
                   <td>{ticket.eventTitle}</td>
                   <td>{ticket.categoryId}</td>
@@ -150,7 +160,7 @@ function TicketManage({ user }) {
                   <td>{ticket.eventDate}</td>
                   <td>{ticket.ticketDetails}</td>
                   <td>{ticket.location}</td>
-                  <td>{ticket.price.toLocaleString("vi-VN")}</td>
+                  <td>{ticket.price.toLocaleString("vi-VN")} VND</td>
                   <td>
                     <MDBBadge
                       color={
@@ -189,6 +199,19 @@ function TicketManage({ user }) {
             </MDBTableBody>
           </MDBTable>
         )}
+
+               <Modal show={showModalImage} onHide={() => setShowModalImage(false)} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Ảnh Ticket</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <img
+                src={selectedImage}
+                style={{ width: "100%", height: "auto" }}
+              />
+            </Modal.Body>
+          </Modal>
+
         <Pagination
           currentPage={ticketPage}
           pageCount={Math.ceil(tickets.length / itemsPerPage)}

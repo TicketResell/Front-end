@@ -47,25 +47,6 @@ function OrderList({ user }) {
     fetchOrders();
   }, [showModal]);
 
-  const updateOrderStatus = async (orderId) => {
-    const confirmDelete = window.confirm(
-      "Are you sure to change cancelled status"
-    );
-    if (confirmDelete) {
-      try {
-        await api.put(`/orders/update-order-status/${orderId}`, {
-          order_status: "cancelled",
-        });
-        await fetchOrders();
-      } catch (error) {
-        console.error(
-          "Error updating order status:",
-          error.response ? error.response.data : error.message
-        );
-      }
-    }
-  };
-
   const handleImageClick = (imgSrc) => {
     setSelectedImage(imgSrc);
     setShowModalImage(true);
