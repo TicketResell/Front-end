@@ -22,7 +22,6 @@ function Login() {
         identifier: '',
         password: '',
     });
-    const [rememberMe, setRememberMe] = useState(false); // Thêm trạng thái cho checkbox
 
     const checkIdentifier = (e) => {
         const value = e.target.value;
@@ -65,6 +64,7 @@ function Login() {
             if (response && response.status === 200) {
                 const { jwt } = response.data;
                 const decodedUser = jwtDecode(jwt);
+                
                 localStorage.setItem("token", jwt);
                 console.log("Token",jwt);
                 localStorage.setItem("user", JSON.stringify(decodedUser));
@@ -145,17 +145,7 @@ function Login() {
                                                 )}
                                             </div>
 
-                                            {/* Thêm checkbox ghi nhớ */}
-                                            <div className="form-check mb-4">
-                                                <input
-                                                    type="checkbox"
-                                                    className="form-check-input"
-                                                    id="rememberMe"
-                                                    checked={rememberMe}
-                                                    onChange={() => setRememberMe(!rememberMe)}
-                                                />
-                                                <label className="form-check-label" htmlFor="rememberMe">Ghi nhớ đăng nhập</label>
-                                            </div>
+                                            
 
                                             <div className="pt-1 mb-4">
                                                 <button className="btn btn-dark btn-lg btn-block" type="submit" disabled={loading}>

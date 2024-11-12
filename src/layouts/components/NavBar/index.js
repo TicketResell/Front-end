@@ -8,6 +8,7 @@ import { TbLogout } from "react-icons/tb";
 import Notification from "./Notification";
 import api from "../../../config/axios"; 
 import { useNavigate } from "react-router-dom"; 
+import { GoComment } from "react-icons/go";
 
 function NavigationBar() {
   const cx = classNames.bind(styles); 
@@ -62,6 +63,10 @@ function NavigationBar() {
     }, 3000);
   };
 
+  const handleChat = () => {
+    navigate("/customer", { state: { currentLayout: "chat" } });
+  };
+
   const handleLogin = (event) => {
     event.preventDefault(); 
     navigate("/login");
@@ -96,6 +101,12 @@ function NavigationBar() {
             <Button variant="outline-light" style={{ marginRight: "10px" }} title="Notification" onClick={() => setShowNofitication(!showNofitication)}>
               <GoBell />
             </Button>
+
+            {/* Nút Chat */}
+            <Button variant="outline-light" style={{ marginRight: "10px" }} title="Chat" onClick={handleChat}>
+              <GoComment />
+            </Button>
+
             {showNofitication && <Notification listNofitication={listNofitication} />}
             <Button variant="outline-light" className={cx("custom-button")} style={{ marginRight: "10px" }} href={user.role === "user" ? "/customer" : user.role === "staff" ? "/staff" : "/admin"}>
               <img src={user.user_image} alt="User" style={{ width: "40px", height: "40px", borderRadius: "50%" }} />
