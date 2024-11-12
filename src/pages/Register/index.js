@@ -3,7 +3,7 @@ import classNames from "classnames/bind";
 import styles from "./Register.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
-import { confirmEmail, confirmPhone } from "../../services/api/RegisterAPI";
+import { confirmEmail, confirmPhone } from "../../services/api/Format";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import ReCAPTCHA from "react-google-recaptcha";

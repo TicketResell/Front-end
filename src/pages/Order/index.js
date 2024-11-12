@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Form, Button, Container, Row, Col, Card } from "react-bootstrap";
+import { Form, Button, Container, Row, Col, Card , Dropdown , DropdownButton} from "react-bootstrap";
 import styles from "./Order.module.scss";
 import { useLocation } from "react-router-dom";
-import { confirmPhone } from "../../services/api/RegisterAPI";
+import { confirmAddress, confirmPhone } from "../../services/api/Format";
 import { FaLockOpen,FaLock } from "react-icons/fa";
 import api from "../../config/axios";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import classNames from "classnames/bind";
+import apiLocation from "../../config/vietNamLocation";
+
 const OrderPage = () => {
   const cx = classNames.bind(styles);
   const navigate = useNavigate();
@@ -29,6 +31,19 @@ const OrderPage = () => {
   
   const [user, setUser] = useState({});
   const [profile, setProfile] = useState({});
+
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+
+  const [addressPart, setAddressPart] = useState([]);
+  const [selectedProvinceName, setSelectedProvinceName] = useState("Select Province");
+  const [selectedDistrictName, setSelectedDistrictName] = useState("Select District");
+  const [selectedWardName, setSelectedWardName] = useState("Select Ward");
+
+  const [selectedProvinceCode, setSelectedProvinceCode] = useState(0);
+  const [selectedDistrictCode, setSelectedDistrictCode] = useState(0);
+
   const [errors, setErrors] = useState({
     fullname: "",
     phone: "",
@@ -61,10 +76,21 @@ const OrderPage = () => {
   }, []);
 
   useEffect(() => {
-    if (user) {
       fetchProfileUser();
-    }
   }, [user]);
+
+  useEffect(() => {
+    console.log("ProfileAddress",profile.address);
+    const addresspart = profile.address ? profile.address.split(",") : [];
+    console.log("addresspart",addresspart);
+    setAddressPart(addresspart);
+
+    setSelectedProvinceName(addresspart[3]);
+    setSelectedDistrictName(addresspart[2]);
+    setSelectedWardName(addresspart[1]);
+  }, [profile]);
+
+
 
   // Update order every time profile changes
   useEffect(() => {
@@ -84,18 +110,83 @@ const OrderPage = () => {
     }
   }, [profile, user, ticket, quantity]); // Chạy khi profile, user, ticket hoặc address thay đổi
 
+  const fetchProvinces = async () => {
+    try {
+      const response = await apiLocation.get("/");
+      console.log("Provinces List", response.data.results);
+      const provinceList = response.data.results;
+      if (provinceList.length === 0) {
+        provinceList = ["No Province Found"];
+      }
+      setProvinces(provinceList);
+    } catch (error) {
+      console.error("Không kéo được location", error);
+    }
+  };
+
+  const fetchDistricts = async (pid) => {
+    try {
+      const response = await apiLocation.get(`/district/${pid}`);
+      console.log("Districts List", response.data.results);
+      const districtList = response.data.results;
+      if (districtList.length === 0) {
+        districtList = ["No District Found"];
+      }
+      setDistricts(districtList);
+    } catch (error) {
+      console.error("Không kéo được location", error);
+    }
+  };
+
+  const fetchWards = async (did) => {
+    try {
+      const response = await apiLocation.get(`/ward/${did}`);
+      console.log("Wards List", response.data.results);
+      const wardList = response.data.results;
+      if (wardList.length === 0) {
+        wardList = ["No Ward Found"];
+      }
+      setWards(wardList);
+    } catch (error) {
+      console.error("Không kéo được location", error);
+    }
+  };
+
+  const handleProvinceSelect = (provinceCode, provinceName) => {
+    console.log("Province Code", provinceCode);
+    setSelectedProvinceCode(provinceCode);
+    setSelectedProvinceName(provinceName);
+    setSelectedDistrictName("Select District");
+    setSelectedWardName("Select Ward");
+  };
+
+  const handleDistrictsSelect = (districtCode, districtName) => {
+    console.log("District", districtCode);
+    setSelectedDistrictCode(districtCode);
+    setSelectedDistrictName(districtName);
+  };
+
+  const handleWardsSelect = (wardName) => {
+    setSelectedWardName(wardName);
+  };
+
   const handleRadioChange = (e) => {
     setOrder({ ...order, orderMethod: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    const formSend = {
+      fullname : order.fullname,
+      phone: order.phone,
+      address : order.address,
+      email : order.email
+    }
     // Nếu nút hiện tại là "Save", thì chuyển sang trạng thái readonly và thay đổi nhãn nút
     if (buttonLabel === "Save") {
       setIsReadonly(true);
       setButtonLabel("Update");
-      const response = await api.put(`accounts/profile/${user.sub}`, profile);
+      const response = await api.put(`accounts/${user.sub}`,formSend);
       if(response.status === 200){
         toast.success("Saved successfully", {
           position: "top-center",
@@ -121,27 +212,29 @@ const OrderPage = () => {
   // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    console.log(value);
 
-    if (name === "phone") {
-      if (!confirmPhone(value)) {
-        setErrors((prev) => ({ ...prev, [name]: "Phone number is incorrect" }));
-      } else {
-        setErrors((prev) => ({ ...prev, [name]: "" }));
-      }
+    if(name === "address"){
+      const locationForm = value + ","+ selectedWardName+ ","+ selectedDistrictName + "," + selectedProvinceName;
+      setOrder((prevOrder) => ({ ...prevOrder, address: locationForm }));
     }
 
     if (value.trim() === "") {
       setErrors((prev) => ({ ...prev, [name]: "Do not leave blank cells" }));
+    } else if (name === "phone" && !confirmPhone(value)) {
+      setErrors((prev) => ({ ...prev, [name]: "Phone number is incorrect" }));
+    } else if (name === "address" && !confirmAddress(value)) {
+        setErrors((prev) => ({ ...prev, [name]: "Address format is incorrect" }));
+      } else if (value.length < 10) {
+        setErrors((prev) => ({ ...prev, [name]: "Address must have at least 10 characters" }));
     } else {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
-
-    setOrder({ ...order, [name]: value });
+    setOrder((prevOrder) => ({ ...prevOrder, [name]: value }));
   };
 
   const handleCreateOrder = async () =>{
       // Kiểm tra thông tin trong phần Delivery Information
-      console.log("Order cua3 bo61",order);
 if (!order.fullname || !order.phone || !order.address || errors.fullname || errors.phone || errors.address) {
   toast.error("You have not filled in enough delivery information", {
     position: "top-center",
@@ -230,6 +323,18 @@ if (!order.fullname || !order.phone || !order.address || errors.fullname || erro
     navigate("/customer");
   }
 
+  useEffect(() => {
+    fetchProvinces();
+  }, []);
+
+  useEffect(() => {
+    fetchDistricts(selectedProvinceCode);
+  }, [selectedProvinceCode]);
+
+  useEffect(() => {
+    fetchWards(selectedDistrictCode);
+  }, [selectedDistrictCode]);
+
   return (
     isPaymentCODSuccess ? (
       <div className={cx("body")}>
@@ -251,7 +356,7 @@ if (!order.fullname || !order.phone || !order.address || errors.fullname || erro
             <Card.Body>
               <h3>Delivery Information</h3>
               <Form onSubmit={handleSubmit}>
-                <Form.Group controlId="fullname">
+                <Form.Group >
                   <Form.Label style={{ color: "red" }}>Fullname (Required) <span>{isReadonly ? <FaLock/> : <FaLockOpen/> }</span></Form.Label>
                   <Form.Control
                     required
@@ -269,11 +374,10 @@ if (!order.fullname || !order.phone || !order.address || errors.fullname || erro
                   </Form.Control.Feedback>
                 </Form.Group>
 
-                <Form.Group controlId="phone">
+                <Form.Group >
                   <Form.Label style={{ color: "red" }}>Phone (Required) <span>{isReadonly ? <FaLock/> : <FaLockOpen/> }</span></Form.Label>
                   <Form.Control
                     required
-                    type="phone"
                     placeholder="Please type phone"
                     name="phone"
                     value={order.phone}
@@ -287,9 +391,9 @@ if (!order.fullname || !order.phone || !order.address || errors.fullname || erro
                   </Form.Control.Feedback>
                 </Form.Group>
 
-                <Form.Group controlId="address">
+                <Form.Group >
                   <Form.Label style={{ color: "red" }}>
-                    Address (Required) <span>{isReadonly ? <FaLock/> : <FaLockOpen/> }</span>
+                    Address (Required) (Do not re-enter Provinces, Districts, Wards in this box) <span>{isReadonly ? <FaLock/> : <FaLockOpen/> }</span>
                   </Form.Label>
                   <Form.Control
                     required
@@ -307,7 +411,80 @@ if (!order.fullname || !order.phone || !order.address || errors.fullname || erro
                   </Form.Control.Feedback>
                 </Form.Group>
 
-                <Form.Group controlId="email">
+                <Form.Group as={Row} className="mb-3">
+
+              <Col sm="3"  style={{ marginRight: '30px' }} >
+                <Form.Label>Provinces</Form.Label>
+                <DropdownButton 
+                  title={selectedProvinceName}
+                  onSelect={(e) => {
+                    const selectedPro = provinces.find(
+                      (pro) => pro.province_id === e
+                    );
+                    console.log("Province đang chọn",selectedPro);
+                    handleProvinceSelect(e, selectedPro.province_name);
+                  }}
+                  variant="outline-secondary"
+                >
+                  <div style={{ maxHeight: '200px', overflowY: 'auto' }} >
+                  {Array.isArray(provinces) &&
+                    provinces.map((province) => (
+                      <Dropdown.Item eventKey={province.province_id}>
+                        {province.province_name}
+                      </Dropdown.Item>
+                    ))}
+                  </div>
+                </DropdownButton>
+              </Col>
+
+              <Col sm="3"  style={{ marginRight: '15px' }} >
+                <Form.Label>Districts</Form.Label>
+                <DropdownButton
+                  title={selectedDistrictName}
+                  onSelect={(e) => {
+                    const selectedDis = districts.find(
+                      (dis) => dis.district_id === e
+                    );
+                    handleDistrictsSelect(e, selectedDis.district_name);
+                  }}
+                  variant="outline-secondary"
+                >
+                  <div style={{ maxHeight: '200px', overflowY: 'auto' }} >
+                  {Array.isArray(districts) &&
+                    districts.map((district) => (
+                      <Dropdown.Item eventKey={district.district_id}>
+                        {district.district_name}
+                      </Dropdown.Item>
+                    ))}
+                    </div>
+                </DropdownButton>
+              </Col>
+
+              <Col sm="3"  style={{ marginRight: '15px' }}>
+                <Form.Label>Wards</Form.Label>
+                <DropdownButton
+                  title={selectedWardName}
+                  onSelect={(e) => {
+                    const selectedWard = wards.find(
+                      (ward) => ward.ward_id === e
+                    );
+                    handleWardsSelect(selectedWard.ward_name);
+                  }}
+                  variant="outline-secondary"
+                >
+                  <div style={{ maxHeight: '200px', overflowY: 'auto' }} >
+                  {Array.isArray(wards) &&
+                    wards.map((ward) => (
+                      <Dropdown.Item eventKey={ward.ward_id}>
+                        {ward.ward_name}
+                      </Dropdown.Item>
+                    ))}
+                    </div>
+                </DropdownButton>
+              </Col>
+            </Form.Group>
+
+                <Form.Group >
                   <Form.Label>Email <span><FaLock/></span></Form.Label>
                   <Form.Control
                     type="text"
