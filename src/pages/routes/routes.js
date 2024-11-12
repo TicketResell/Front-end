@@ -8,6 +8,7 @@ import ForgotPassword from '../ForgotPassword';
 import AboutUs from '../AboutUs';
 import Payment from '../Payment';
 import Admin from '../Admin/AdminOverview';
+import AdminLayout from '../Admin/Layout';
 import CustomerLayout from '../Customer/Layout';
 import OrderPage from '../Order';
 import StaffLayout from '../Staff/Layout';
@@ -34,7 +35,7 @@ const privateRoutes = [
     { path: '/forgot-password', component: ForgotPassword, layout: null},
     { path: '/payment', component: Payment, layout: HeaderOnly, role: 'user'},
     { path: '/customer', component: CustomerLayout,layout : null, role: 'user'},
-    { path: '/admin',component: Admin, layout: null, role: 'admin'},
+    { path: '/admin',component: AdminLayout, layout: null, role: 'admin'},
     { path: '/shipper',component: ShipperLayout, layout: null, role: 'shipper'},
     { path: '/staff',component: StaffLayout, layout: null, role: 'staff'},
 ];
