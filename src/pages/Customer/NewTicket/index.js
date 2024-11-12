@@ -558,7 +558,7 @@ export default function NewTick({ user }) {
                 <Form.Control
                   type="text"
                   name="location"
-                  placeholder="Enter event location"
+                  placeholder="Enter venue number"
                   value={formData.location}
                   onChange={handleInputChange}
                 />

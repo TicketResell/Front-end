@@ -8,7 +8,6 @@ import api from "../../../../config/axios";
 import apiLocation from "../../../../config/vietNamLocation";
 
 function TicketEdit({ ticket, onSave }) {
-  console.log('ticket',ticket);
   const cx = classNames.bind(styles);
   const [formData, setFormData] = useState(ticket);
   const [showImages, setShowImages] = useState(ticket.imageUrls || []);
@@ -18,9 +17,10 @@ function TicketEdit({ ticket, onSave }) {
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
 
-  const [selectedProvinceName, setSelectedProvinceName] = useState("Select Province");
-  const [selectedDistrictName, setSelectedDistrictName] = useState("Select District");
-  const [selectedWardName, setSelectedWardName] = useState("Select Ward");
+  const locationPart = ticket.location.split(",")
+  const [selectedProvinceName, setSelectedProvinceName] = useState(locationPart[3] || "Select Province");
+  const [selectedDistrictName, setSelectedDistrictName] = useState(locationPart[2] || "Select District");
+  const [selectedWardName, setSelectedWardName] = useState(locationPart[1] || "Select Ward");
 
   const [selectedProvinceCode, setSelectedProvinceCode] = useState(0);
   const [selectedDistrictCode, setSelectedDistrictCode] = useState(0);
@@ -30,6 +30,9 @@ function TicketEdit({ ticket, onSave }) {
       const response = await apiLocation.get("/");
       console.log("Provinces List", response.data.results);
       const provinceList = response.data.results;
+      if (provinceList.length === 0) {
+        provinceList = ["No Province Found"];
+      }
       setProvinces(provinceList);
     } catch (error) {
       console.error("Không kéo được location", error);
@@ -41,6 +44,9 @@ function TicketEdit({ ticket, onSave }) {
       const response = await apiLocation.get(`/district/${pid}`);
       console.log("Districts List", response.data.results);
       const districtList = response.data.results;
+      if (districtList.length === 0) {
+        districtList = ["No District Found"];
+      }
       setDistricts(districtList);
     } catch (error) {
       console.error("Không kéo được location", error);
@@ -52,6 +58,9 @@ function TicketEdit({ ticket, onSave }) {
       const response = await apiLocation.get(`/ward/${did}`);
       console.log("Wards List", response.data.results);
       const wardList = response.data.results;
+      if (wardList.length === 0) {
+        wardList = ["No Ward Found"];
+      }
       setWards(wardList);
     } catch (error) {
       console.error("Không kéo được location", error);
@@ -121,7 +130,7 @@ if (imagesChanged) {
 
       // Prevent past event dates
       if (inputDate < today) {
-        toast.error("Ngày sự kiện không thể là quá khứ. Đặt lại ngày ban đầu.", {
+        toast.error("The event date cannot be in the past. Reset to original date.", {
           position: "top-center",
           autoClose: 5000,
           theme: "light",
@@ -154,6 +163,11 @@ if (imagesChanged) {
       return;
     }
 
+    if(name === "location"){
+      const locationForm = value + ","+ selectedWardName+ ","+ selectedDistrictName + "," + selectedProvinceName;
+      setFormData({ ...formData, location: locationForm });
+    }
+
     setFormData({ ...formData, [name]: value });
   };
 
@@ -174,7 +188,6 @@ if (imagesChanged) {
     try {
       console.log("Form thay đổi trả cho backend",formData);
         const response = await api.put(`/tickets/${formData.id}`, formData);
-  
         if (response.status === 200) {
           toast.success("Ticket updated successfully", {
             position: "top-center",
@@ -182,7 +195,10 @@ if (imagesChanged) {
             theme: "light",
             transition: Bounce,
           });
-          onSave(formData);
+
+          setTimeout(() => {
+            onSave(formData);
+          }, 2000);
         }
     } catch (error) {
       toast.error("Failed to update ticket", {
@@ -277,7 +293,7 @@ if (imagesChanged) {
           <Form.Control
             type="text"
             name="location"
-            value={formData.location}
+            value={locationPart[0]}
             onChange={handleInputChange}
           />
         </Form.Group>
@@ -288,7 +304,7 @@ if (imagesChanged) {
 
               <Col sm="3"  style={{ marginRight: '15px' }} >
                 <Form.Label>Provinces</Form.Label>
-                <DropdownButton
+                <DropdownButton 
                   title={selectedProvinceName}
                   onSelect={(e) => {
                     const selectedPro = provinces.find(
@@ -299,12 +315,14 @@ if (imagesChanged) {
                   }}
                   variant="outline-secondary"
                 >
+                  <div style={{ maxHeight: '200px', overflowY: 'auto' }} >
                   {Array.isArray(provinces) &&
                     provinces.map((province) => (
                       <Dropdown.Item eventKey={province.province_id}>
                         {province.province_name}
                       </Dropdown.Item>
                     ))}
+                  </div>
                 </DropdownButton>
               </Col>
 

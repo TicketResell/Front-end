@@ -147,12 +147,6 @@ function TicketManage({ user }) {
                   scope="col"
                   style={{ backgroundColor: "#8e65ff", color: "white" }}
                 >
-                  Category
-                </th>
-                <th
-                  scope="col"
-                  style={{ backgroundColor: "#8e65ff", color: "white" }}
-                >
                   Ticket Type
                 </th>
                 <th
@@ -201,8 +195,8 @@ function TicketManage({ user }) {
             </MDBTableHead>
             <MDBTableBody>
               {currentTickets.map((ticket, index) => (
-                <tr key={index + offset + 1}>
-                  <td>{ticket.id}</td>
+                <tr key={ticket.id}>
+                  <td>{index + offset + 1}</td>
                   <td>
                     <div style={{ display: "flex", gap: "5px" }}>
                       {ticket.imageUrls.map((imgSrc) => (
@@ -217,7 +211,6 @@ function TicketManage({ user }) {
                     </div>
                   </td>
                   <td>{ticket.eventTitle}</td>
-                  <td>{ticket.categoryId}</td>
                   <td>{ticket.ticketType}</td>
                   <td>{ticket.eventDate}</td>
                   <td>{ticket.ticketDetails}</td>
