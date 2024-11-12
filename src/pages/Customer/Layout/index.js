@@ -28,6 +28,15 @@ export default function CustomerLayout() {
   const [revenue,setRevenue] = useState(0);
   const [sales,setSales] = useState(0);
 
+  useEffect(() => {
+    fetchUser();  
+    if (ticket) {
+        setCurrentLayout("chat"); // Đặt thẳng vào chat nếu có ticket
+    } else if (location.state?.currentLayout) {
+        setCurrentLayout(location.state.currentLayout);
+    }
+}, [ticket, location.state]);
+
   const fetchOrdersListByBuyer = async () =>{
     try {
       console.log("User Current Buyer",user.id)
