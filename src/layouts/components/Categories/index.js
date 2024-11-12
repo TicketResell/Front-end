@@ -5,7 +5,7 @@ import crowd from "../../../assets/images/crowd-background.jpg";
 import { Container, Row, Col, Card } from "react-bootstrap";
 import allCategoriesImg from "../../../assets/images/pixelcut-export (1).jpeg"
 
-function Categories({ categories, clickCategory, clickAll }) {
+function Categories({ categories, clickCategory, clickAll, onClickDisplay }) {
   const cx = classNames.bind(styles);
 
   return (
@@ -14,7 +14,7 @@ function Categories({ categories, clickCategory, clickAll }) {
         <div className={cx("wrapper")}>
           {categories.map((category) => (
             <Col key={category.id} xs={12} md={6} lg={3} className={cx("mb-4")}>
-              <div className={cx("card")}>
+              <div className={cx("card")} onClick={() => clickCategory(category.id)}>
                 <img src={category.image} alt={category.name} />
                 <div className={cx("info")}>
                   <h1 style={{color : "white", fontSize:"25px"}}>{category.name}</h1>
@@ -29,7 +29,10 @@ function Categories({ categories, clickCategory, clickAll }) {
         </div>
         {/* "All Categories" as a Card */}
         <Row>
-          <div className={cx("card")} onClick={clickAll}>
+          <div className={cx("card")} onClick={()=>{
+             clickAll();
+             onClickDisplay();
+          }} >
             <img
               src={allCategoriesImg}
               alt="All Categories"
@@ -37,7 +40,7 @@ function Categories({ categories, clickCategory, clickAll }) {
             <div className={cx("info")}>
               <h1 style={{color : "white"}} >All Categories</h1>
               <p></p>
-              <button className={cx("all-button")}>View More</button>
+              <button className={cx("all-button")} onClick={onClickDisplay}>View More</button>
             </div>
           </div>
         </Row>

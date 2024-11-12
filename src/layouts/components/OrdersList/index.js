@@ -3,14 +3,15 @@ import { MDBTable, MDBTableHead, MDBTableBody } from "mdb-react-ui-kit";
 import classNames from "classnames/bind";
 import styles from "./OrdersList.module.scss";
 import Pagination from "../Pagination";
-import { Button, Modal, Form } from "react-bootstrap";
+import { Button, Modal, Form, Image } from "react-bootstrap";
 import api from "../../../config/axios";
-import { ImStarFull, ImStarEmpty } from "react-icons/im";
+import { ImStarFull, ImStarEmpty, ImGift } from "react-icons/im";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoWarning } from "react-icons/io5";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 
 function OrdersList({ listOrders = [], isOrderBuyer , onRefresh }) {
+  console.log("Order List",listOrders);
   const cx = classNames.bind(styles);
   const [orderPage, setOrderPage] = useState(0);
   const itemsPerPage = 10;
@@ -230,9 +231,13 @@ function OrdersList({ listOrders = [], isOrderBuyer , onRefresh }) {
                         onClick={() => handleReceived(order.id)}
                       >
                           Confirm Completed
-                      </Button>) :(
+                      </Button>) : orderStatuses[order.id] === "pending" ? ( 
+                        <Image src="https://i.ibb.co/LQZTQ4B/Animation-1731417311297.gif" height={30}/>
+                      ) : orderStatuses[order.id] === "shipping" ? ( 
+                        <Image src="https://i.ibb.co/nr0rNrn/360-F-227739395-Bhszne-Mcufc-Ae9-DJEBTHFFx-VJM1-PR8-RT.jpg" height={30}/>
+                      ) :(
                         <FaCheckCircle size={30} color="#198754"/>
-                      ) }
+                      )}
 
                       <Button
                         className={cx("btn-response")}
