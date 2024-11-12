@@ -364,22 +364,31 @@ function Register() {
                         controlId="formBasicPassword"
                         className={cx("mt-3", "form-group")}
                       >
-                        <Form.Control
-                          type={showPassword ? "text" : "password"}
-                          placeholder="Password"
-                          className={cx("input", "form-control-lg")}
-                          onChange={checkPass}
-                          value={password}
-                          isInvalid={errors.password}
-                          isValid={!errors.password && password.length > 0}
-                        />
-                        <span
-                          className={cx("password-icon")}
-                          onClick={iconShowPassword}
-                          style={{ top: errors.password ? "25%" : "50%" }}
-                        >
-                          {showPassword ? <FaEyeSlash /> : <FaEye />}
-                        </span>
+                        <div className="position-relative">
+                          <Form.Control
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Password"
+                            className={cx("input", "form-control-lg")}
+                            onChange={checkPass}
+                            value={password}
+                            isInvalid={errors.password}
+                            isValid={!errors.password && password.length > 0}
+                          />
+                          <span
+                            className={cx("password-icon")}
+                            onClick={iconShowPassword}
+                            style={{
+                              position: "absolute",
+                              right: "30px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              cursor: "pointer",
+                              zIndex: 1,
+                            }}
+                          >
+                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                          </span>
+                        </div>
                         {errors.password ? (
                           <Form.Control.Feedback type="invalid">
                             {errors.password}
@@ -389,28 +398,36 @@ function Register() {
                         )}
                       </Form.Group>
 
+                      {/* Confirm Password input */}
                       <Form.Group
                         controlId="formBasicConfirmPassword"
                         className={cx("mt-3", "form-group")}
                       >
-                        <Form.Control
-                          type={showConfirmPassword ? "text" : "password"}
-                          placeholder="Confirm Password"
-                          className={cx("input", "form-control-lg")}
-                          onChange={checkPassAgain}
-                          value={confirmPassword}
-                          isInvalid={errors.confirmPassword}
-                          isValid={
-                            !errors.confirmPassword && confirmPassword.length > 0
-                          }
-                        />
-                        <span
-                          className={cx("password-icon")}
-                          onClick={iconShowConfirmPassword}
-                          style={{ top: errors.confirmPassword ? "25%" : "50%" }}
-                        >
-                          {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-                        </span>
+                        <div className="position-relative">
+                          <Form.Control
+                            type={showConfirmPassword ? "text" : "password"}
+                            placeholder="Confirm Password"
+                            className={cx("input", "form-control-lg")}
+                            onChange={checkPassAgain}
+                            value={confirmPassword}
+                            isInvalid={errors.confirmPassword}
+                            isValid={!errors.confirmPassword && confirmPassword.length > 0}
+                          />
+                          <span
+                            className={cx("password-icon")}
+                            onClick={iconShowConfirmPassword}
+                            style={{
+                              position: "absolute",
+                              right: "30px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              cursor: "pointer",
+                              zIndex: 1,
+                            }}
+                          >
+                            {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                          </span>
+                        </div>
                         {errors.confirmPassword ? (
                           <Form.Control.Feedback type="invalid">
                             {errors.confirmPassword}
@@ -419,6 +436,7 @@ function Register() {
                           <Form.Control.Feedback></Form.Control.Feedback>
                         )}
                       </Form.Group>
+
 
                       <ReCAPTCHA sitekey="6Le50GYqAAAAANRMEZWQwweXM5BLZkQ8VL49h3QX" onChange={(e) => setReCaptcha(e)} />
 
