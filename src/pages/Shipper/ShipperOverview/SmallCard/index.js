@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, Row, Col, Container } from 'react-bootstrap';
 import { MdLocalShipping } from "react-icons/md";
 import { RiEmotionUnhappyLine } from "react-icons/ri";
-
+import { GiCash } from "react-icons/gi";
 
 export default function SmallCard ({types}){
 
@@ -12,7 +12,7 @@ export default function SmallCard ({types}){
         <Container>
           <Row>
             <Col xs={2}>
-            {types.name === "Shipping Count" ? (<MdLocalShipping style={{ fontSize: '2rem', color: '#5e46ff' }} />) : (<RiEmotionUnhappyLine style={{ fontSize: '2rem', color: '#5e46ff' }} />)}
+            {types.name === "Shipping Count" ? (<MdLocalShipping style={{ fontSize: '2rem', color: '#5e46ff' }} />) : types.name === "Shipping Count" ? (<RiEmotionUnhappyLine style={{ fontSize: '2rem', color: '#5e46ff' }} />) : (<GiCash style={{ fontSize: '2rem', color: '#5e46ff' }} />)}
             </Col>
             <Col>
               <Card.Title>{types.name}</Card.Title>

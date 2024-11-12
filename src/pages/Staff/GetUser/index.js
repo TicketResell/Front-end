@@ -25,7 +25,8 @@ function StaffList() {
   };
 
   const banUser = async (userId) => {
-    try {
+    const confirmDelete = window.confirm("Are you sure to ban this use");
+    if(confirmDelete){
       const response = await api.get(`/staff/get-ban-user/${userId}`);
       if (response.data === true) {
         toast.success("Ban user successfully", {
@@ -41,6 +42,8 @@ function StaffList() {
         });
       }
       fetchUsers();
+    }
+    try {
     } catch (err) {
       if (err.response) {
         console.error("Error banning user:", err.response.data);

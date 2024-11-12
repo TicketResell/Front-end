@@ -77,7 +77,7 @@ const OrderPage = () => {
         eventTitle: ticket.eventTitle,
         quantity: quantity,
         price: ticket.price,
-        totalAmount: quantity * ticket.price,
+        totalAmount: quantity * ticket.price+ 15000,
         orderMethod: "COD",
       };
       setOrder(orderCreate);
@@ -362,6 +362,7 @@ if (!order.fullname || !order.phone || !order.address || errors.fullname || erro
               <p>Ticket Title : {order.eventTitle}</p>
               <p>Price: {order.price.toLocaleString("vi-VN")} VND</p>
               <p>Quantity: {order.quantity}</p>
+              <p>Shipping Fee: 15,000 VND</p>
               <h4>Total Amount: {order.totalAmount.toLocaleString("vi-VN")} VND</h4>
             </Card.Body>
           </Card>
