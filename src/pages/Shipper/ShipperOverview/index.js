@@ -8,6 +8,7 @@ export default function Overview() {
   const [orderShipping, setOrderShipping] = useState(0);
   const [orderbombing, setOrderBombing] = useState(0);
   const [counts,setCounts] = useState([])
+  const [revenue,setRevenue]  = useState([]);
 
   const fetchOrderShipping = async () => {
 
@@ -29,10 +30,17 @@ export default function Overview() {
       setOrderBombing(response.data);
   }
 
+  const fetchRevenueShipper = async () =>{
+    const response = await apiWithoutPrefix.get("/order/revenue-shipper");
+    console.log("Revenue Response",response.data)
+    setRevenue(response.data);
+}
+
   useEffect(() => {
     fetchOrderShipping();
     fetchOrderBomnbingCount();
     fetchCount();
+    fetchRevenueShipper();
   }, []);
 
   return (
@@ -51,6 +59,14 @@ export default function Overview() {
               types={{
                 name: "OrderBombing Count",
                 number: orderbombing,
+              }}
+            />
+          </Row>
+          <Row style={{height : "14rem"}}>
+            <SmallerCard
+              types={{
+                name: "Revenue",
+                number: revenue,
               }}
             />
           </Row>

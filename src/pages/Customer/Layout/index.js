@@ -27,6 +27,7 @@ export default function CustomerLayout() {
   const [errorMessage,setErrorMessage] = useState("");
   const [revenue,setRevenue] = useState(0);
   const [sales,setSales] = useState(0);
+
   const fetchOrdersListByBuyer = async () =>{
     try {
       console.log("User Current Buyer",user.id)
@@ -93,10 +94,10 @@ export default function CustomerLayout() {
     console.log("currentLayout khi bấm vào sidebar",currentLayout);
     switch (currentLayout) {
       case "overview":
-        return <Overview listOrdersBuyer={ordersBuyer} revenue={revenue} sales={sales}/>;
+        return <Overview listOrdersBuyer={ordersBuyer} revenue={revenue} sales={sales} onRefresh = {fetchOrdersListByBuyer}/>;
       case "orderSeller":
         return ordersSeller.length > 0 ? (
-          <OrdersList listOrders={ordersSeller} />
+          <OrdersList listOrders={ordersSeller}  onRefresh={fetchOrdersListBySeller}/>
         ) : (
           <ErrorPage errorMessage={errorMessage}/>
         );

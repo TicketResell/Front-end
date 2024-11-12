@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { Button, Form, Row } from "react-bootstrap";
+import { useState,useEffect } from "react";
+import { Button, Form, Row ,Col, Dropdown , DropdownButton} from "react-bootstrap";
 import classNames from "classnames/bind";
 import styles from "./TicketEdit.module.scss";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import uploadImgBB from "../../../../config/imgBB";
 import api from "../../../../config/axios";
+import apiLocation from "../../../../config/vietNamLocation";
 
 function TicketEdit({ ticket, onSave }) {
   console.log('ticket',ticket);
@@ -13,11 +14,73 @@ function TicketEdit({ ticket, onSave }) {
   const [showImages, setShowImages] = useState(ticket.imageUrls || []);
   const [priceError, setPriceError] = useState("");
 
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+
+  const [selectedProvinceName, setSelectedProvinceName] = useState("Select Province");
+  const [selectedDistrictName, setSelectedDistrictName] = useState("Select District");
+  const [selectedWardName, setSelectedWardName] = useState("Select Ward");
+
+  const [selectedProvinceCode, setSelectedProvinceCode] = useState(0);
+  const [selectedDistrictCode, setSelectedDistrictCode] = useState(0);
+
+  const fetchProvinces = async () => {
+    try {
+      const response = await apiLocation.get("/");
+      console.log("Provinces List", response.data.results);
+      const provinceList = response.data.results;
+      setProvinces(provinceList);
+    } catch (error) {
+      console.error("Không kéo được location", error);
+    }
+  };
+
+  const fetchDistricts = async (pid) => {
+    try {
+      const response = await apiLocation.get(`/district/${pid}`);
+      console.log("Districts List", response.data.results);
+      const districtList = response.data.results;
+      setDistricts(districtList);
+    } catch (error) {
+      console.error("Không kéo được location", error);
+    }
+  };
+
+  const fetchWards = async (did) => {
+    try {
+      const response = await apiLocation.get(`/ward/${did}`);
+      console.log("Wards List", response.data.results);
+      const wardList = response.data.results;
+      setWards(wardList);
+    } catch (error) {
+      console.error("Không kéo được location", error);
+    }
+  };
+
+  const handleProvinceSelect = (provinceCode, provinceName) => {
+    console.log("Province Code", provinceCode);
+    setSelectedProvinceCode(provinceCode);
+    setSelectedProvinceName(provinceName);
+    setSelectedDistrictName("Select District");
+    setSelectedWardName("Select Ward");
+  };
+
+  const handleDistrictsSelect = (districtCode, districtName) => {
+    console.log("District", districtCode);
+    setSelectedDistrictCode(districtCode);
+    setSelectedDistrictName(districtName);
+  };
+
+  const handleWardsSelect = (wardCode, wardName) => {
+    setSelectedWardName(wardName);
+  };
+
   const handleImageChange = async (e) => {
     const imageList = Array.from(e.target.files);
 
     if (imageList.length > 5) {
-      toast.error("Bạn chỉ có thể tải lên tối đa 5 ảnh", {
+      toast.error("You can only upload a maximum of 5 photos", {
         position: "top-center",
         autoClose: 5000,
         theme: "light",
@@ -132,6 +195,18 @@ if (imagesChanged) {
     }
   };
 
+  useEffect(() => {
+    fetchProvinces();
+  }, []);
+
+  useEffect(() => {
+    fetchDistricts(selectedProvinceCode);
+  }, [selectedProvinceCode]);
+
+  useEffect(() => {
+    fetchWards(selectedDistrictCode);
+  }, [selectedDistrictCode]);
+
   return (
     <Form onSubmit={handleSubmit}>
       <ToastContainer />
@@ -206,6 +281,75 @@ if (imagesChanged) {
             onChange={handleInputChange}
           />
         </Form.Group>
+            {/*Location detail */}
+        <Form.Group as={Row} className="mb-3">
+              <Form.Label column sm="2">
+              </Form.Label>
+
+              <Col sm="3"  style={{ marginRight: '15px' }} >
+                <Form.Label>Provinces</Form.Label>
+                <DropdownButton
+                  title={selectedProvinceName}
+                  onSelect={(e) => {
+                    const selectedPro = provinces.find(
+                      (pro) => pro.province_id === e
+                    );
+                    console.log("Province đang chọn",selectedPro);
+                    handleProvinceSelect(e, selectedPro.province_name);
+                  }}
+                  variant="outline-secondary"
+                >
+                  {Array.isArray(provinces) &&
+                    provinces.map((province) => (
+                      <Dropdown.Item eventKey={province.province_id}>
+                        {province.province_name}
+                      </Dropdown.Item>
+                    ))}
+                </DropdownButton>
+              </Col>
+
+              <Col sm="3"  style={{ marginRight: '15px' }} >
+                <Form.Label>Districts</Form.Label>
+                <DropdownButton
+                  title={selectedDistrictName}
+                  onSelect={(e) => {
+                    const selectedDis = districts.find(
+                      (dis) => dis.district_id === e
+                    );
+                    handleDistrictsSelect(e, selectedDis.district_name);
+                  }}
+                  variant="outline-secondary"
+                >
+                  {Array.isArray(districts) &&
+                    districts.map((district) => (
+                      <Dropdown.Item eventKey={district.district_id}>
+                        {district.district_name}
+                      </Dropdown.Item>
+                    ))}
+                </DropdownButton>
+              </Col>
+
+              <Col sm="3"  style={{ marginRight: '15px' }}>
+                <Form.Label>Wards</Form.Label>
+                <DropdownButton
+                  title={selectedWardName}
+                  onSelect={(e) => {
+                    const selectedWard = wards.find(
+                      (ward) => ward.ward_id === e
+                    );
+                    handleWardsSelect(e, selectedWard.ward_name);
+                  }}
+                  variant="outline-secondary"
+                >
+                  {Array.isArray(wards) &&
+                    wards.map((ward) => (
+                      <Dropdown.Item eventKey={ward.ward_id}>
+                        {ward.ward_name}
+                      </Dropdown.Item>
+                    ))}
+                </DropdownButton>
+              </Col>
+            </Form.Group>
 
         <Form.Group>
           <Form.Label>Price (VND)</Form.Label>

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import { MDBTable, MDBTableHead, MDBTableBody } from "mdb-react-ui-kit";
 import classNames from "classnames/bind";
 import styles from "./OrdersList.module.scss";
@@ -7,10 +6,11 @@ import Pagination from "../Pagination";
 import { Button, Modal, Form } from "react-bootstrap";
 import api from "../../../config/axios";
 import { ImStarFull, ImStarEmpty } from "react-icons/im";
+import { FaCheckCircle } from "react-icons/fa";
 import { IoWarning } from "react-icons/io5";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 
-function OrdersList({ listOrders = [], isOrderBuyer }) {
+function OrdersList({ listOrders = [], isOrderBuyer , onRefresh }) {
   const cx = classNames.bind(styles);
   const [orderPage, setOrderPage] = useState(0);
   const itemsPerPage = 10;
@@ -26,7 +26,7 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
   const [hoverStarRate, setHoverStarRate] = useState(0);
   const [currentUser, setCurrentUser] = useState(null);
   const [orderChosen, setOrderChosen] = useState(null);
-  
+
   useEffect(() => {
     const initialStatuses = {};
     listOrders.forEach((order) => {
@@ -55,6 +55,7 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
       });
       if (response.status === 200) {
         toast.success("Order marked as shipped.", { transition: Bounce });
+        onRefresh();
       }
     } catch (error) {
       toast.error("Error updating order status to shipped.");
@@ -69,6 +70,7 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
       if (response.status === 200) {
         toast.success("Order marked as completed.", { transition: Bounce });
         setOrderStatuses((prev) => ({ ...prev, [id]: "completed" }));
+        onRefresh(); 
       }
     } catch (error) {
       toast.error("Error updating order status to completed.");
@@ -213,7 +215,7 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
                 <td>{order.createdDate}</td>
                 <td>
                   {isOrderBuyer ? (
-                    <>
+                    <div style={{display : "flex", alignItems : "center" , justifyContent : "space-between"}}>
                       <Button
                         className={cx("btn-complaints")}
                         variant="outline-danger"
@@ -221,15 +223,17 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
                       >
                         Report
                       </Button>
-                      <Button
+                      {orderStatuses[order.id] === "received" ? (                      
+                        <Button
                         className={cx("btn-response")}
                         variant="outline-success"
                         onClick={() => handleReceived(order.id)}
                       >
-                        {orderStatuses[order.id] === "completed"
-                          ? "Completed"
-                          : "Confirm Received"}
-                      </Button>
+                          Confirm Completed
+                      </Button>) :(
+                        <FaCheckCircle size={30} color="#198754"/>
+                      ) }
+
                       <Button
                         className={cx("btn-response")}
                         variant="outline-primary"
@@ -237,7 +241,7 @@ function OrdersList({ listOrders = [], isOrderBuyer }) {
                       >
                         Rating
                       </Button>
-                    </>
+                    </div>
                   ) : (
                     <Button
                       className={cx("btn-response")}
