@@ -190,9 +190,12 @@ export default function Chat({ ticket, user }) {
   };
 
   const fetchChatConversation = async (userId,user2Id = null) => {
+    console.log("User Login",userId);
     try {
       if(userId && user2Id) {
         await apiWithoutPrefix.post(`/check-conversation/${userId}/${user2Id}`);
+      }else{
+        await apiWithoutPrefix.post(`/check-conversation/${userId}/${userId}`);
       }
       console.log("UserID1 fetchChatConversation", userId);
       console.log("UserID2 fetchChatConversation", user2Id);
@@ -339,7 +342,10 @@ export default function Chat({ ticket, user }) {
           onClearClick={() => setSearchTerm("")}
         />
         <ConversationList>
-          {filteredUsers.map((conversation, index) => (
+          {filteredUsers.map((conversation, index) => {
+            console.log("User2 filter:", conversation.user2);
+            console.log("Userid filter:", user.id);
+            return (
             <Conversation
               key={index}
               name={conversation.user1 === user.id ? conversation.user2FullName : conversation.user1FullName}
@@ -351,7 +357,8 @@ export default function Chat({ ticket, user }) {
             >
               <Avatar src={conversation.user1 === user.id ? conversation.user2Img : conversation.user1Img || "https://i.ibb.co/sg31cC8/download.png" } status={conversation.user1 === user.id ? (conversation.user2OnlineStatus === true ? "available" : "dnd") : (conversation.user1OnlineStatus === true ? "available" : "dnd")}/>
             </Conversation>
-          ))}
+            )
+          })}
         </ConversationList>
       </Sidebar>
       <ChatContainer>

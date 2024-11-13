@@ -28,7 +28,7 @@ function Home() {
   const [filteredNormal, setFilteredNormal] = useState([]);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
-  const itemsPerPage = 4;
+  const itemsPerPage = 8;
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 

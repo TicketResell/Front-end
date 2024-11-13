@@ -14,7 +14,7 @@ function OrdersList({ listOrders = [], isOrderBuyer , onRefresh }) {
   console.log("Order List",listOrders);
   const cx = classNames.bind(styles);
   const [orderPage, setOrderPage] = useState(0);
-  const itemsPerPage = 10;
+  const itemsPerPage = 8;
   const offset = orderPage * itemsPerPage;
   const numberStar = 5;
   const currentOrders = listOrders.slice(offset, offset + itemsPerPage);

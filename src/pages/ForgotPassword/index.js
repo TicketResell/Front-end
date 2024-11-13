@@ -24,8 +24,9 @@ const ForgotPassword = () => {
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
+        console.log("searchParams",searchParams);
         const emailFromURL = searchParams.get('email');
-        console.log("emailFromURL",emailFromURL)
+        console.log("emailFromURL",emailFromURL);
         if (emailFromURL) {
             // Nếu có email trong URL, chuyển sang bước reset password và dừng loading
             setEmail(emailFromURL);

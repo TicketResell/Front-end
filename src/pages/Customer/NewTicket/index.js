@@ -237,7 +237,7 @@ export default function NewTick({ user }) {
       !formData.imageUrls ||
       formData.imageUrls.length === 0
     ) {
-      toast.error("Vui lòng nhập đầy đủ thông tin vé", {
+      toast.error("Please enter complete ticket information", {
         position: "top-center",
         autoClose: 5000,
         theme: "light",
@@ -247,7 +247,7 @@ export default function NewTick({ user }) {
     }
 
     if (!formData.imageUrls || formData.imageUrls.length === 0) {
-      toast.error("Vui lòng tải lên ít nhất một ảnh", {
+      toast.error("Please upload at least one photo", {
         position: "top-center",
         autoClose: 5000,
         theme: "light",
@@ -257,15 +257,23 @@ export default function NewTick({ user }) {
     }
 
     if (!formData.eventTitle) {
-      toast.error("Vui lòng nhập tiêu đề sự kiện", {
+      toast.error("Please enter an event title", {
         position: "top-center",
         autoClose: 5000,
         theme: "light",
         transition: Bounce,
       });
       return;
-    } else if (/[^a-zA-Z0-9\s]/.test(formData.eventTitle)) {
-      toast.error("Tiêu đề sự kiện không được có kí tự đặc biệt", {
+    } else if (/\d/.test(formData.eventTitle)) {
+      toast.error("Event titles cannot contain numbers", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }else if (/[^a-zA-Z0-9\s]/.test(formData.eventTitle)) {
+      toast.error("Event titles cannot contain special characters", {
         position: "top-center",
         autoClose: 5000,
         theme: "light",
@@ -275,7 +283,7 @@ export default function NewTick({ user }) {
     }
 
     if (!formData.eventDate) {
-      toast.error("Vui lòng nhập ngày diễn ra sự kiện", {
+      toast.error("Please enter the event date", {
         position: "top-center",
         autoClose: 5000,
         theme: "light",
@@ -285,7 +293,7 @@ export default function NewTick({ user }) {
     }
 
     if (new Date(formData.eventDate) < new Date()) {
-      toast.error("Ngày sự kiện không được chọn trong quá khứ.", {
+      toast.error("The event date was not selected in the past.", {
         position: "top-center",
         autoClose: 5000,
         theme: "light",
@@ -315,7 +323,7 @@ export default function NewTick({ user }) {
     }
 
     if (!formData.ticketDetails) {
-      toast.error("Vui lòng nhập mô tả chi tiết vé", {
+      toast.error("Please enter a detailed ticket description", {
         position: "top-center",
         autoClose: 5000,
         theme: "light",
@@ -323,7 +331,7 @@ export default function NewTick({ user }) {
       });
       return;
     } else if (/[^a-zA-Z0-9\s]/.test(formData.ticketDetails)) {
-      toast.error("Mô tả chi tiết không được có kí tự đặc biệt", {
+      toast.error("Detailed descriptions cannot contain special characters", {
         position: "top-center",
         autoClose: 5000,
         theme: "light",
@@ -333,7 +341,7 @@ export default function NewTick({ user }) {
     }
 
     if (!formData.location) {
-      toast.error("Vui lòng nhập địa điểm sự kiện", {
+      toast.error("Please enter event location", {
         position: "top-center",
         autoClose: 5000,
         theme: "light",
@@ -343,7 +351,7 @@ export default function NewTick({ user }) {
     }
 
     if (!formData.price) {
-      toast.error("Vui lòng nhập giá gốc", {
+      toast.error("Please enter original price", {
         position: "top-center",
         autoClose: 5000,
         theme: "light",

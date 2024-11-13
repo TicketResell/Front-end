@@ -174,6 +174,128 @@ if (imagesChanged) {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (
+      !formData.eventTitle ||
+      !formData.eventDate ||
+      formData.ticketType === "Select Ticket Type" ||
+      !formData.ticketDetails ||
+      !formData.location ||
+      !formData.price ||
+      !formData.imageUrls ||
+      formData.imageUrls.length === 0
+    ) {
+      toast.error("Please enter complete ticket information", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+
+    if (!formData.imageUrls || formData.imageUrls.length === 0) {
+      toast.error("Please upload at least one photo", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+
+    if (!formData.eventTitle) {
+      toast.error("Please enter an event title", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    } else if (/\d/.test(formData.eventTitle)) {
+      toast.error("Event titles cannot contain numbers", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }else if (/[^a-zA-Z0-9\s]/.test(formData.eventTitle)) {
+      toast.error("Event titles cannot contain special characters", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+
+    if (!formData.eventDate) {
+      toast.error("Please enter the event date", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+
+    if (new Date(formData.eventDate) < new Date()) {
+      toast.error("The event date was not selected in the past.", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+
+    if (formData.ticketType === "Select Ticket Type") {
+      toast.error("Vui lòng chọn loại vé", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+
+    if (!formData.ticketDetails) {
+      toast.error("Please enter a detailed ticket description", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    } else if (/[^a-zA-Z0-9\s]/.test(formData.ticketDetails)) {
+      toast.error("Detailed descriptions cannot contain special characters", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+
+    if (!formData.location) {
+      toast.error("Please enter event location", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+
+    if (!formData.price) {
+      toast.error("Please enter original price", {
+        position: "top-center",
+        autoClose: 5000,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
 
     if (formData.price < 10000 || formData.price > 20000000) {
       toast.error("Cannot save if the amount is not valid", {
@@ -287,6 +409,20 @@ if (imagesChanged) {
             onChange={handleInputChange}
           />
         </Form.Group>
+
+        <Form.Group as={Row} className="mb-3" controlId="formTicketDetails">
+              <Form.Label column sm="2">
+                Ticket Details
+              </Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  name="ticketDetails"
+                  placeholder="Enter Ticket Details"
+                  value={formData.ticketDetails}
+                  onChange={handleInputChange}
+                />
+            </Form.Group>
 
         <Form.Group>
           <Form.Label>Location</Form.Label>
