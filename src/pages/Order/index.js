@@ -174,14 +174,52 @@ const OrderPage = () => {
     setOrder({ ...order, orderMethod: e.target.value });
   };
 
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    console.log(value);
+
+    if (value.trim() === "") {
+      setErrors((prev) => ({ ...prev, [name]: "Do not leave blank cells" }));
+    } else if (name === "phone" && !confirmPhone(value)) {
+      setErrors((prev) => ({ ...prev, [name]: "Phone number is incorrect" }));
+    } else if (name === "address" && !confirmAddress(value)) {
+        setErrors((prev) => ({ ...prev, [name]: "Address format is incorrect" }));
+      } else if (value.length < 10) {
+        setErrors((prev) => ({ ...prev, [name]: "Address must have at least 10 characters" }));
+    } else {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+
+    setOrder((prevOrder) => ({ ...prevOrder, [name]: value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if(errors.fullname !== "" || errors.phone !== "" || errors.address !== ""){
+      toast.error("Data entry errors persist in the form. Please re-enter", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      return; 
+    }
+
+    
+
     const formSend = {
       fullname : order.fullname,
       phone: order.phone,
-      address : order.address,
-      email : order.email
+      address : order.address + ","+ selectedWardName+ ","+ selectedDistrictName + "," + selectedProvinceName,
+      email : order.email ,
     }
+    console.log("Order Address", formSend.address);
     // Nếu nút hiện tại là "Save", thì chuyển sang trạng thái readonly và thay đổi nhãn nút
     if (buttonLabel === "Save") {
       setIsReadonly(true);
@@ -207,30 +245,6 @@ const OrderPage = () => {
       setDisabled(true);
       setButtonLabel("Save");
     }
-  };
-
-  // Handle form input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    console.log(value);
-
-    if(name === "address"){
-      const locationForm = value + ","+ selectedWardName+ ","+ selectedDistrictName + "," + selectedProvinceName;
-      setOrder((prevOrder) => ({ ...prevOrder, address: locationForm }));
-    }
-
-    if (value.trim() === "") {
-      setErrors((prev) => ({ ...prev, [name]: "Do not leave blank cells" }));
-    } else if (name === "phone" && !confirmPhone(value)) {
-      setErrors((prev) => ({ ...prev, [name]: "Phone number is incorrect" }));
-    } else if (name === "address" && !confirmAddress(value)) {
-        setErrors((prev) => ({ ...prev, [name]: "Address format is incorrect" }));
-      } else if (value.length < 10) {
-        setErrors((prev) => ({ ...prev, [name]: "Address must have at least 10 characters" }));
-    } else {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    }
-    setOrder((prevOrder) => ({ ...prevOrder, [name]: value }));
   };
 
   const handleCreateOrder = async () =>{
@@ -400,7 +414,7 @@ if (!order.fullname || !order.phone || !order.address || errors.fullname || erro
                     type="text"
                     placeholder="Please type address"
                     name="address"
-                    value={order.address}
+                    value={order.address.split(",")[0]}
                     isInvalid={errors.address}
                     isValid={!errors.address && order.address.length > 0}
                     onChange={handleInputChange}
