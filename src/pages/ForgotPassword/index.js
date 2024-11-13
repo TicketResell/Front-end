@@ -38,9 +38,12 @@ const ForgotPassword = () => {
     const handleSendResetLink = async (e) => {
         e.preventDefault();
         setLoading(true);
-
+    
         try {
+            // Send request to the backend to check if the email exists and send the reset link
             const response = await api.post('/accounts/reset', { email });
+            
+            // If the email exists and the link is sent successfully
             if (response && response.status === 200) {
                 toast.success(response.data, {
                     position: "top-center",
@@ -53,21 +56,41 @@ const ForgotPassword = () => {
                     theme: "light",
                     transition: Bounce,
                 });
+                setStep('resetPassword');  // Move to reset password step
             }
         } catch (error) {
-            toast.error(error.data, {
-                position: "top-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                transition: Bounce,
-            });
+            // Handle error when email is not found
+            if (error.response && error.response.status === 400) {
+                toast.error('Email chưa được đăng ký! Vui lòng kiểm tra lại.', {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
+            } else {
+                // Handle general errors
+                toast.error('Có lỗi xảy ra. Vui lòng thử lại sau.', {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
+            }
+        } finally {
+            setLoading(false);
         }
     };
+    
 
     // Đặt lại mật khẩu
     const handleResetPassword = async (e) => {
