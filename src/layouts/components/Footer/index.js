@@ -89,9 +89,6 @@ function Footer() {
                   </a>
                 </p>
                 <p>
-                  <a href="#" className="text-reset">
-                    Trợ giúp
-                  </a>
                 </p>
               </MDBCol>
 
