@@ -13,3 +13,9 @@ export const confirmUsername = (username) => {
     return regex.test(username);
 };
 
+export const confirmAddress = (username) => {
+    const regex = /^[0-9]+[a-zA-ZÀ-ỹ0-9\s,.\-\/]*$/u;
+    return regex.test(username);
+};
+
+

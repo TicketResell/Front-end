@@ -14,6 +14,7 @@ import { IoWarning } from "react-icons/io5";
 import classNames from "classnames/bind";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode';
+import { useRef } from "react";
 
 function Home() {
   const cx = classNames.bind(styles);
@@ -30,6 +31,14 @@ function Home() {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
+  const ticketDisplayRef = useRef(null);
+
+  // Scroll đến phần hiển thị Ticket
+  const scrollToTicketDisplay = () => {
+    if (ticketDisplayRef.current) {
+      ticketDisplayRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   // Nhận giá trị MIN và MAX từ Filter
   const handleMinMaxChange = (min, max) => {
@@ -125,6 +134,7 @@ function Home() {
     try {
       const response = await api.get(`/tickets/category/${categoryId}`);
       ticketClassification(response.data);
+      scrollToTicketDisplay();
     } catch (error) {
       console.error("Error fetching ticket by categories ", error);
     }
@@ -149,6 +159,7 @@ function Home() {
               categories={categories}
               clickCategory={handleCategoryClick}
               clickAll={fetchTickets}
+              onClickDisplay={scrollToTicketDisplay}
             />
           </Row>
           <Row>
@@ -169,6 +180,7 @@ function Home() {
         </section>
 
         {/* Carousel for Nearly Expired Tickets */}
+        <div ref={ticketDisplayRef} >
         <h1 className={cx("span-flame")}>
           EXPIRING SOON TICKET{" "}
           <span>
@@ -247,6 +259,7 @@ function Home() {
           pageCount={Math.ceil(normalTickets.length / itemsPerPage)}
           onPageChange={(selectedPage) => setNormalPage(selectedPage)}
         />
+        </div>
       </Container>
     </>
   );

@@ -558,7 +558,7 @@ export default function NewTick({ user }) {
                 <Form.Control
                   type="text"
                   name="location"
-                  placeholder="Enter event location"
+                  placeholder="Enter venue number"
                   value={formData.location}
                   onChange={handleInputChange}
                 />
@@ -583,12 +583,14 @@ export default function NewTick({ user }) {
                   }}
                   variant="outline-secondary"
                 >
+                  <div style={{ maxHeight: '200px', overflowY: 'auto' }} >
                   {Array.isArray(provinces) &&
                     provinces.map((province) => (
                       <Dropdown.Item eventKey={province.province_id}>
                         {province.province_name}
                       </Dropdown.Item>
                     ))}
+                    </div>
                 </DropdownButton>
               </Col>
 
@@ -604,12 +606,14 @@ export default function NewTick({ user }) {
                   }}
                   variant="outline-secondary"
                 >
+                  <div style={{ maxHeight: '200px', overflowY: 'auto' }} >
                   {Array.isArray(districts) &&
                     districts.map((district) => (
                       <Dropdown.Item eventKey={district.district_id}>
                         {district.district_name}
                       </Dropdown.Item>
                     ))}
+                    </div>
                 </DropdownButton>
               </Col>
 
@@ -625,12 +629,14 @@ export default function NewTick({ user }) {
                   }}
                   variant="outline-secondary"
                 >
+                  <div style={{ maxHeight: '200px', overflowY: 'auto' }} >
                   {Array.isArray(wards) &&
                     wards.map((ward) => (
                       <Dropdown.Item eventKey={ward.ward_id}>
                         {ward.ward_name}
                       </Dropdown.Item>
                     ))}
+                  </div>
                 </DropdownButton>
               </Col>
             </Form.Group>

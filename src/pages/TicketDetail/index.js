@@ -8,10 +8,11 @@ import { LuMessagesSquare } from "react-icons/lu";
 import classNames from "classnames/bind";
 import soldout from '../../assets/images/soldout-logo.png';
 import onsale from '../../assets/images/onsale-logo.jpg';
-import api, { apiWithoutPrefix } from "../../../src/config/axios";
+import api from "../../../src/config/axios";
 import styles from "./TicketDetail.module.scss";
 import { ToastContainer,Bounce, toast } from 'react-toastify';
 import SellerInformation from "../../layouts/components/Seller Information";
+import { useRef } from "react";
 
 const TicketDetail = () => {
   const navigate = useNavigate();
@@ -36,6 +37,13 @@ const TicketDetail = () => {
   const [imagesSeries, setImageSeries] = useState(series);
   const [user, setUser] = useState(null);
   const [reportSuccessMessage, setReportSuccessMessage] = useState("");
+  const ticketDisplayRef = useRef(null);
+
+  const scrollToTicketDisplay = () => {
+    if (ticketDisplayRef.current) {
+      ticketDisplayRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   // Check user login state from localStorage
   const fetchUserFromLocalStorage = () => {
@@ -166,10 +174,13 @@ const TicketDetail = () => {
     } catch (error) {
       console.error("Lỗi chat rồi");
     }
-   
   }
+  useEffect (()=>{
+    scrollToTicketDisplay();
+  },[])
+  
   return (
-    <section className={cx("py-5")}>
+    <section className={cx("py-5")} ref={ticketDisplayRef}>
       <Container>
         <ToastContainer/>
         <Row className={cx("gx-5")}>
