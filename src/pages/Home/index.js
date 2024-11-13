@@ -16,7 +16,6 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode';
 import { useRef } from "react";
 
-
 function Home() {
   const cx = classNames.bind(styles);
   const [nearlyExpiredTickets, setNearlyExpiredTickets] = useState([]);
