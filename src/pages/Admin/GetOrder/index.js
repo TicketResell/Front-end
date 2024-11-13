@@ -80,34 +80,39 @@ const OrderList = () => {
 
   const updateServiceFee = async () => {
     if (!currentOrder || newServiceFee === "") return;
-
+  
     const newFee = parseFloat(newServiceFee);
     const currentFee = parseFloat(currentOrder.serviceFee);
-
+  
     if (newFee > currentFee) {
       setServiceFeeError("The new service fee must be smaller than the current service fee.");
       return;
     }
-
+  
     try {
       const response = await api.put(`/admin/update-service-fee/${currentOrder.id}`, {
         serviceFee: newFee,
       });
-
-      await fetchOrders();
-
+  
       const updatedOrder = { ...currentOrder, serviceFee: response.data.serviceFee };
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order.id === currentOrder.id ? updatedOrder : order
         )
       );
+      
       setCurrentOrder(updatedOrder);
+  
+     
       setShowModal(false);
+      
+      await fetchOrders();
+      
     } catch (error) {
       console.error("Error updating service fee:", error);
     }
   };
+  
 
   const fetchOrders = async () => {
     try {
