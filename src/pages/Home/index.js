@@ -14,7 +14,6 @@ import { IoWarning } from "react-icons/io5";
 import classNames from "classnames/bind";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from 'jwt-decode';
-import { use } from "i18next";
 
 function Home() {
   const cx = classNames.bind(styles);

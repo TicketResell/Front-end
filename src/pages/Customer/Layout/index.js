@@ -31,7 +31,7 @@ export default function CustomerLayout() {
   useEffect(() => {
     fetchUser();  
     if (ticket) {
-        setCurrentLayout("chat"); // Đặt thẳng vào chat nếu có ticket
+        setCurrentLayout("chat"); 
     } else if (location.state?.currentLayout) {
         setCurrentLayout(location.state.currentLayout);
     }
